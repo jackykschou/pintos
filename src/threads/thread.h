@@ -148,7 +148,7 @@ int thread_get_recent_cpu (void);
 int thread_get_load_avg (void);
 
 bool thread_elem_compare_priority (const struct list_elem *_a, const struct list_elem *_b, void *);
-void thread_push_list_priority_based_round_robin (struct list *l, struct thread *t);
+//void thread_push_list_priority_based_round_robin (struct list *l, struct thread *t);
 struct thread *thread_get_first_list_highest_priority (struct list *l);
 struct thread *thread_pop_list_first_highest_priority (struct list *l);
 

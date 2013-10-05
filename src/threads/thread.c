@@ -83,6 +83,7 @@ thread_elem_compare_priority (const struct list_elem *a_, const struct list_elem
   return (t1->priority) < (t2->priority);
 }
 
+/*
 void
 thread_push_list_priority_based_round_robin (struct list *l, struct thread *t)
 {
@@ -101,6 +102,7 @@ thread_push_list_priority_based_round_robin (struct list *l, struct thread *t)
 
   list_insert (e, &t->elem);
 }
+*/
 
 struct thread *
 thread_get_first_list_highest_priority (struct list *l)
