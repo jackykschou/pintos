@@ -90,14 +90,16 @@ struct thread
     enum thread_status status;          /* Thread state. */
     char name[16];                      /* Name (for debugging purposes). */
     uint8_t *stack;                     /* Saved stack pointer. */
-    int priority;                       /* Priority. */
+    int priority;                       /* Current Priority. */
     struct list_elem allelem;           /* List element for all threads list. */
 
-    struct semaphore sleep_sema;
-    int64_t sleep_start;                /* :D Time thread starts sleeping. */
-    int64_t sleep_ticks;                /* :D Number of ticks a thread wants to sleep for. */
+    /* Fields added for sleep_timer. */
+    struct semaphore sleep_sema;         /* semaphore for getting the thread sleep instead of using busy waiting */      
+    int64_t sleep_start;                 /* Time thread starts sleeping. */
+    int64_t sleep_ticks;                 /* Number of ticks a thread wants to sleep for. */
 
-    int original_priority;
+    int original_priority;                /* semaphore for getting the thread sleep instead of using busy waiting */   
+    struct thread *thread_waiting_for;    /* The thread that holds the lock that this thread is waiting for. */
 
     /* Shared between thread.c and synch.c. */
     struct list_elem elem;              /* List element. */
@@ -147,8 +149,9 @@ void thread_set_nice (int);
 int thread_get_recent_cpu (void);
 int thread_get_load_avg (void);
 
+/* Newly add function declaration. */
 bool thread_elem_compare_priority (const struct list_elem *_a, const struct list_elem *_b, void *);
-//void thread_push_list_priority_based_round_robin (struct list *l, struct thread *t);
+void thread_push_list_priority_based_round_robin (struct list *l, struct thread *t);
 struct thread *thread_get_first_list_highest_priority (struct list *l);
 struct thread *thread_pop_list_first_highest_priority (struct list *l);
 

@@ -71,62 +71,6 @@ static void schedule (void);
 void thread_schedule_tail (struct thread *prev);
 static tid_t allocate_tid (void);
 
-/* Newly added functions */
-
-bool
-thread_elem_compare_priority (const struct list_elem *a_, const struct list_elem *b_, void *aux)
-{
-  ASSERT (intr_get_level () == INTR_OFF);
-  const struct thread *t1 = list_entry (a_, struct thread, elem);
-  const struct thread *t2 = list_entry (b_, struct thread, elem);
-
-  return (t1->priority) < (t2->priority);
-}
-
-/*
-void
-thread_push_list_priority_based_round_robin (struct list *l, struct thread *t)
-{
-  struct list_elem *e;
-
-  ASSERT (l != NULL);
-  ASSERT (t != NULL);
-  ASSERT (intr_get_level () == INTR_OFF);
-
-  for (e = list_begin (l); e != list_end (l); e = list_next (e))
-    {
-      struct thread *thread_to_compare = list_entry (e, struct thread, elem);
-      if ((t->priority) > (thread_to_compare->priority))
-        break;
-    }
-
-  list_insert (e, &t->elem);
-}
-*/
-
-struct thread *
-thread_get_first_list_highest_priority (struct list *l)
-{
-  ASSERT (intr_get_level () == INTR_OFF);
-  ASSERT (!list_empty (l));
-
-  return list_entry (list_max (l, thread_elem_compare_priority, NULL), struct thread, elem);
-}
-
-struct thread *
-thread_pop_list_first_highest_priority (struct list *l)
-{
-  ASSERT (intr_get_level () == INTR_OFF);
-  ASSERT (!list_empty (l));
-
-  struct thread *t = thread_get_first_list_highest_priority (l);
-  list_remove (&t->elem);
-
-  return t;
-}
-
-/* End of newly added functions */
-
 /* Initializes the threading system by transforming the code
    that's currently running into a thread.  This can't work in
    general and it is possible in this case only because loader.S
@@ -265,6 +209,10 @@ thread_create (const char *name, int priority,
   /* Add to run queue. */
   thread_unblock (t);
 
+  /* Yield the current running thread if the thread just created has a higher prioriy than that of the running thread. */
+  if (!intr_context () && t->priority > thread_current ()->priority)
+    thread_yield ();
+
   return tid;
 }
 
@@ -297,13 +245,12 @@ void
 thread_unblock (struct thread *t) 
 {
   enum intr_level old_level;
-
   ASSERT (is_thread (t));
 
   old_level = intr_disable ();
+
   ASSERT (t->status == THREAD_BLOCKED);
   list_push_back (&ready_list, &t->elem);
-  //thread_push_list_priority_based_round_robin (&ready_list, t);
   t->status = THREAD_READY;
   intr_set_level (old_level);
 }
@@ -375,7 +322,6 @@ thread_yield (void)
   old_level = intr_disable ();
   if (cur != idle_thread) 
     {
-      //thread_push_list_priority_based_round_robin (&ready_list, cur);
       list_push_back (&ready_list, &cur->elem);
     }
   cur->status = THREAD_READY;
@@ -404,14 +350,20 @@ thread_foreach (thread_action_func *func, void *aux)
 void
 thread_set_priority (int new_priority) 
 {
-  thread_current ()->priority = new_priority;
+  if (thread_current ()->original_priority == thread_current ()->priority)
+    thread_current ()->priority = new_priority;
+  
+  thread_current ()->original_priority = new_priority;
+  
   if (!list_empty (&ready_list))
     {
+      /* Yield the current running thread if the priority changed thread has a lower prioriy than any thread in the ready list. */
       if ((thread_get_first_list_highest_priority (&ready_list)->priority) > new_priority)
         {
           thread_yield ();
         }
     }
+    
 }
 
 /* Returns the current thread's priority. */
@@ -538,11 +490,13 @@ init_thread (struct thread *t, const char *name, int priority)
   t->priority = priority;
   t->magic = THREAD_MAGIC;
 
+  /*Initialization of newly added fields. */
   sema_init (&t->sleep_sema, 0);
   t->sleep_start = 0;
   t->sleep_ticks = 0;
 
   t->original_priority = priority;
+  t->thread_waiting_for = NULL;
 
   list_push_back (&all_list, &t->allelem);
 }
@@ -571,8 +525,8 @@ next_thread_to_run (void)
   if (list_empty (&ready_list))
     return idle_thread;
   else
+    /*return the highest priority thread in the ready list. */
     return thread_pop_list_first_highest_priority (&ready_list);
-    //return list_entry (list_pop_front (&ready_list), struct thread, elem);
 }
 
 /* Completes a thread switch by activating the new thread's page
@@ -662,3 +616,51 @@ allocate_tid (void)
 /* Offset of `stack' member within `struct thread'.
    Used by switch.S, which can't figure it out on its own. */
 uint32_t thread_stack_ofs = offsetof (struct thread, stack);
+
+/* ******************************Newly added functions****************************** */
+
+/*Less compare function for comparing two threads according to priority. */
+bool
+thread_elem_compare_priority (const struct list_elem *a_, const struct list_elem *b_, void *aux)
+{
+  ASSERT (intr_get_level () == INTR_OFF);
+  const struct thread *t1 = list_entry (a_, struct thread, elem);
+  const struct thread *t2 = list_entry (b_, struct thread, elem);
+
+  return (t1->priority) < (t2->priority);
+}
+
+/* Given a list of threads, return the thread with the highest priority, if there are more than one
+thread with the highest priority, return the one in most front of the list. */
+struct thread *
+thread_get_first_list_highest_priority (struct list *l)
+{
+  ASSERT (!list_empty (l));
+
+  struct list_elem *max = list_begin (l);
+  struct list_elem *e;
+  
+  if (max != list_end (l))
+    {
+      for (e = list_next (max); e != list_end (l); e = list_next (e))
+        if ((list_entry (e, struct thread, elem)->priority) > (list_entry (max, struct thread, elem)->priority))
+          max = e; 
+    }
+
+  return list_entry (max, struct thread, elem);
+}
+
+/* Given a list of threads, remove the thread with the highest priority from the list and return it, 
+if there are more than one thread with the highest priority, remove and return the one in most front of the list. */
+struct thread *
+thread_pop_list_first_highest_priority (struct list *l)
+{
+  ASSERT (!list_empty (l));
+
+  struct thread *t = thread_get_first_list_highest_priority (l);
+  list_remove (&t->elem);
+
+  return t;
+}
+
+/* ******************************End of newly added functions****************************** */

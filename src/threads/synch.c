@@ -32,6 +32,11 @@
 #include "threads/interrupt.h"
 #include "threads/thread.h"
 
+/* Newly added function declaractions. */
+static void apply_donation (struct thread *donator);
+static void recover_priority (struct thread *donation_receiver);
+static struct semaphore_elem* pop_highest_priority_semaphore_elem_list (struct list *l);
+
 /* Initializes semaphore SEMA to VALUE.  A semaphore is a
    nonnegative integer along with two atomic operators for
    manipulating it:
@@ -113,16 +118,19 @@ sema_up (struct semaphore *sema)
   ASSERT (sema != NULL);
 
   old_level = intr_disable ();
+  struct thread *unblock_thread = NULL;
   if (!list_empty (&sema->waiters))
     {
-      thread_unblock (thread_pop_list_first_highest_priority (&sema->waiters));
+      unblock_thread = thread_pop_list_first_highest_priority (&sema->waiters);
+      thread_unblock (unblock_thread);
     } 
-    /*
-    thread_unblock (list_entry (list_pop_front (&sema->waiters),
-                                struct thread, elem));
-                                */
   sema->value++;
   intr_set_level (old_level);
+
+  /* If the thread that get waken up has a higher priority than that of the current running thread, yields the thread. */
+  if (!intr_context () && unblock_thread != NULL && unblock_thread->priority > thread_current ()->original_priority)
+        thread_yield ();
+
 }
 
 static void sema_test_helper (void *sema_);
@@ -201,8 +209,30 @@ lock_acquire (struct lock *lock)
   ASSERT (!intr_context ());
   ASSERT (!lock_held_by_current_thread (lock));
 
-  sema_down (&lock->semaphore);
-  lock->holder = thread_current ();
+  /* If the lock is not being held, just grap the lock. */
+  if (lock->holder == NULL)
+  {
+    sema_down (&lock->semaphore);
+    lock->holder = thread_current ();
+  }
+  /* If the lock is being held and donation is needed (priority is higher than the lock holder), 
+  apply donation, set the lock holder as waiting thread and reverse donation afterwards. */
+  else if (thread_current ()->priority > lock->holder->original_priority)
+  {
+    thread_current ()->thread_waiting_for = lock->holder;
+    apply_donation (thread_current ());
+    sema_down (&lock->semaphore);
+    lock->holder = thread_current ();
+    recover_priority (thread_current ()->thread_waiting_for);
+  }
+  /* If the lock is being held and donation is not needed (priority is lower than the lock holder), 
+  just set the lock holder as waiting thread for possible chain donation and reverse possible chain donation afterwards */
+  else
+  {
+    thread_current ()->thread_waiting_for = lock->holder;
+    sema_down (&lock->semaphore);
+    lock->holder = thread_current ();
+  }
 }
 
 /* Tries to acquires LOCK and returns true if successful or false
@@ -321,9 +351,9 @@ cond_signal (struct condition *cond, struct lock *lock UNUSED)
   ASSERT (!intr_context ());
   ASSERT (lock_held_by_current_thread (lock));
 
+  /* sema_up the semaphore that has the highest priority thread in the semaphore list. */
   if (!list_empty (&cond->waiters)) 
-    sema_up (&list_entry (list_pop_front (&cond->waiters),
-                          struct semaphore_elem, elem)->semaphore);
+    sema_up (&pop_highest_priority_semaphore_elem_list (&cond->waiters)->semaphore);
 }
 
 /* Wakes up all threads, if any, waiting on COND (protected by
@@ -341,3 +371,63 @@ cond_broadcast (struct condition *cond, struct lock *lock)
   while (!list_empty (&cond->waiters))
     cond_signal (cond, lock);
 }
+
+/* ******************************Newly added functions****************************** */
+
+/* Recursively donate priority to the thread (s) the donator is waiting for. */ 
+static void
+apply_donation (struct thread *donator)
+{
+  if (donator->thread_waiting_for != NULL)
+    {
+      donator->thread_waiting_for->priority = (donator->priority > donator->thread_waiting_for->priority) 
+       ? donator->priority : donator->thread_waiting_for->priority;
+      apply_donation (donator->thread_waiting_for);
+    }
+  
+}
+
+/* Recover the priority of a thread to its original priority */ 
+static void
+recover_priority (struct thread *donation_receiver)
+{
+    donation_receiver->priority = donation_receiver->original_priority;
+}
+
+/* Given a list of semaphores, remove the return the semaphore that has the highest priority thread in the list*/
+static struct semaphore_elem*
+pop_highest_priority_semaphore_elem_list (struct list *l)
+{
+  ASSERT (!list_empty (l));
+  struct list_elem *max = list_begin (l);
+
+  /* Get the highest priority of the thread that is in the semaphore waiter list. */
+  int max_highest_priority = thread_get_first_list_highest_priority 
+  (&(list_entry (max, struct semaphore_elem, elem)->semaphore.waiters))->priority;
+
+  struct list_elem *e;
+  if (max != list_end (l))
+  {
+    for (e = list_next (max); e != list_end (l); e = list_next (e))
+      {
+        /* Get the highest priority of the thread that is in the semaphore waiter list. */
+        int sema_list_highest_priority = thread_get_first_list_highest_priority 
+        (&(list_entry (e, struct semaphore_elem, elem)->semaphore.waiters))->priority;
+
+        if (sema_list_highest_priority > max_highest_priority)
+        {
+          max = e;
+
+          /* Update highest priority of the thread that is in the max semaphore waiter list. */
+          max_highest_priority = thread_get_first_list_highest_priority 
+          (&(list_entry (max, struct semaphore_elem, elem)->semaphore.waiters))->priority; 
+        }
+      }
+  }
+  list_remove (max);
+  return list_entry (max, struct semaphore_elem, elem);
+}
+
+
+/* ******************************End of newly added function****************************** */
+

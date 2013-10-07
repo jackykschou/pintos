@@ -31,7 +31,6 @@ static void
 simple_thread_func (void *aux UNUSED) 
 {
   int i;
-  
   for (i = 0; i < 5; i++) 
     {
       msg ("Thread %s iteration %d", thread_name (), i);

@@ -29,6 +29,8 @@ static bool too_many_loops (unsigned loops);
 static void busy_wait (int64_t loops);
 static void real_time_sleep (int64_t num, int32_t denom);
 static void real_time_delay (int64_t num, int32_t denom);
+
+/* Newly added function declaraction. */
 static void check_sleep_sema (struct thread*, void*);
 
 /* Sets up the timer to interrupt TIMER_FREQ times per second,
@@ -95,9 +97,9 @@ timer_sleep (int64_t ticks)
   if(ticks > 0)
   {
     t = thread_current ();
-    t->sleep_start = timer_ticks (); /* :D set the number of ticks at which a thread begins to sleep. */ 
-    t->sleep_ticks = ticks;           /* :D set the number of ticks a thread is going to sleep for. */
-    sema_down(&t->sleep_sema);        /* :D send current thread to sleep. */
+    t->sleep_start = timer_ticks ();  /* Set the number of ticks at which a thread begins to sleep. */ 
+    t->sleep_ticks = ticks;           /* Set the number of ticks a thread is going to sleep for. */
+    sema_down(&t->sleep_sema);        /* Send current thread to sleep. */
   }
 
 }
@@ -177,7 +179,7 @@ static void
 timer_interrupt (struct intr_frame *args UNUSED)
 {
   ticks++;
-  thread_foreach(check_sleep_sema, NULL); /* :D Check if there is any thread that needs to wake up every timer tick. */
+  thread_foreach(check_sleep_sema, NULL); /* Check if there is any thread that needs to wake up every timer tick. */
   thread_tick ();
 }
 
@@ -252,17 +254,21 @@ real_time_delay (int64_t num, int32_t denom)
   busy_wait (loops_per_tick * num / 1000 * TIMER_FREQ / (denom / 1000)); 
 }
 
-/* :D This function checks if the T has slept for sleep_ticks (member of a thread) ticks.
+/* ******************************Newly added functions****************************** */
+
+/*  Checks if the T has slept for sleep_ticks ticks.
     If it has, wake it up.  */
 static void
 check_sleep_sema (struct thread *t, void *aux)
 {
   /* If the amount of ticks the thread has slept is greater or equal than the specified
-     amount of ticks, revert the value sleep_ticks back to 0,
-     wake it up by upping the value of sema. */
+     amount of ticks, revert the value sleep_ticks back to 0.
+     Wake it up by upping the value of sema. */
   if (t->sleep_ticks != 0 && timer_elapsed (t->sleep_start) >= t->sleep_ticks)
   {
     t->sleep_ticks = 0;
     sema_up (&t->sleep_sema);
   }
 }
+
+/* ******************************End of newly added functions****************************** */
