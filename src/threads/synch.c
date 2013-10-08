@@ -114,11 +114,12 @@ void
 sema_up (struct semaphore *sema) 
 {
   enum intr_level old_level;
+  struct thread *unblock_thread;
 
   ASSERT (sema != NULL);
 
   old_level = intr_disable ();
-  struct thread *unblock_thread = NULL;
+  unblock_thread = NULL;
   if (!list_empty (&sema->waiters))
     {
       unblock_thread = thread_pop_list_first_highest_priority (&sema->waiters);
@@ -130,7 +131,6 @@ sema_up (struct semaphore *sema)
   /* If the thread that get waken up has a higher priority than that of the current running thread, yields the thread. */
   if (!intr_context () && unblock_thread != NULL && unblock_thread->priority > thread_current ()->original_priority)
         thread_yield ();
-
 }
 
 static void sema_test_helper (void *sema_);
@@ -252,6 +252,7 @@ lock_try_acquire (struct lock *lock)
   success = sema_try_down (&lock->semaphore);
   if (success)
     lock->holder = thread_current ();
+
   return success;
 }
 
@@ -384,7 +385,6 @@ apply_donation (struct thread *donator)
        ? donator->priority : donator->thread_waiting_for->priority;
       apply_donation (donator->thread_waiting_for);
     }
-  
 }
 
 /* Recover the priority of a thread to its original priority */ 
@@ -394,18 +394,19 @@ recover_priority (struct thread *donation_receiver)
     donation_receiver->priority = donation_receiver->original_priority;
 }
 
-/* Given a list of semaphores, remove the return the semaphore that has the highest priority thread in the list*/
+/* Given a list of semaphores, remove and return the semaphore that has the highest priority thread in the list*/
 static struct semaphore_elem*
 pop_highest_priority_semaphore_elem_list (struct list *l)
 {
-  ASSERT (!list_empty (l));
-  struct list_elem *max = list_begin (l);
+  struct list_elem *max;
+  struct list_elem *e;
 
+  ASSERT (!list_empty (l));
+
+  max = list_begin (l);
   /* Get the highest priority of the thread that is in the semaphore waiter list. */
   int max_highest_priority = thread_get_first_list_highest_priority 
   (&(list_entry (max, struct semaphore_elem, elem)->semaphore.waiters))->priority;
-
-  struct list_elem *e;
   if (max != list_end (l))
   {
     for (e = list_next (max); e != list_end (l); e = list_next (e))
@@ -425,6 +426,7 @@ pop_highest_priority_semaphore_elem_list (struct list *l)
       }
   }
   list_remove (max);
+
   return list_entry (max, struct semaphore_elem, elem);
 }
 

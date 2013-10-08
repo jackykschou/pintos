@@ -245,11 +245,11 @@ void
 thread_unblock (struct thread *t) 
 {
   enum intr_level old_level;
+
   ASSERT (is_thread (t));
+  ASSERT (t->status == THREAD_BLOCKED);
 
   old_level = intr_disable ();
-
-  ASSERT (t->status == THREAD_BLOCKED);
   list_push_back (&ready_list, &t->elem);
   t->status = THREAD_READY;
   intr_set_level (old_level);
@@ -350,8 +350,12 @@ thread_foreach (thread_action_func *func, void *aux)
 void
 thread_set_priority (int new_priority) 
 {
+
+  enum intr_level old_level = intr_disable ();
+  /* Only change the current priority if there is no priority donation occured. */
   if (thread_current ()->original_priority == thread_current ()->priority)
     thread_current ()->priority = new_priority;
+  intr_set_level (old_level);
   
   thread_current ()->original_priority = new_priority;
   
@@ -494,7 +498,6 @@ init_thread (struct thread *t, const char *name, int priority)
   sema_init (&t->sleep_sema, 0);
   t->sleep_start = 0;
   t->sleep_ticks = 0;
-
   t->original_priority = priority;
   t->thread_waiting_for = NULL;
 
@@ -618,17 +621,6 @@ allocate_tid (void)
 uint32_t thread_stack_ofs = offsetof (struct thread, stack);
 
 /* ******************************Newly added functions****************************** */
-
-/*Less compare function for comparing two threads according to priority. */
-bool
-thread_elem_compare_priority (const struct list_elem *a_, const struct list_elem *b_, void *aux)
-{
-  ASSERT (intr_get_level () == INTR_OFF);
-  const struct thread *t1 = list_entry (a_, struct thread, elem);
-  const struct thread *t2 = list_entry (b_, struct thread, elem);
-
-  return (t1->priority) < (t2->priority);
-}
 
 /* Given a list of threads, return the thread with the highest priority, if there are more than one
 thread with the highest priority, return the one in most front of the list. */

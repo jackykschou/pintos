@@ -97,11 +97,10 @@ timer_sleep (int64_t ticks)
   if(ticks > 0)
   {
     t = thread_current ();
-    t->sleep_start = timer_ticks ();  /* Set the number of ticks at which a thread begins to sleep. */ 
+    t->sleep_start = timer_ticks ();  /* Set the number of ticks at which a thread begins to sleep. */
     t->sleep_ticks = ticks;           /* Set the number of ticks a thread is going to sleep for. */
     sema_down(&t->sleep_sema);        /* Send current thread to sleep. */
   }
-
 }
 
 /* Sleeps for approximately MS milliseconds.  Interrupts must be

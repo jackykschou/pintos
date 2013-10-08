@@ -51,6 +51,7 @@ static void
 start_process (void *file_name_)
 {
   char *file_name = file_name_;
+
   struct intr_frame if_;
   bool success;
 
@@ -88,6 +89,8 @@ start_process (void *file_name_)
 int
 process_wait (tid_t child_tid UNUSED) 
 {
+  while (true)
+    ;
   return -1;
 }
 
@@ -195,7 +198,7 @@ struct Elf32_Phdr
 #define PF_W 2          /* Writable. */
 #define PF_R 4          /* Readable. */
 
-static bool setup_stack (void **esp);
+static bool setup_stack (void **esp, char **argv, int argc);
 static bool validate_segment (const struct Elf32_Phdr *, struct file *);
 static bool load_segment (struct file *file, off_t ofs, uint8_t *upage,
                           uint32_t read_bytes, uint32_t zero_bytes,
@@ -215,6 +218,26 @@ load (const char *file_name, void (**eip) (void), void **esp)
   bool success = false;
   int i;
 
+  char *program_name, *save_ptr;
+
+  //program_name = strtok_r (file_name, " ", &save_ptr);
+
+  char *s = file_name;
+  char *token;
+  char **argv;
+  char **current_argv;
+  int argc = 0;
+
+  current_argv = argv;
+   for (token = strtok_r (s, " ", &save_ptr); token != NULL;
+        token = strtok_r (NULL, " ", &save_ptr))
+   {
+      *current_argv = token;
+      ++current_argv;
+      printf ("'%s'\n", token);
+      argc++;
+   }
+
   /* Allocate and activate page directory. */
   t->pagedir = pagedir_create ();
   if (t->pagedir == NULL) 
@@ -222,10 +245,12 @@ load (const char *file_name, void (**eip) (void), void **esp)
   process_activate ();
 
   /* Open executable file. */
-  file = filesys_open (file_name);
+  file = filesys_open (program_name);
+  //file = filesys_open (file_name);
+
   if (file == NULL) 
     {
-      printf ("load: %s: open failed\n", file_name);
+      printf ("load: %s: open failed\n", program_name);
       goto done; 
     }
 
@@ -238,7 +263,7 @@ load (const char *file_name, void (**eip) (void), void **esp)
       || ehdr.e_phentsize != sizeof (struct Elf32_Phdr)
       || ehdr.e_phnum > 1024) 
     {
-      printf ("load: %s: error loading executable\n", file_name);
+      printf ("load: %s: error loading executable\n", program_name);
       goto done; 
     }
 
@@ -302,7 +327,7 @@ load (const char *file_name, void (**eip) (void), void **esp)
     }
 
   /* Set up stack. */
-  if (!setup_stack (esp))
+  if (!setup_stack (esp, argv, argc))
     goto done;
 
   /* Start address. */
@@ -427,7 +452,7 @@ load_segment (struct file *file, off_t ofs, uint8_t *upage,
 /* Create a minimal stack by mapping a zeroed page at the top of
    user virtual memory. */
 static bool
-setup_stack (void **esp) 
+setup_stack (void **esp, char **argv, int argc) 
 {
   uint8_t *kpage;
   bool success = false;
@@ -437,7 +462,35 @@ setup_stack (void **esp)
     {
       success = install_page (((uint8_t *) PHYS_BASE) - PGSIZE, kpage, true);
       if (success)
-        *esp = PHYS_BASE;
+        {
+          /**
+          *esp = PHYS_BASE;
+          int i;
+          for (i = argc; i > 0; --i)
+            {
+              memcpy (*esp, argv[i-1], (strlen (argv[i-1]) + 1));
+              *esp -= (strlen (*(argv + i - 1)) + 1);
+            }
+          ROUND_DOWN ((uint8_t)*esp, 4);
+          memcpy (*esp, NULL, sizeof (char*));
+          *esp -= sizeof (uint8_t);
+          for (i = argc; i > 0; --i)
+            {
+              memcpy (*esp, &argv[i - 1], sizeof (char*));
+              *esp -= sizeof (char*);
+            }
+          memcpy (*esp, *(esp + 4), sizeof (char**));
+          *esp -= sizeof (char**);
+          memcpy (*esp, argc, sizeof (int));
+          *esp -= sizeof (int);
+          memcpy (*esp, 0, sizeof (void (*)()));
+          *esp -= sizeof (void (*)());
+        */
+
+
+        //*esp = PHYS_BASE - PGSIZE;
+        *esp = PHYS_BASE - 12;
+        }
       else
         palloc_free_page (kpage);
     }

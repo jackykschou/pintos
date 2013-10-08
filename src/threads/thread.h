@@ -98,7 +98,7 @@ struct thread
     int64_t sleep_start;                 /* Time thread starts sleeping. */
     int64_t sleep_ticks;                 /* Number of ticks a thread wants to sleep for. */
 
-    int original_priority;                /* semaphore for getting the thread sleep instead of using busy waiting */   
+    int original_priority;                /* The priority that the thread has when there is not priority donation. */   
     struct thread *thread_waiting_for;    /* The thread that holds the lock that this thread is waiting for. */
 
     /* Shared between thread.c and synch.c. */
@@ -150,8 +150,6 @@ int thread_get_recent_cpu (void);
 int thread_get_load_avg (void);
 
 /* Newly add function declaration. */
-bool thread_elem_compare_priority (const struct list_elem *_a, const struct list_elem *_b, void *);
-void thread_push_list_priority_based_round_robin (struct list *l, struct thread *t);
 struct thread *thread_get_first_list_highest_priority (struct list *l);
 struct thread *thread_pop_list_first_highest_priority (struct list *l);
 
