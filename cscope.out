@@ -1,5 +1,5 @@
-cscope 15 /v/filer4b/v38q001/jackyc/CS439/pintos/src               0000937670
-	@devices/block.c
+cscope 15 /v/filer4b/v38q001/jackyc/CS439/pintos               0000933421
+	@src/devices/block.c
 
 1 
 	~"devi˚s/block.h
@@ -727,7 +727,7 @@ NULL
 	}
 }
 
-	@devices/block.h
+	@src/devices/block.h
 
 1 #i‚de‡
 DEVICES_BLOCK_H
@@ -939,7 +939,7 @@ block_›î©i⁄s
 aux
 );
 
-	@devices/ide.c
+	@src/devices/ide.c
 
 1 
 	~"devi˚s/ide.h
@@ -2839,7 +2839,7 @@ c
 	}
 }
 
-	@devices/ide.h
+	@src/devices/ide.h
 
 1 #i‚de‡
 DEVICES_IDE_H
@@ -2855,7 +2855,7 @@ DEVICES_IDE_H
 ide_öô
  ();
 
-	@devices/input.c
+	@src/devices/input.c
 
 1 
 	~"devi˚s/öput.h
@@ -3011,7 +3011,7 @@ buf„r
 	}
 }
 
-	@devices/input.h
+	@src/devices/input.h
 
 1 #i‚de‡
 DEVICES_INPUT_H
@@ -3053,7 +3053,7 @@ boﬁ
 öput_fuŒ
  ();
 
-	@devices/intq.c
+	@src/devices/intq.c
 
 1 
 	~"devi˚s/ötq.h
@@ -3529,7 +3529,7 @@ NULL
 	}
 }
 
-	@devices/intq.h
+	@src/devices/intq.h
 
 1 #i‚de‡
 DEVICES_INTQ_H
@@ -3631,7 +3631,7 @@ uöt8_t
 uöt8_t
 );
 
-	@devices/kbd.c
+	@src/devices/kbd.c
 
 1 
 	~"devi˚s/kbd.h
@@ -4143,7 +4143,7 @@ fú°_sˇncode
 	}
 }
 
-	@devices/kbd.h
+	@src/devices/kbd.h
 
 1 #i‚de‡
 DEVICES_KBD_H
@@ -4167,7 +4167,7 @@ kbd_öô
 kbd_¥öt_°©s
  ();
 
-	@devices/partition.c
+	@src/devices/partition.c
 
 1 
 	~"devi˚s/∑πôi⁄.h
@@ -4939,7 +4939,7 @@ block_›î©i⁄s
 ∑πôi⁄_wrôe
 
 
-	@devices/partition.h
+	@src/devices/partition.h
 
 1 #i‚de‡
 DEVICES_PARTITION_H
@@ -4961,7 +4961,7 @@ DEVICES_PARTITION_H
 block
  *);
 
-	@devices/pit.c
+	@src/devices/pit.c
 
 1 
 	~"devi˚s/pô.h
@@ -5109,7 +5109,7 @@ cou¡
 	}
 }
 
-	@devices/pit.h
+	@src/devices/pit.h
 
 1 #i‚de‡
 DEVICES_PIT_H
@@ -5135,7 +5135,7 @@ mode
 ‰equícy
 );
 
-	@devices/rtc.c
+	@src/devices/rtc.c
 
 1 
 	~"devi˚s/πc.h
@@ -5485,7 +5485,7 @@ CMOS_REG_IO
 	}
 }
 
-	@devices/rtc.h
+	@src/devices/rtc.h
 
 1 #i‚de‡
 RTC_H
@@ -5507,7 +5507,7 @@ time_t
 πc_gë_time
  ();
 
-	@devices/serial.c
+	@src/devices/serial.c
 
 1 
 	~"devi˚s/£rül.h
@@ -6179,7 +6179,7 @@ txq
 	}
 }
 
-	@devices/serial.h
+	@src/devices/serial.h
 
 1 #i‚de‡
 DEVICES_SERIAL_H
@@ -6213,7 +6213,7 @@ uöt8_t
 £rül_nŸify
  ();
 
-	@devices/shutdown.c
+	@src/devices/shutdown.c
 
 1 
 	~"devi˚s/shutdown.h
@@ -6471,7 +6471,7 @@ USERPROG
 	}
 }
 
-	@devices/shutdown.h
+	@src/devices/shutdown.h
 
 1 #i‚de‡
 DEVICES_SHUTDOWN_H
@@ -6525,7 +6525,7 @@ NO_RETURN
 NO_RETURN
 ;
 
-	@devices/speaker.c
+	@src/devices/speaker.c
 
 1 
 	~"devi˚s/•ókî.h
@@ -6665,7 +6665,7 @@ INTR_ON
 	}
 }
 
-	@devices/speaker.h
+	@src/devices/speaker.h
 
 1 #i‚de‡
 DEVICES_SPEAKER_H
@@ -6691,7 +6691,7 @@ DEVICES_SPEAKER_H
 •ókî_bìp
  ();
 
-	@devices/timer.c
+	@src/devices/timer.c
 
 1 
 	~"devi˚s/timî.h
@@ -7387,7 +7387,7 @@ t
 	}
 }
 
-	@devices/timer.h
+	@src/devices/timer.h
 
 1 #i‚de‡
 DEVICES_TIMER_H
@@ -7493,7 +7493,7 @@ timî_ndñay
 timî_¥öt_°©s
  ();
 
-	@devices/vga.c
+	@src/devices/vga.c
 
 1 
 	~"devi˚s/vga.h
@@ -7957,7 +7957,7 @@ COL_CNT
 	}
 }
 
-	@devices/vga.h
+	@src/devices/vga.h
 
 1 #i‚de‡
 DEVICES_VGA_H
@@ -7973,7 +7973,7 @@ DEVICES_VGA_H
 vga_putc
  ();
 
-	@examples/bubsort.c
+	@src/examples/bubsort.c
 
 9 
 	~<°dio.h
@@ -8073,7 +8073,7 @@ tmp
 	}
 }
 
-	@examples/cat.c
+	@src/examples/cat.c
 
 5 
 	~<°dio.h
@@ -8183,7 +8183,7 @@ EXIT_FAILURE
 	}
 }
 
-	@examples/cmp.c
+	@src/examples/cmp.c
 
 5 
 	~<°dio.h
@@ -8399,7 +8399,7 @@ EXIT_SUCCESS
 	}
 }
 
-	@examples/cp.c
+	@src/examples/cp.c
 
 5 
 	~<°dio.h
@@ -8545,7 +8545,7 @@ EXIT_SUCCESS
 	}
 }
 
-	@examples/echo.c
+	@src/examples/echo.c
 
 1 
 	~<°dio.h
@@ -8593,7 +8593,7 @@ EXIT_SUCCESS
 	}
 }
 
-	@examples/halt.c
+	@src/examples/halt.c
 
 7 
 	~<sysˇŒ.h
@@ -8611,7 +8611,7 @@ EXIT_SUCCESS
 	}
 }
 
-	@examples/hex-dump.c
+	@src/examples/hex-dump.c
 
 5 
 	~<°dio.h
@@ -8731,7 +8731,7 @@ EXIT_FAILURE
 	}
 }
 
-	@examples/insult.c
+	@src/examples/insult.c
 
 13 *
 	g°¨t
@@ -9789,7 +9789,7 @@ h™dÀ
 	}
 }
 
-	@examples/lineup.c
+	@src/examples/lineup.c
 
 10 
 	~<˘y≥.h
@@ -9915,7 +9915,7 @@ EXIT_SUCCESS
 	}
 }
 
-	@examples/ls.c
+	@src/examples/ls.c
 
 11 
 	~<sysˇŒ.h
@@ -10207,7 +10207,7 @@ EXIT_FAILURE
 	}
 }
 
-	@examples/matmult.c
+	@src/examples/matmult.c
 
 11 
 	~<°dio.h
@@ -10333,7 +10333,7 @@ DIM
 	}
 }
 
-	@examples/mcat.c
+	@src/examples/mcat.c
 
 6 
 	~<°dio.h
@@ -10465,7 +10465,7 @@ EXIT_SUCCESS
 	}
 }
 
-	@examples/mcp.c
+	@src/examples/mcp.c
 
 5 
 	~<°dio.h
@@ -10677,7 +10677,7 @@ EXIT_SUCCESS
 	}
 }
 
-	@examples/mkdir.c
+	@src/examples/mkdir.c
 
 5 
 	~<°dio.h
@@ -10733,7 +10733,7 @@ EXIT_SUCCESS
 	}
 }
 
-	@examples/pwd.c
+	@src/examples/pwd.c
 
 5 
 	~<sysˇŒ.h
@@ -11147,7 +11147,7 @@ cwd_size
 	}
 }
 
-	@examples/recursor.c
+	@src/examples/recursor.c
 
 1 
 	~<°dio.h
@@ -11259,7 +11259,7 @@ pid
 	}
 }
 
-	@examples/rm.c
+	@src/examples/rm.c
 
 5 
 	~<°dio.h
@@ -11329,7 +11329,7 @@ EXIT_FAILURE
 	}
 }
 
-	@examples/shell.c
+	@src/examples/shell.c
 
 1 
 	~<°dboﬁ.h
@@ -11575,7 +11575,7 @@ pos
 	}
 }
 
-	@filesys/directory.c
+	@src/filesys/directory.c
 
 1 
 	~"fûesys/dúe˘‹y.h
@@ -12375,7 +12375,7 @@ NAME_MAX
 	gÁl£
 ;
 
-	@filesys/directory.h
+	@src/filesys/directory.h
 
 1 #i‚de‡
 FILESYS_DIRECTORY_H
@@ -12503,7 +12503,7 @@ dú
 NAME_MAX
  + 1]);
 
-	@filesys/file.c
+	@src/filesys/file.c
 
 1 
 	~"fûesys/fûe.h
@@ -13041,7 +13041,7 @@ pos
 	}
 }
 
-	@filesys/file.h
+	@src/filesys/file.h
 
 1 #i‚de‡
 FILESYS_FILE_H
@@ -13165,7 +13165,7 @@ fûe_Àngth
 fûe
  *);
 
-	@filesys/filesys.c
+	@src/filesys/filesys.c
 
 1 
 	~"fûesys/fûesys.h
@@ -13489,7 +13489,7 @@ ROOT_DIR_SECTOR
 	}
 }
 
-	@filesys/filesys.h
+	@src/filesys/filesys.h
 
 1 #i‚de‡
 FILESYS_FILESYS_H
@@ -13567,7 +13567,7 @@ fûesys_ªmove
 «me
 );
 
-	@filesys/free-map.c
+	@src/filesys/free-map.c
 
 1 
 	~"fûesys/‰ì-m≠.h
@@ -13895,7 +13895,7 @@ NULL
 	}
 }
 
-	@filesys/free-map.h
+	@src/filesys/free-map.h
 
 1 #i‚de‡
 FILESYS_FREE_MAP_H
@@ -13957,7 +13957,7 @@ block_£˘‹_t
 size_t
 );
 
-	@filesys/fsutil.c
+	@src/filesys/fsutil.c
 
 1 
 	~"fûesys/fsutû.h
@@ -14775,7 +14775,7 @@ buf„r
 	}
 }
 
-	@filesys/fsutil.h
+	@src/filesys/fsutil.h
 
 1 #i‚de‡
 FILESYS_FSUTIL_H
@@ -14817,7 +14817,7 @@ fsutû_≠≥nd
 ¨gv
 );
 
-	@filesys/inode.c
+	@src/filesys/inode.c
 
 1 
 	~"fûesys/öode.h
@@ -15971,7 +15971,7 @@ d©a
 	}
 }
 
-	@filesys/inode.h
+	@src/filesys/inode.h
 
 1 #i‚de‡
 FILESYS_INODE_H
@@ -16091,7 +16091,7 @@ off_t
 öode
  *);
 
-	@filesys/off_t.h
+	@src/filesys/off_t.h
 
 1 #i‚de‡
 FILESYS_OFF_T_H
@@ -16121,7 +16121,7 @@ PRId32
 
 	)
 
-	@lib/arithmetic.c
+	@src/lib/arithmetic.c
 
 1 
 	~<°döt.h
@@ -16599,7 +16599,7 @@ d
 	}
 }
 
-	@lib/ctype.h
+	@src/lib/ctype.h
 
 1 #i‚de‡
 __LIB_CTYPE_H
@@ -16803,7 +16803,7 @@ c
 	}
 }
 
-	@lib/debug.c
+	@src/lib/debug.c
 
 1 
 	~<debug.h
@@ -16895,7 +16895,7 @@ ex∂aöed
 	}
 }
 
-	@lib/debug.h
+	@src/lib/debug.h
 
 1 #i‚de‡
 __LIB_DEBUG_H
@@ -17049,7 +17049,7 @@ CONDITION
 
 	)
 
-	@lib/inttypes.h
+	@src/lib/inttypes.h
 
 1 #i‚de‡
 __LIB_INTTYPES_H
@@ -17281,7 +17281,7 @@ __LIB_INTTYPES_H
 
 	)
 
-	@lib/kernel/bitmap.c
+	@src/lib/kernel/bitmap.c
 
 1 
 	~"bôm≠.h
@@ -18683,7 +18683,7 @@ bô_˙t
 	}
 }
 
-	@lib/kernel/bitmap.h
+	@src/lib/kernel/bitmap.h
 
 1 #i‚de‡
 __LIB_KERNEL_BITMAP_H
@@ -18975,7 +18975,7 @@ bôm≠_dump
 bôm≠
  *);
 
-	@lib/kernel/console.c
+	@src/lib/kernel/console.c
 
 1 
 	~<c⁄sﬁe.h
@@ -19371,7 +19371,7 @@ c
 	}
 }
 
-	@lib/kernel/console.h
+	@src/lib/kernel/console.h
 
 1 #i‚de‡
 __LIB_KERNEL_CONSOLE_H
@@ -19395,7 +19395,7 @@ c⁄sﬁe_∑nic
 c⁄sﬁe_¥öt_°©s
  ();
 
-	@lib/kernel/debug.c
+	@src/lib/kernel/debug.c
 
 1 
 	~<debug.h
@@ -19751,7 +19751,7 @@ NULL
 	}
 }
 
-	@lib/kernel/hash.c
+	@src/lib/kernel/hash.c
 
 8 
 	~"hash.h
@@ -21203,7 +21203,7 @@ li°_ñem
 	}
 }
 
-	@lib/kernel/hash.h
+	@src/lib/kernel/hash.h
 
 1 #i‚de‡
 __LIB_KERNEL_HASH_H
@@ -21497,7 +21497,7 @@ hash_°rög
 hash_öt
  ();
 
-	@lib/kernel/list.c
+	@src/lib/kernel/list.c
 
 1 
 	~"li°.h
@@ -23237,7 +23237,7 @@ mö
 	}
 }
 
-	@lib/kernel/list.h
+	@src/lib/kernel/list.h
 
 1 #i‚de‡
 __LIB_KERNEL_LIST_H
@@ -23593,7 +23593,7 @@ li°_Àss_func
 aux
 );
 
-	@lib/kernel/stdio.h
+	@src/lib/kernel/stdio.h
 
 1 #i‚de‡
 __LIB_KERNEL_STDIO_H
@@ -23611,7 +23611,7 @@ putbuf
 size_t
 );
 
-	@lib/limits.h
+	@src/lib/limits.h
 
 1 #i‚de‡
 __LIB_LIMITS_H
@@ -23763,7 +23763,7 @@ LLONG_MAX
 
 	)
 
-	@lib/packed.h
+	@src/lib/packed.h
 
 1 #i‚de‡
 __LIB_PACKED_H
@@ -23785,7 +23785,7 @@ __LIB_PACKED_H
 
 	)
 
-	@lib/random.c
+	@src/lib/random.c
 
 1 
 	~"øndom.h
@@ -24043,7 +24043,7 @@ ul
 	}
 }
 
-	@lib/random.h
+	@src/lib/random.h
 
 1 #i‚de‡
 __LIB_RANDOM_H
@@ -24075,7 +24075,7 @@ size_t
 øndom_ul⁄g
  ();
 
-	@lib/round.h
+	@src/lib/round.h
 
 1 #i‚de‡
 __LIB_ROUND_H
@@ -24117,7 +24117,7 @@ STEP
 
 	)
 
-	@lib/stdarg.h
+	@src/lib/stdarg.h
 
 1 #i‚de‡
 __LIB_STDARG_H
@@ -24181,7 +24181,7 @@ SRC
 
 	)
 
-	@lib/stdbool.h
+	@src/lib/stdbool.h
 
 1 #i‚de‡
 __LIB_STDBOOL_H
@@ -24219,7 +24219,7 @@ _Boﬁ
 
 	)
 
-	@lib/stddef.h
+	@src/lib/stddef.h
 
 1 #i‚de‡
 __LIB_STDDEF_H
@@ -24261,7 +24261,7 @@ __SIZE_TYPE__
 	tsize_t
 ;
 
-	@lib/stdint.h
+	@src/lib/stdint.h
 
 1 #i‚de‡
 __LIB_STDINT_H
@@ -24481,7 +24481,7 @@ UINT32_MAX
 
 	)
 
-	@lib/stdio.c
+	@src/lib/stdio.c
 
 1 
 	~<°dio.h
@@ -26593,7 +26593,7 @@ size
 	}
 }
 
-	@lib/stdio.h
+	@src/lib/stdio.h
 
 1 #i‚de‡
 __LIB_STDIO_H
@@ -26751,7 +26751,7 @@ d⁄t_u£_v•rötf_u£_v¢¥ötf
 
 	)
 
-	@lib/stdlib.c
+	@src/lib/stdlib.c
 
 1 
 	~<˘y≥.h
@@ -27433,7 +27433,7 @@ NULL
 	}
 }
 
-	@lib/stdlib.h
+	@src/lib/stdlib.h
 
 1 #i‚de‡
 __LIB_STDLIB_H
@@ -27539,7 +27539,7 @@ aux
 aux
 );
 
-	@lib/string.c
+	@src/lib/string.c
 
 1 
 	~<°rög.h
@@ -28629,7 +28629,7 @@ d°_Àn
 	}
 }
 
-	@lib/string.h
+	@src/lib/string.h
 
 1 #i‚de‡
 __LIB_STRING_H
@@ -28781,7 +28781,7 @@ d⁄t_u£_°πok_u£_°πok_r
 
 	)
 
-	@lib/syscall-nr.h
+	@src/lib/syscall-nr.h
 
 1 #i‚de‡
 __LIB_SYSCALL_NR_H
@@ -28873,7 +28873,7 @@ __LIB_SYSCALL_NR_H
 	mSYS_INUMBER
 
 
-	@lib/user/console.c
+	@src/lib/user/console.c
 
 1 
 	~<°dio.h
@@ -29203,7 +29203,7 @@ buf
 	}
 }
 
-	@lib/user/debug.c
+	@src/lib/user/debug.c
 
 1 
 	~<debug.h
@@ -29293,7 +29293,7 @@ mesßge
 	}
 }
 
-	@lib/user/entry.c
+	@src/lib/user/entry.c
 
 1 
 	~<sysˇŒ.h
@@ -29333,7 +29333,7 @@ _°¨t
 	}
 }
 
-	@lib/user/stdio.h
+	@src/lib/user/stdio.h
 
 1 #i‚de‡
 __LIB_USER_STDIO_H
@@ -29359,7 +29359,7 @@ va_li°
 	`PRINTF_FORMAT
  (2, 0);
 
-	@lib/user/syscall.c
+	@src/lib/user/syscall.c
 
 1 
 	~<sysˇŒ.h
@@ -29977,7 +29977,7 @@ fd
 	}
 }
 
-	@lib/user/syscall.h
+	@src/lib/user/syscall.h
 
 1 #i‚de‡
 __LIB_USER_SYSCALL_H
@@ -30195,7 +30195,7 @@ fd
 fd
 );
 
-	@lib/ustar.c
+	@src/lib/ustar.c
 
 1 
 	~<u°¨.h
@@ -30901,7 +30901,7 @@ NULL
 	}
 }
 
-	@lib/ustar.h
+	@src/lib/ustar.h
 
 1 #i‚de‡
 __LIB_USTAR_H
@@ -30975,7 +30975,7 @@ u°¨_ty≥
 size
 );
 
-	@tests/arc4.c
+	@src/tests/arc4.c
 
 1 
 	~<°döt.h
@@ -31233,7 +31233,7 @@ j
 	}
 }
 
-	@tests/arc4.h
+	@src/tests/arc4.h
 
 1 #i‚de‡
 TESTS_ARC4_H
@@ -31287,7 +31287,7 @@ size_t
 size_t
 );
 
-	@tests/cksum.c
+	@src/tests/cksum.c
 
 3 
 	~<°döt.h
@@ -31419,7 +31419,7 @@ n
 	}
 }
 
-	@tests/cksum.h
+	@src/tests/cksum.h
 
 1 #i‚de‡
 TESTS_CKSUM_H
@@ -31441,7 +31441,7 @@ cksum
 size_t
 );
 
-	@tests/filesys/base/child-syn-read.c
+	@src/tests/filesys/base/child-syn-read.c
 
 7 
 	~<øndom.h
@@ -31587,7 +31587,7 @@ chûd_idx
 	}
 }
 
-	@tests/filesys/base/child-syn-wrt.c
+	@src/tests/filesys/base/child-syn-wrt.c
 
 5 
 	~<øndom.h
@@ -31719,7 +31719,7 @@ chûd_idx
 	}
 }
 
-	@tests/filesys/base/lg-create.c
+	@src/tests/filesys/base/lg-create.c
 
 4 
 	#TEST_SIZE
@@ -31731,7 +31731,7 @@ chûd_idx
 	~"ã°s/fûesys/¸óã.öc
 "
 
-	@tests/filesys/base/lg-full.c
+	@src/tests/filesys/base/lg-full.c
 
 5 
 	#TEST_SIZE
@@ -31743,7 +31743,7 @@ chûd_idx
 	~"ã°s/fûesys/ba£/fuŒ.öc
 "
 
-	@tests/filesys/base/lg-random.c
+	@src/tests/filesys/base/lg-random.c
 
 5 
 	#BLOCK_SIZE
@@ -31761,7 +31761,7 @@ chûd_idx
 	~"ã°s/fûesys/ba£/øndom.öc
 "
 
-	@tests/filesys/base/lg-seq-block.c
+	@src/tests/filesys/base/lg-seq-block.c
 
 5 
 	#TEST_SIZE
@@ -31779,7 +31779,7 @@ chûd_idx
 	~"ã°s/fûesys/ba£/£q-block.öc
 "
 
-	@tests/filesys/base/lg-seq-random.c
+	@src/tests/filesys/base/lg-seq-random.c
 
 5 
 	#TEST_SIZE
@@ -31791,7 +31791,7 @@ chûd_idx
 	~"ã°s/fûesys/ba£/£q-øndom.öc
 "
 
-	@tests/filesys/base/sm-create.c
+	@src/tests/filesys/base/sm-create.c
 
 4 
 	#TEST_SIZE
@@ -31803,7 +31803,7 @@ chûd_idx
 	~"ã°s/fûesys/¸óã.öc
 "
 
-	@tests/filesys/base/sm-full.c
+	@src/tests/filesys/base/sm-full.c
 
 5 
 	#TEST_SIZE
@@ -31815,7 +31815,7 @@ chûd_idx
 	~"ã°s/fûesys/ba£/fuŒ.öc
 "
 
-	@tests/filesys/base/sm-random.c
+	@src/tests/filesys/base/sm-random.c
 
 5 
 	#BLOCK_SIZE
@@ -31833,7 +31833,7 @@ chûd_idx
 	~"ã°s/fûesys/ba£/øndom.öc
 "
 
-	@tests/filesys/base/sm-seq-block.c
+	@src/tests/filesys/base/sm-seq-block.c
 
 5 
 	#TEST_SIZE
@@ -31851,7 +31851,7 @@ chûd_idx
 	~"ã°s/fûesys/ba£/£q-block.öc
 "
 
-	@tests/filesys/base/sm-seq-random.c
+	@src/tests/filesys/base/sm-seq-random.c
 
 5 
 	#TEST_SIZE
@@ -31863,7 +31863,7 @@ chûd_idx
 	~"ã°s/fûesys/ba£/£q-øndom.öc
 "
 
-	@tests/filesys/base/syn-read.c
+	@src/tests/filesys/base/syn-read.c
 
 5 
 	~<øndom.h
@@ -31987,7 +31987,7 @@ CHILD_CNT
 	}
 }
 
-	@tests/filesys/base/syn-read.h
+	@src/tests/filesys/base/syn-read.h
 
 1 #i‚de‡
 TESTS_FILESYS_BASE_SYN_READ_H
@@ -32009,7 +32009,7 @@ TESTS_FILESYS_BASE_SYN_READ_H
 	gfûe_«me
 [] = "data";
 
-	@tests/filesys/base/syn-remove.c
+	@src/tests/filesys/base/syn-remove.c
 
 4 
 	~<øndom.h
@@ -32147,7 +32147,7 @@ fd
 	}
 }
 
-	@tests/filesys/base/syn-write.c
+	@src/tests/filesys/base/syn-write.c
 
 5 
 	~<øndom.h
@@ -32273,7 +32273,7 @@ fûe_«me
 	}
 }
 
-	@tests/filesys/base/syn-write.h
+	@src/tests/filesys/base/syn-write.h
 
 1 #i‚de‡
 TESTS_FILESYS_BASE_SYN_WRITE_H
@@ -32311,7 +32311,7 @@ CHUNK_SIZE
 	gfûe_«me
 [] = "stuff";
 
-	@tests/filesys/extended/child-syn-rw.c
+	@src/tests/filesys/extended/child-syn-rw.c
 
 10 
 	~<øndom.h
@@ -32491,7 +32491,7 @@ chûd_idx
 	}
 }
 
-	@tests/filesys/extended/dir-empty-name.c
+	@src/tests/filesys/extended/dir-empty-name.c
 
 4 
 	~<sysˇŒ.h
@@ -32519,7 +32519,7 @@ chûd_idx
 	}
 }
 
-	@tests/filesys/extended/dir-mk-tree.c
+	@src/tests/filesys/extended/dir-mk-tree.c
 
 4 
 	~"ã°s/fûesys/exãnded/mk-åì.h
@@ -32541,7 +32541,7 @@ chûd_idx
 	}
 }
 
-	@tests/filesys/extended/dir-mkdir.c
+	@src/tests/filesys/extended/dir-mkdir.c
 
 3 
 	~<sysˇŒ.h
@@ -32587,7 +32587,7 @@ chûd_idx
 	}
 }
 
-	@tests/filesys/extended/dir-open.c
+	@src/tests/filesys/extended/dir-open.c
 
 4 
 	~<sysˇŒ.h
@@ -32653,7 +32653,7 @@ fd
 	}
 }
 
-	@tests/filesys/extended/dir-over-file.c
+	@src/tests/filesys/extended/dir-over-file.c
 
 4 
 	~<sysˇŒ.h
@@ -32687,7 +32687,7 @@ fd
 	}
 }
 
-	@tests/filesys/extended/dir-rm-cwd.c
+	@src/tests/filesys/extended/dir-rm-cwd.c
 
 5 
 	~<sysˇŒ.h
@@ -32969,7 +32969,7 @@ a_fd0
 	}
 }
 
-	@tests/filesys/extended/dir-rm-parent.c
+	@src/tests/filesys/extended/dir-rm-parent.c
 
 4 
 	~<sysˇŒ.h
@@ -33021,7 +33021,7 @@ a_fd0
 	}
 }
 
-	@tests/filesys/extended/dir-rm-root.c
+	@src/tests/filesys/extended/dir-rm-root.c
 
 4 
 	~<sysˇŒ.h
@@ -33055,7 +33055,7 @@ a_fd0
 	}
 }
 
-	@tests/filesys/extended/dir-rm-tree.c
+	@src/tests/filesys/extended/dir-rm-tree.c
 
 4 
 	~<°d¨g.h
@@ -33303,7 +33303,7 @@ f‹m©
 	}
 }
 
-	@tests/filesys/extended/dir-rmdir.c
+	@src/tests/filesys/extended/dir-rmdir.c
 
 4 
 	~<sysˇŒ.h
@@ -33343,7 +33343,7 @@ f‹m©
 	}
 }
 
-	@tests/filesys/extended/dir-under-file.c
+	@src/tests/filesys/extended/dir-under-file.c
 
 4 
 	~<sysˇŒ.h
@@ -33377,7 +33377,7 @@ f‹m©
 	}
 }
 
-	@tests/filesys/extended/dir-vine.c
+	@src/tests/filesys/extended/dir-vine.c
 
 10 
 	~<°rög.h
@@ -33699,7 +33699,7 @@ quõt
 	}
 }
 
-	@tests/filesys/extended/grow-create.c
+	@src/tests/filesys/extended/grow-create.c
 
 3 
 	#TEST_SIZE
@@ -33711,7 +33711,7 @@ quõt
 	~"ã°s/fûesys/¸óã.öc
 "
 
-	@tests/filesys/extended/grow-dir-lg.c
+	@src/tests/filesys/extended/grow-dir-lg.c
 
 4 
 	#FILE_CNT
@@ -33729,7 +33729,7 @@ quõt
 	~"ã°s/fûesys/exãnded/grow-dú.öc
 "
 
-	@tests/filesys/extended/grow-file-size.c
+	@src/tests/filesys/extended/grow-file-size.c
 
 5 
 	~<sysˇŒ.h
@@ -33821,7 +33821,7 @@ check_fûe_size
 	}
 }
 
-	@tests/filesys/extended/grow-root-lg.c
+	@src/tests/filesys/extended/grow-root-lg.c
 
 3 
 	#FILE_CNT
@@ -33833,7 +33833,7 @@ check_fûe_size
 	~"ã°s/fûesys/exãnded/grow-dú.öc
 "
 
-	@tests/filesys/extended/grow-root-sm.c
+	@src/tests/filesys/extended/grow-root-sm.c
 
 3 
 	#FILE_CNT
@@ -33845,7 +33845,7 @@ check_fûe_size
 	~"ã°s/fûesys/exãnded/grow-dú.öc
 "
 
-	@tests/filesys/extended/grow-seq-lg.c
+	@src/tests/filesys/extended/grow-seq-lg.c
 
 4 
 	#TEST_SIZE
@@ -33857,7 +33857,7 @@ check_fûe_size
 	~"ã°s/fûesys/exãnded/grow-£q.öc
 "
 
-	@tests/filesys/extended/grow-seq-sm.c
+	@src/tests/filesys/extended/grow-seq-sm.c
 
 4 
 	#TEST_SIZE
@@ -33869,7 +33869,7 @@ check_fûe_size
 	~"ã°s/fûesys/exãnded/grow-£q.öc
 "
 
-	@tests/filesys/extended/grow-sparse.c
+	@src/tests/filesys/extended/grow-sparse.c
 
 4 
 	~<sysˇŒ.h
@@ -33971,7 +33971,7 @@ buf
 	}
 }
 
-	@tests/filesys/extended/grow-tell.c
+	@src/tests/filesys/extended/grow-tell.c
 
 4 
 	~<sysˇŒ.h
@@ -34063,7 +34063,7 @@ check_ãŒ
 	}
 }
 
-	@tests/filesys/extended/grow-two-files.c
+	@src/tests/filesys/extended/grow-two-files.c
 
 4 
 	~<øndom.h
@@ -34329,7 +34329,7 @@ FILE_SIZE
 	}
 }
 
-	@tests/filesys/extended/mk-tree.c
+	@src/tests/filesys/extended/mk-tree.c
 
 3 
 	~<°dio.h
@@ -34619,7 +34619,7 @@ fûe
 	}
 }
 
-	@tests/filesys/extended/mk-tree.h
+	@src/tests/filesys/extended/mk-tree.h
 
 1 #i‚de‡
 TESTS_FILESYS_EXTENDED_MK_TREE_H
@@ -34643,7 +34643,7 @@ bt
 dt
 );
 
-	@tests/filesys/extended/syn-rw.c
+	@src/tests/filesys/extended/syn-rw.c
 
 4 
 	~<øndom.h
@@ -34785,7 +34785,7 @@ CHILD_CNT
 	}
 }
 
-	@tests/filesys/extended/syn-rw.h
+	@src/tests/filesys/extended/syn-rw.h
 
 1 #i‚de‡
 TESTS_FILESYS_EXTENDED_SYN_RW_H
@@ -34823,7 +34823,7 @@ CHUNK_CNT
 	gfûe_«me
 [] = "logfile";
 
-	@tests/filesys/extended/tar.c
+	@src/tests/filesys/extended/tar.c
 
 5 
 	~<u°¨.h
@@ -35683,7 +35683,7 @@ wrôe_îr‹
 	}
 }
 
-	@tests/filesys/seq-test.c
+	@src/tests/filesys/seq-test.c
 
 1 
 	~"ã°s/fûesys/£q-ã°.h
@@ -35877,7 +35877,7 @@ size
 	}
 }
 
-	@tests/filesys/seq-test.h
+	@src/tests/filesys/seq-test.h
 
 1 #i‚de‡
 TESTS_FILESYS_SEQ_TEST_H
@@ -35923,7 +35923,7 @@ fd
 ofs
 ));
 
-	@tests/internal/list.c
+	@src/tests/internal/list.c
 
 10 #unde‡
 NDEBUG
@@ -36661,7 +36661,7 @@ li°
 	}
 }
 
-	@tests/internal/stdio.c
+	@src/tests/internal/stdio.c
 
 10 #unde‡
 NDEBUG
@@ -37369,7 +37369,7 @@ size_t
 	}
 }
 
-	@tests/internal/stdlib.c
+	@src/tests/internal/stdlib.c
 
 10 #unde‡
 NDEBUG
@@ -37741,7 +37741,7 @@ NULL
 	}
 }
 
-	@tests/lib.c
+	@src/tests/lib.c
 
 1 
 	~"ã°s/lib.h
@@ -38595,7 +38595,7 @@ fûe_«me
 	}
 }
 
-	@tests/lib.h
+	@src/tests/lib.h
 
 1 #i‚de‡
 TESTS_LIB_H
@@ -38759,7 +38759,7 @@ ofs
 fûe_«me
 );
 
-	@tests/main.c
+	@src/tests/main.c
 
 1 
 	~<øndom.h
@@ -38809,7 +38809,7 @@ UNUSED
 	}
 }
 
-	@tests/main.h
+	@src/tests/main.h
 
 1 #i‚de‡
 TESTS_MAIN_H
@@ -38825,7 +38825,7 @@ TESTS_MAIN_H
 ã°_maö
  ();
 
-	@tests/threads/alarm-negative.c
+	@src/tests/threads/alarm-negative.c
 
 3 
 	~<°dio.h
@@ -38867,7 +38867,7 @@ TESTS_MAIN_H
 	}
 }
 
-	@tests/threads/alarm-priority.c
+	@src/tests/threads/alarm-priority.c
 
 4 
 	~<°dio.h
@@ -39045,7 +39045,7 @@ waô_£ma
 	}
 }
 
-	@tests/threads/alarm-simultaneous.c
+	@src/tests/threads/alarm-simultaneous.c
 
 5 
 	~<°dio.h
@@ -39353,7 +39353,7 @@ ouçut_pos
 	}
 }
 
-	@tests/threads/alarm-wait.c
+	@src/tests/threads/alarm-wait.c
 
 5 
 	~<°dio.h
@@ -39911,7 +39911,7 @@ ouçut_lock
 	}
 }
 
-	@tests/threads/alarm-zero.c
+	@src/tests/threads/alarm-zero.c
 
 3 
 	~<°dio.h
@@ -39953,7 +39953,7 @@ ouçut_lock
 	}
 }
 
-	@tests/threads/mlfqs-block.c
+	@src/tests/threads/mlfqs-block.c
 
 12 
 	~<°dio.h
@@ -40135,7 +40135,7 @@ lock
 	}
 }
 
-	@tests/threads/mlfqs-fair.c
+	@src/tests/threads/mlfqs-fair.c
 
 18 
 	~<°dio.h
@@ -40553,7 +40553,7 @@ cur_time
 	}
 }
 
-	@tests/threads/mlfqs-load-1.c
+	@src/tests/threads/mlfqs-load-1.c
 
 9 
 	~<°dio.h
@@ -40729,7 +40729,7 @@ lﬂd_avg
 	}
 }
 
-	@tests/threads/mlfqs-load-60.c
+	@src/tests/threads/mlfqs-load-60.c
 
 100 
 	~<°dio.h
@@ -40965,7 +40965,7 @@ exô_time
 	}
 }
 
-	@tests/threads/mlfqs-load-avg.c
+	@src/tests/threads/mlfqs-load-avg.c
 
 111 
 	~<°dio.h
@@ -41203,7 +41203,7 @@ exô_time
 	}
 }
 
-	@tests/threads/mlfqs-recent-1.c
+	@src/tests/threads/mlfqs-recent-1.c
 
 98 
 	~<°dio.h
@@ -41353,7 +41353,7 @@ lﬂd_avg
 	}
 }
 
-	@tests/threads/priority-change.c
+	@src/tests/threads/priority-change.c
 
 5 
 	~<°dio.h
@@ -41445,7 +41445,7 @@ PRI_DEFAULT
 	}
 }
 
-	@tests/threads/priority-condvar.c
+	@src/tests/threads/priority-condvar.c
 
 4 
 	~<°dio.h
@@ -41637,7 +41637,7 @@ lock
 	}
 }
 
-	@tests/threads/priority-donate-chain.c
+	@src/tests/threads/priority-donate-chain.c
 
 27 
 	~<°dio.h
@@ -41985,7 +41985,7 @@ UNUSED
 	}
 }
 
-	@tests/threads/priority-donate-lower.c
+	@src/tests/threads/priority-donate-lower.c
 
 7 
 	~<°dio.h
@@ -42147,7 +42147,7 @@ lock
 	}
 }
 
-	@tests/threads/priority-donate-multiple.c
+	@src/tests/threads/priority-donate-multiple.c
 
 12 
 	~<°dio.h
@@ -42387,7 +42387,7 @@ lock
 	}
 }
 
-	@tests/threads/priority-donate-multiple2.c
+	@src/tests/threads/priority-donate-multiple2.c
 
 17 
 	~<°dio.h
@@ -42655,7 +42655,7 @@ UNUSED
 	}
 }
 
-	@tests/threads/priority-donate-nest.c
+	@src/tests/threads/priority-donate-nest.c
 
 12 
 	~<°dio.h
@@ -42955,7 +42955,7 @@ lock
 	}
 }
 
-	@tests/threads/priority-donate-one.c
+	@src/tests/threads/priority-donate-one.c
 
 12 
 	~<°dio.h
@@ -43153,7 +43153,7 @@ lock
 	}
 }
 
-	@tests/threads/priority-donate-sema.c
+	@src/tests/threads/priority-donate-sema.c
 
 13 
 	~<°dio.h
@@ -43429,7 +43429,7 @@ lock
 	}
 }
 
-	@tests/threads/priority-fifo.c
+	@src/tests/threads/priority-fifo.c
 
 10 
 	~<°dio.h
@@ -43795,7 +43795,7 @@ lock
 	}
 }
 
-	@tests/threads/priority-preempt.c
+	@src/tests/threads/priority-preempt.c
 
 9 
 	~<°dio.h
@@ -43897,7 +43897,7 @@ i
 	}
 }
 
-	@tests/threads/priority-sema.c
+	@src/tests/threads/priority-sema.c
 
 4 
 	~<°dio.h
@@ -44043,7 +44043,7 @@ UNUSED
 	}
 }
 
-	@tests/threads/tests.c
+	@src/tests/threads/tests.c
 
 1 
 	~"ã°s/thªads/ã°s.h
@@ -44363,7 +44363,7 @@ f‹m©
 	}
 }
 
-	@tests/threads/tests.h
+	@src/tests/threads/tests.h
 
 1 #i‚de‡
 TESTS_THREADS_TESTS_H
@@ -44557,7 +44557,7 @@ msg
 ∑ss
  ();
 
-	@tests/userprog/args.c
+	@src/tests/userprog/args.c
 
 6 
 	~"ã°s/lib.h
@@ -44625,7 +44625,7 @@ i
 	}
 }
 
-	@tests/userprog/bad-jump.c
+	@src/tests/userprog/bad-jump.c
 
 4 
 	~"ã°s/lib.h
@@ -44655,7 +44655,7 @@ NULL
 	}
 }
 
-	@tests/userprog/bad-jump2.c
+	@src/tests/userprog/bad-jump2.c
 
 4 
 	~"ã°s/lib.h
@@ -44681,7 +44681,7 @@ NULL
 	}
 }
 
-	@tests/userprog/bad-read.c
+	@src/tests/userprog/bad-read.c
 
 4 
 	~"ã°s/lib.h
@@ -44711,7 +44711,7 @@ NULL
 	}
 }
 
-	@tests/userprog/bad-read2.c
+	@src/tests/userprog/bad-read2.c
 
 4 
 	~"ã°s/lib.h
@@ -44737,7 +44737,7 @@ NULL
 	}
 }
 
-	@tests/userprog/bad-write.c
+	@src/tests/userprog/bad-write.c
 
 4 
 	~"ã°s/lib.h
@@ -44763,7 +44763,7 @@ NULL
 	}
 }
 
-	@tests/userprog/bad-write2.c
+	@src/tests/userprog/bad-write2.c
 
 4 
 	~"ã°s/lib.h
@@ -44785,7 +44785,7 @@ NULL
 	}
 }
 
-	@tests/userprog/boundary.c
+	@src/tests/userprog/boundary.c
 
 5 
 	~<öây≥s.h
@@ -44875,7 +44875,7 @@ p
 	}
 }
 
-	@tests/userprog/boundary.h
+	@src/tests/userprog/boundary.h
 
 1 #i‚de‡
 TESTS_USERPROG_BOUNDARY_H
@@ -44895,7 +44895,7 @@ gë_bound¨y_¨ó
 c›y_°rög_a¸oss_bound¨y
  (const *);
 
-	@tests/userprog/child-bad.c
+	@src/tests/userprog/child-bad.c
 
 6 
 	~"ã°s/lib.h
@@ -44921,7 +44921,7 @@ asm
 	}
 }
 
-	@tests/userprog/child-close.c
+	@src/tests/userprog/child-close.c
 
 10 
 	~<˘y≥.h
@@ -44987,7 +44987,7 @@ UNUSED
 	}
 }
 
-	@tests/userprog/child-rox.c
+	@src/tests/userprog/child-rox.c
 
 7 
 	~<˘y≥.h
@@ -45159,7 +45159,7 @@ quõt
 	}
 }
 
-	@tests/userprog/child-simple.c
+	@src/tests/userprog/child-simple.c
 
 5 
 	~<°dio.h
@@ -45185,7 +45185,7 @@ quõt
 	}
 }
 
-	@tests/userprog/close-bad-fd.c
+	@src/tests/userprog/close-bad-fd.c
 
 4 
 	~<sysˇŒ.h
@@ -45207,7 +45207,7 @@ quõt
 	}
 }
 
-	@tests/userprog/close-normal.c
+	@src/tests/userprog/close-normal.c
 
 3 
 	~<sysˇŒ.h
@@ -45251,7 +45251,7 @@ h™dÀ
 	}
 }
 
-	@tests/userprog/close-stdin.c
+	@src/tests/userprog/close-stdin.c
 
 4 
 	~<sysˇŒ.h
@@ -45273,7 +45273,7 @@ h™dÀ
 	}
 }
 
-	@tests/userprog/close-stdout.c
+	@src/tests/userprog/close-stdout.c
 
 4 
 	~<sysˇŒ.h
@@ -45295,7 +45295,7 @@ h™dÀ
 	}
 }
 
-	@tests/userprog/close-twice.c
+	@src/tests/userprog/close-twice.c
 
 5 
 	~<sysˇŒ.h
@@ -45349,7 +45349,7 @@ h™dÀ
 	}
 }
 
-	@tests/userprog/create-bad-ptr.c
+	@src/tests/userprog/create-bad-ptr.c
 
 5 
 	~"ã°s/lib.h
@@ -45373,7 +45373,7 @@ h™dÀ
 	}
 }
 
-	@tests/userprog/create-bound.c
+	@src/tests/userprog/create-bound.c
 
 4 
 	~<sysˇŒ.h
@@ -45409,7 +45409,7 @@ h™dÀ
 	}
 }
 
-	@tests/userprog/create-empty.c
+	@src/tests/userprog/create-empty.c
 
 3 
 	~"ã°s/lib.h
@@ -45433,7 +45433,7 @@ h™dÀ
 	}
 }
 
-	@tests/userprog/create-exists.c
+	@src/tests/userprog/create-exists.c
 
 4 
 	~<sysˇŒ.h
@@ -45485,7 +45485,7 @@ h™dÀ
 	}
 }
 
-	@tests/userprog/create-long.c
+	@src/tests/userprog/create-long.c
 
 4 
 	~<°rög.h
@@ -45533,7 +45533,7 @@ h™dÀ
 	}
 }
 
-	@tests/userprog/create-normal.c
+	@src/tests/userprog/create-normal.c
 
 3 
 	~"ã°s/lib.h
@@ -45557,7 +45557,7 @@ h™dÀ
 	}
 }
 
-	@tests/userprog/create-null.c
+	@src/tests/userprog/create-null.c
 
 4 
 	~"ã°s/lib.h
@@ -45583,7 +45583,7 @@ NULL
 	}
 }
 
-	@tests/userprog/exec-arg.c
+	@src/tests/userprog/exec-arg.c
 
 3 
 	~<sysˇŒ.h
@@ -45607,7 +45607,7 @@ NULL
 	}
 }
 
-	@tests/userprog/exec-bad-ptr.c
+	@src/tests/userprog/exec-bad-ptr.c
 
 4 
 	~<sysˇŒ.h
@@ -45629,7 +45629,7 @@ NULL
 	}
 }
 
-	@tests/userprog/exec-missing.c
+	@src/tests/userprog/exec-missing.c
 
 4 
 	~<sysˇŒ.h
@@ -45657,7 +45657,7 @@ NULL
 	}
 }
 
-	@tests/userprog/exec-multiple.c
+	@src/tests/userprog/exec-multiple.c
 
 3 
 	~<sysˇŒ.h
@@ -45703,7 +45703,7 @@ NULL
 	}
 }
 
-	@tests/userprog/exec-once.c
+	@src/tests/userprog/exec-once.c
 
 3 
 	~<sysˇŒ.h
@@ -45731,7 +45731,7 @@ NULL
 	}
 }
 
-	@tests/userprog/exit.c
+	@src/tests/userprog/exit.c
 
 3 
 	~"ã°s/lib.h
@@ -45757,7 +45757,7 @@ NULL
 	}
 }
 
-	@tests/userprog/halt.c
+	@src/tests/userprog/halt.c
 
 3 
 	~"ã°s/lib.h
@@ -45783,7 +45783,7 @@ NULL
 	}
 }
 
-	@tests/userprog/multi-child-fd.c
+	@src/tests/userprog/multi-child-fd.c
 
 6 
 	~<°dio.h
@@ -45855,7 +45855,7 @@ h™dÀ
 	}
 }
 
-	@tests/userprog/multi-recurse.c
+	@src/tests/userprog/multi-recurse.c
 
 4 
 	~<debug.h
@@ -45977,7 +45977,7 @@ n
 	}
 }
 
-	@tests/userprog/no-vm/multi-oom.c
+	@src/tests/userprog/no-vm/multi-oom.c
 
 18 
 	~<debug.h
@@ -46385,7 +46385,7 @@ ex≥˘ed_dïth
 	}
 }
 
-	@tests/userprog/open-bad-ptr.c
+	@src/tests/userprog/open-bad-ptr.c
 
 4 
 	~<sysˇŒ.h
@@ -46417,7 +46417,7 @@ ex≥˘ed_dïth
 	}
 }
 
-	@tests/userprog/open-boundary.c
+	@src/tests/userprog/open-boundary.c
 
 4 
 	~<sysˇŒ.h
@@ -46451,7 +46451,7 @@ ex≥˘ed_dïth
 	}
 }
 
-	@tests/userprog/open-empty.c
+	@src/tests/userprog/open-empty.c
 
 3 
 	~<sysˇŒ.h
@@ -46489,7 +46489,7 @@ h™dÀ
 	}
 }
 
-	@tests/userprog/open-missing.c
+	@src/tests/userprog/open-missing.c
 
 3 
 	~<sysˇŒ.h
@@ -46527,7 +46527,7 @@ h™dÀ
 	}
 }
 
-	@tests/userprog/open-normal.c
+	@src/tests/userprog/open-normal.c
 
 3 
 	~<sysˇŒ.h
@@ -46565,7 +46565,7 @@ h™dÀ
 	}
 }
 
-	@tests/userprog/open-null.c
+	@src/tests/userprog/open-null.c
 
 4 
 	~<°ddef.h
@@ -46593,7 +46593,7 @@ NULL
 	}
 }
 
-	@tests/userprog/open-twice.c
+	@src/tests/userprog/open-twice.c
 
 5 
 	~<sysˇŒ.h
@@ -46655,7 +46655,7 @@ h1
 	}
 }
 
-	@tests/userprog/read-bad-fd.c
+	@src/tests/userprog/read-bad-fd.c
 
 5 
 	~<limôs.h
@@ -46731,7 +46731,7 @@ buf
 	}
 }
 
-	@tests/userprog/read-bad-ptr.c
+	@src/tests/userprog/read-bad-ptr.c
 
 4 
 	~<sysˇŒ.h
@@ -46775,7 +46775,7 @@ h™dÀ
 	}
 }
 
-	@tests/userprog/read-boundary.c
+	@src/tests/userprog/read-boundary.c
 
 4 
 	~<°rög.h
@@ -46887,7 +46887,7 @@ buf„r
 	}
 }
 
-	@tests/userprog/read-normal.c
+	@src/tests/userprog/read-normal.c
 
 3 
 	~"ã°s/u£Ωrog/ßm∂e.öc
@@ -46915,7 +46915,7 @@ buf„r
 	}
 }
 
-	@tests/userprog/read-stdout.c
+	@src/tests/userprog/read-stdout.c
 
 5 
 	~<°dio.h
@@ -46949,7 +46949,7 @@ buf
 	}
 }
 
-	@tests/userprog/read-zero.c
+	@src/tests/userprog/read-zero.c
 
 4 
 	~<sysˇŒ.h
@@ -47021,7 +47021,7 @@ buf
 	}
 }
 
-	@tests/userprog/rox-child.c
+	@src/tests/userprog/rox-child.c
 
 4 
 	#CHILD_CNT
@@ -47033,7 +47033,7 @@ buf
 	~"ã°s/u£Ωrog/rox-chûd.öc
 "
 
-	@tests/userprog/rox-multichild.c
+	@src/tests/userprog/rox-multichild.c
 
 4 
 	#CHILD_CNT
@@ -47045,7 +47045,7 @@ buf
 	~"ã°s/u£Ωrog/rox-chûd.öc
 "
 
-	@tests/userprog/rox-simple.c
+	@src/tests/userprog/rox-simple.c
 
 4 
 	~<sysˇŒ.h
@@ -47103,7 +47103,7 @@ buf„r
 	}
 }
 
-	@tests/userprog/sc-bad-arg.c
+	@src/tests/userprog/sc-bad-arg.c
 
 7 
 	~<sysˇŒ-ƒ.h
@@ -47137,7 +47137,7 @@ SYS_EXIT
 	}
 }
 
-	@tests/userprog/sc-bad-sp.c
+	@src/tests/userprog/sc-bad-sp.c
 
 12 
 	~"ã°s/lib.h
@@ -47163,7 +47163,7 @@ asm
 	}
 }
 
-	@tests/userprog/sc-boundary-2.c
+	@src/tests/userprog/sc-boundary-2.c
 
 5 
 	~<sysˇŒ-ƒ.h
@@ -47215,7 +47215,7 @@ p
 	}
 }
 
-	@tests/userprog/sc-boundary.c
+	@src/tests/userprog/sc-boundary.c
 
 4 
 	~<sysˇŒ-ƒ.h
@@ -47271,7 +47271,7 @@ p
 	}
 }
 
-	@tests/userprog/wait-bad-pid.c
+	@src/tests/userprog/wait-bad-pid.c
 
 4 
 	~<sysˇŒ.h
@@ -47295,7 +47295,7 @@ pid_t
 	}
 }
 
-	@tests/userprog/wait-killed.c
+	@src/tests/userprog/wait-killed.c
 
 3 
 	~<sysˇŒ.h
@@ -47325,7 +47325,7 @@ pid_t
 	}
 }
 
-	@tests/userprog/wait-simple.c
+	@src/tests/userprog/wait-simple.c
 
 3 
 	~<sysˇŒ.h
@@ -47355,7 +47355,7 @@ pid_t
 	}
 }
 
-	@tests/userprog/wait-twice.c
+	@src/tests/userprog/wait-twice.c
 
 5 
 	~<sysˇŒ.h
@@ -47401,7 +47401,7 @@ chûd
 	}
 }
 
-	@tests/userprog/write-bad-fd.c
+	@src/tests/userprog/write-bad-fd.c
 
 5 
 	~<limôs.h
@@ -47473,7 +47473,7 @@ buf
 	}
 }
 
-	@tests/userprog/write-bad-ptr.c
+	@src/tests/userprog/write-bad-ptr.c
 
 4 
 	~<sysˇŒ.h
@@ -47517,7 +47517,7 @@ h™dÀ
 	}
 }
 
-	@tests/userprog/write-boundary.c
+	@src/tests/userprog/write-boundary.c
 
 4 
 	~<°rög.h
@@ -47605,7 +47605,7 @@ byã_˙t
 	}
 }
 
-	@tests/userprog/write-normal.c
+	@src/tests/userprog/write-normal.c
 
 3 
 	~<sysˇŒ.h
@@ -47677,7 +47677,7 @@ byã_˙t
 	}
 }
 
-	@tests/userprog/write-stdin.c
+	@src/tests/userprog/write-stdin.c
 
 5 
 	~<sysˇŒ.h
@@ -47709,7 +47709,7 @@ buf
 	}
 }
 
-	@tests/userprog/write-zero.c
+	@src/tests/userprog/write-zero.c
 
 4 
 	~<sysˇŒ.h
@@ -47773,7 +47773,7 @@ byã_˙t
 	}
 }
 
-	@tests/vm/child-inherit.c
+	@src/tests/vm/child-inherit.c
 
 5 
 	~<°rög.h
@@ -47807,7 +47807,7 @@ byã_˙t
 	}
 }
 
-	@tests/vm/child-linear.c
+	@src/tests/vm/child-linear.c
 
 5 
 	~<°rög.h
@@ -47929,7 +47929,7 @@ i
 	}
 }
 
-	@tests/vm/child-mm-wrt.c
+	@src/tests/vm/child-mm-wrt.c
 
 6 
 	~<°rög.h
@@ -48005,7 +48005,7 @@ ACTUAL
 	}
 }
 
-	@tests/vm/child-qsort-mm.c
+	@src/tests/vm/child-qsort-mm.c
 
 4 
 	~<debug.h
@@ -48089,7 +48089,7 @@ p
 	}
 }
 
-	@tests/vm/child-qsort.c
+	@src/tests/vm/child-qsort.c
 
 6 
 	~<debug.h
@@ -48197,7 +48197,7 @@ h™dÀ
 	}
 }
 
-	@tests/vm/child-sort.c
+	@src/tests/vm/child-sort.c
 
 5 
 	~<debug.h
@@ -48357,7 +48357,7 @@ h™dÀ
 	}
 }
 
-	@tests/vm/mmap-bad-fd.c
+	@src/tests/vm/mmap-bad-fd.c
 
 5 
 	~<sysˇŒ.h
@@ -48387,7 +48387,7 @@ MAP_FAILED
 	}
 }
 
-	@tests/vm/mmap-clean.c
+	@src/tests/vm/mmap-clean.c
 
 4 
 	~<°rög.h
@@ -48577,7 +48577,7 @@ buf„r
 	}
 }
 
-	@tests/vm/mmap-close.c
+	@src/tests/vm/mmap-close.c
 
 3 
 	~<°rög.h
@@ -48675,7 +48675,7 @@ m≠
 	}
 }
 
-	@tests/vm/mmap-exit.c
+	@src/tests/vm/mmap-exit.c
 
 4 
 	~<sysˇŒ.h
@@ -48741,7 +48741,7 @@ quõt
 	}
 }
 
-	@tests/vm/mmap-inherit.c
+	@src/tests/vm/mmap-inherit.c
 
 4 
 	~<°rög.h
@@ -48859,7 +48859,7 @@ a˘uÆ
 	}
 }
 
-	@tests/vm/mmap-misalign.c
+	@src/tests/vm/mmap-misalign.c
 
 3 
 	~<sysˇŒ.h
@@ -48903,7 +48903,7 @@ MAP_FAILED
 	}
 }
 
-	@tests/vm/mmap-null.c
+	@src/tests/vm/mmap-null.c
 
 3 
 	~<sysˇŒ.h
@@ -48949,7 +48949,7 @@ MAP_FAILED
 	}
 }
 
-	@tests/vm/mmap-over-code.c
+	@src/tests/vm/mmap-over-code.c
 
 3 
 	~<°döt.h
@@ -49013,7 +49013,7 @@ MAP_FAILED
 	}
 }
 
-	@tests/vm/mmap-over-data.c
+	@src/tests/vm/mmap-over-data.c
 
 3 
 	~<°döt.h
@@ -49081,7 +49081,7 @@ MAP_FAILED
 	}
 }
 
-	@tests/vm/mmap-over-stk.c
+	@src/tests/vm/mmap-over-stk.c
 
 3 
 	~<°döt.h
@@ -49145,7 +49145,7 @@ MAP_FAILED
 	}
 }
 
-	@tests/vm/mmap-overlap.c
+	@src/tests/vm/mmap-overlap.c
 
 3 
 	~<sysˇŒ.h
@@ -49219,7 +49219,7 @@ MAP_FAILED
 	}
 }
 
-	@tests/vm/mmap-read.c
+	@src/tests/vm/mmap-read.c
 
 3 
 	~<°rög.h
@@ -49341,7 +49341,7 @@ h™dÀ
 	}
 }
 
-	@tests/vm/mmap-remove.c
+	@src/tests/vm/mmap-remove.c
 
 4 
 	~<°rög.h
@@ -49481,7 +49481,7 @@ m≠
 	}
 }
 
-	@tests/vm/mmap-shuffle.c
+	@src/tests/vm/mmap-shuffle.c
 
 4 
 	~<°dio.h
@@ -49613,7 +49613,7 @@ SIZE
 	}
 }
 
-	@tests/vm/mmap-twice.c
+	@src/tests/vm/mmap-twice.c
 
 4 
 	~<°rög.h
@@ -49717,7 +49717,7 @@ i
 	}
 }
 
-	@tests/vm/mmap-unmap.c
+	@src/tests/vm/mmap-unmap.c
 
 4 
 	~<sysˇŒ.h
@@ -49793,7 +49793,7 @@ ACTUAL
 	}
 }
 
-	@tests/vm/mmap-write.c
+	@src/tests/vm/mmap-write.c
 
 5 
 	~<°rög.h
@@ -49921,7 +49921,7 @@ h™dÀ
 	}
 }
 
-	@tests/vm/mmap-zero.c
+	@src/tests/vm/mmap-zero.c
 
 6 
 	~<sysˇŒ.h
@@ -49983,7 +49983,7 @@ d©a
 	}
 }
 
-	@tests/vm/page-linear.c
+	@src/tests/vm/page-linear.c
 
 4 
 	~<°rög.h
@@ -50125,7 +50125,7 @@ i
 	}
 }
 
-	@tests/vm/page-merge-mm.c
+	@src/tests/vm/page-merge-mm.c
 
 1 
 	~"ã°s/maö.h
@@ -50147,7 +50147,7 @@ i
 	}
 }
 
-	@tests/vm/page-merge-par.c
+	@src/tests/vm/page-merge-par.c
 
 1 
 	~"ã°s/maö.h
@@ -50169,7 +50169,7 @@ i
 	}
 }
 
-	@tests/vm/page-merge-seq.c
+	@src/tests/vm/page-merge-seq.c
 
 6 
 	~<sysˇŒ.h
@@ -50607,7 +50607,7 @@ buf_idx
 	}
 }
 
-	@tests/vm/page-merge-stk.c
+	@src/tests/vm/page-merge-stk.c
 
 1 
 	~"ã°s/maö.h
@@ -50629,7 +50629,7 @@ buf_idx
 	}
 }
 
-	@tests/vm/page-parallel.c
+	@src/tests/vm/page-parallel.c
 
 3 
 	~<sysˇŒ.h
@@ -50701,7 +50701,7 @@ i
 	}
 }
 
-	@tests/vm/page-shuffle.c
+	@src/tests/vm/page-shuffle.c
 
 4 
 	~<°dboﬁ.h
@@ -50789,7 +50789,7 @@ buf
 	}
 }
 
-	@tests/vm/parallel-merge.c
+	@src/tests/vm/parallel-merge.c
 
 6 
 	~"ã°s/vm/∑øŒñ-mîge.h
@@ -51323,7 +51323,7 @@ exô_°©us
 	}
 }
 
-	@tests/vm/parallel-merge.h
+	@src/tests/vm/parallel-merge.h
 
 1 #i‚de‡
 TESTS_VM_PARALLEL_MERGE
@@ -51343,7 +51343,7 @@ chûd_«me
 exô_°©us
 );
 
-	@tests/vm/pt-bad-addr.c
+	@src/tests/vm/pt-bad-addr.c
 
 4 
 	~"ã°s/lib.h
@@ -51365,7 +51365,7 @@ exô_°©us
 	}
 }
 
-	@tests/vm/pt-bad-read.c
+	@src/tests/vm/pt-bad-read.c
 
 4 
 	~<sysˇŒ.h
@@ -51409,7 +51409,7 @@ h™dÀ
 	}
 }
 
-	@tests/vm/pt-big-stk-obj.c
+	@src/tests/vm/pt-big-stk-obj.c
 
 4 
 	~<°rög.h
@@ -51475,7 +51475,7 @@ h™dÀ
 	}
 }
 
-	@tests/vm/pt-grow-bad.c
+	@src/tests/vm/pt-grow-bad.c
 
 4 
 	~<°rög.h
@@ -51509,7 +51509,7 @@ asm
 	}
 }
 
-	@tests/vm/pt-grow-pusha.c
+	@src/tests/vm/pt-grow-pusha.c
 
 5 
 	~<°rög.h
@@ -51543,7 +51543,7 @@ asm
 	}
 }
 
-	@tests/vm/pt-grow-stack.c
+	@src/tests/vm/pt-grow-stack.c
 
 4 
 	~<°rög.h
@@ -51609,7 +51609,7 @@ asm
 	}
 }
 
-	@tests/vm/pt-grow-stk-sc.c
+	@src/tests/vm/pt-grow-stk-sc.c
 
 7 
 	~<°rög.h
@@ -51727,7 +51727,7 @@ h™dÀ
 	}
 }
 
-	@tests/vm/pt-write-code-2.c
+	@src/tests/vm/pt-write-code-2.c
 
 4 
 	~"ã°s/lib.h
@@ -51769,7 +51769,7 @@ h™dÀ
 	}
 }
 
-	@tests/vm/pt-write-code.c
+	@src/tests/vm/pt-write-code.c
 
 4 
 	~"ã°s/lib.h
@@ -51795,7 +51795,7 @@ h™dÀ
 	}
 }
 
-	@tests/vm/qsort.c
+	@src/tests/vm/qsort.c
 
 1 
 	~"ã°s/vm/qs‹t.h
@@ -52225,7 +52225,7 @@ right_size
 	}
 }
 
-	@tests/vm/qsort.h
+	@src/tests/vm/qsort.h
 
 1 #i‚de‡
 TESTS_VM_QSORT_H
@@ -52251,7 +52251,7 @@ size_t
 size
 );
 
-	@threads/flags.h
+	@src/threads/flags.h
 
 1 #i‚de‡
 THREADS_FLAGS_H
@@ -52275,7 +52275,7 @@ THREADS_FLAGS_H
 
 	)
 
-	@threads/init.c
+	@src/threads/init.c
 
 1 
 	~"thªads/öô.h
@@ -53525,7 +53525,7 @@ block
 	}
 }
 
-	@threads/init.h
+	@src/threads/init.h
 
 1 #i‚de‡
 THREADS_INIT_H
@@ -53559,7 +53559,7 @@ uöt32_t
 öô_∑ge_dú
 ;
 
-	@threads/interrupt.c
+	@src/threads/interrupt.c
 
 1 
 	~"thªads/öãºu±.h
@@ -54763,7 +54763,7 @@ vec
 	}
 }
 
-	@threads/interrupt.h
+	@src/threads/interrupt.h
 
 1 #i‚de‡
 THREADS_INTERRUPT_H
@@ -55001,7 +55001,7 @@ uöt8_t
 vec
 );
 
-	@threads/intr-stubs.h
+	@src/threads/intr-stubs.h
 
 1 #i‚de‡
 THREADS_INTR_STUBS_H
@@ -55027,7 +55027,7 @@ THREADS_INTR_STUBS_H
 öå_exô
  ();
 
-	@threads/io.h
+	@src/threads/io.h
 
 1 #i‚de‡
 THREADS_IO_H
@@ -55429,7 +55429,7 @@ p‹t
 	}
 }
 
-	@threads/loader.h
+	@src/threads/loader.h
 
 1 #i‚de‡
 THREADS_LOADER_H
@@ -55561,7 +55561,7 @@ uöt32_t
 öô_øm_∑ges
 ;
 
-	@threads/malloc.c
+	@src/threads/malloc.c
 
 1 
 	~"thªads/mÆloc.h
@@ -56565,7 +56565,7 @@ block_size
 	}
 }
 
-	@threads/malloc.h
+	@src/threads/malloc.h
 
 1 #i‚de‡
 THREADS_MALLOC_H
@@ -56619,7 +56619,7 @@ size_t
 	`‰ì
  (*);
 
-	@threads/palloc.c
+	@src/threads/palloc.c
 
 1 
 	~"thªads/∑Œoc.h
@@ -57279,7 +57279,7 @@ u£d_m≠
 	}
 }
 
-	@threads/palloc.h
+	@src/threads/palloc.h
 
 1 #i‚de‡
 THREADS_PALLOC_H
@@ -57347,7 +57347,7 @@ size_t
 ∑ge_˙t
 );
 
-	@threads/pte.h
+	@src/threads/pte.h
 
 1 #i‚de‡
 THREADS_PTE_H
@@ -57675,7 +57675,7 @@ PTE_ADDR
 	}
 }
 
-	@threads/switch.h
+	@src/threads/switch.h
 
 1 #i‚de‡
 THREADS_SWITCH_H
@@ -57773,7 +57773,7 @@ swôch_thunk
 
 	)
 
-	@threads/synch.c
+	@src/threads/synch.c
 
 29 
 	~"thªads/synch.h
@@ -58981,7 +58981,7 @@ max
 	}
 }
 
-	@threads/synch.h
+	@src/threads/synch.h
 
 1 #i‚de‡
 THREADS_SYNCH_H
@@ -59145,7 +59145,7 @@ asm
 
 	)
 
-	@threads/thread.c
+	@src/threads/thread.c
 
 1 
 	~"thªads/thªad.h
@@ -60917,7 +60917,7 @@ t
 	}
 }
 
-	@threads/thread.h
+	@src/threads/thread.h
 
 1 #i‚de‡
 THREADS_THREAD_H
@@ -61215,7 +61215,7 @@ li°
 l
 );
 
-	@threads/vaddr.h
+	@src/threads/vaddr.h
 
 1 #i‚de‡
 THREADS_VADDR_H
@@ -61483,7 +61483,7 @@ PHYS_BASE
 	}
 }
 
-	@userprog/exception.c
+	@src/userprog/exception.c
 
 1 
 	~"u£Ωrog/ex˚±i⁄.h
@@ -61837,7 +61837,7 @@ f
 	}
 }
 
-	@userprog/exception.h
+	@src/userprog/exception.h
 
 1 #i‚de‡
 USERPROG_EXCEPTION_H
@@ -61875,7 +61875,7 @@ ex˚±i⁄_öô
 ex˚±i⁄_¥öt_°©s
  ();
 
-	@userprog/gdt.c
+	@src/userprog/gdt.c
 
 1 
 	~"u£Ωrog/gdt.h
@@ -62285,7 +62285,7 @@ ba£
 	}
 }
 
-	@userprog/gdt.h
+	@src/userprog/gdt.h
 
 1 #i‚de‡
 USERPROG_GDT_H
@@ -62329,7 +62329,7 @@ USERPROG_GDT_H
 gdt_öô
  ();
 
-	@userprog/pagedir.c
+	@src/userprog/pagedir.c
 
 1 
 	~"u£Ωrog/∑gedú.h
@@ -63159,7 +63159,7 @@ pd
 	}
 }
 
-	@userprog/pagedir.h
+	@src/userprog/pagedir.h
 
 1 #i‚de‡
 USERPROG_PAGEDIR_H
@@ -63289,7 +63289,7 @@ uöt32_t
 pd
 );
 
-	@userprog/process.c
+	@src/userprog/process.c
 
 1 
 	~"u£Ωrog/¥o˚ss.h
@@ -63367,13 +63367,7 @@ pd
 	~"thªads/vaddr.h
 "
 
-21 
-	#ARG_MAX
- 128
-
-	)
-
-23 
+21 
 thªad_func
  
 °¨t_¥o˚ss
@@ -63381,7 +63375,7 @@ thªad_func
 	gNO_RETURN
 ;
 
-24 
+22 
 boﬁ
  
 lﬂd
@@ -63393,43 +63387,43 @@ eù
 e•
 );
 
-31 
+28 
 tid_t
 
 
-32 
+29 
 	$¥o˚ss_execuã
  (c⁄° *
 fûe_«me
 )
 
-34 *
+31 *
 ‚_c›y
 ;
 
-35 
+32 
 tid_t
  
 tid
 ;
 
-39 
+36 
 ‚_c›y
  = 
 	`∑Œoc_gë_∑ge
  (0);
 
-40 i‡(
+37 i‡(
 ‚_c›y
  =
 NULL
 )
 
-41  
+38  
 TID_ERROR
 ;
 
-42 
+39 
 	`°æ˝y
  (
 ‚_c›y
@@ -63439,7 +63433,7 @@ fûe_«me
 PGSIZE
 );
 
-45 
+42 
 tid
  = 
 	`thªad_¸óã
@@ -63453,57 +63447,57 @@ PRI_DEFAULT
 ‚_c›y
 );
 
-46 i‡(
+43 i‡(
 tid
  =
 TID_ERROR
 )
 
-47 
+44 
 	`∑Œoc_‰ì_∑ge
  (
 ‚_c›y
 );
 
-48  
+45  
 tid
 ;
 
-49 
+46 
 	}
 }
 
-54 
+51 
 	$°¨t_¥o˚ss
  (*
 fûe_«me_
 )
 
-56 *
+53 *
 fûe_«me
  = 
 fûe_«me_
 ;
 
-58 
+55 
 öå_‰ame
  
 if_
 ;
 
-59 
+56 
 boﬁ
  
 suc˚ss
 ;
 
-62 
+59 
 	`mem£t
  (&
 if_
 , 0,  if_);
 
-63 
+60 
 if_
 .
 gs
@@ -63519,7 +63513,7 @@ ss
 SEL_UDSEG
 ;
 
-64 
+61 
 if_
 .
 cs
@@ -63527,7 +63521,7 @@ cs
 SEL_UCSEG
 ;
 
-65 
+62 
 if_
 .
 eÊags
@@ -63537,7 +63531,7 @@ FLAG_IF
 FLAG_MBS
 ;
 
-66 
+63 
 suc˚ss
  = 
 	`lﬂd
@@ -63551,35 +63545,35 @@ eù
 e•
 );
 
-69 
+66 
 	`∑Œoc_‰ì_∑ge
  (
 fûe_«me
 );
 
-70 i‡(!
+67 i‡(!
 suc˚ss
 )
 
-71 
+68 
 	`thªad_exô
  ();
 
-79 
+76 
 asm
  vﬁ©ûê("mov»%0, %%e•; jm∞öå_exô" : : "g" (&
 if_
 ) : "memory");
 
-80 
+77 
 	`NOT_REACHED
  ();
 
-81 
+78 
 	}
 }
 
-93 
+90 
 	$¥o˚ss_waô
  (
 tid_t
@@ -63589,19 +63583,19 @@ chûd_tid
 UNUSED
 )
 
-95 
+92 
 åue
 )
 
-98 
+95 
 	}
 }
 
-102 
+99 
 	$¥o˚ss_exô
  ()
 
-104 
+101 
 thªad
  *
 cur
@@ -63609,13 +63603,13 @@ cur
 	`thªad_cuºít
  ();
 
-105 
+102 
 uöt32_t
  *
 pd
 ;
 
-109 
+106 
 pd
  = 
 cur
@@ -63623,13 +63617,13 @@ cur
 ∑gedú
 ;
 
-110 i‡(
+107 i‡(
 pd
  !
 NULL
 )
 
-119 
+116 
 cur
 ->
 ∑gedú
@@ -63637,27 +63631,27 @@ cur
 NULL
 ;
 
-120 
+117 
 	`∑gedú_a˘iv©e
  (
 NULL
 );
 
-121 
+118 
 	`∑gedú_de°roy
  (
 pd
 );
 
-123 
+120 
 	}
 }
 
-129 
+126 
 	$¥o˚ss_a˘iv©e
  ()
 
-131 
+128 
 thªad
  *
 t
@@ -63665,7 +63659,7 @@ t
 	`thªad_cuºít
  ();
 
-134 
+131 
 	`∑gedú_a˘iv©e
  (
 t
@@ -63673,15 +63667,15 @@ t
 ∑gedú
 );
 
-138 
+135 
 	`tss_upd©e
  ();
 
-139 
+136 
 	}
 }
 
-145 
+142 
 uöt32_t
  
 	tElf32_W‹d
@@ -63691,13 +63685,13 @@ uöt32_t
 	tElf32_Off
 ;
 
-146 
+143 
 uöt16_t
  
 	tElf32_HÆf
 ;
 
-149 
+146 
 	#PE32Wx
  
 PRIx32
@@ -63705,7 +63699,7 @@ PRIx32
 
 	)
 
-150 
+147 
 	#PE32Ax
  
 PRIx32
@@ -63713,7 +63707,7 @@ PRIx32
 
 	)
 
-151 
+148 
 	#PE32Ox
  
 PRIx32
@@ -63721,7 +63715,7 @@ PRIx32
 
 	)
 
-152 
+149 
 	#PE32Hx
  
 PRIx16
@@ -63729,221 +63723,221 @@ PRIx16
 
 	)
 
-156 
+153 
 	sElf32_Ehdr
 
 
-158 
+155 
 	me_idít
 [16];
 
-159 
+156 
 Elf32_HÆf
  
 	me_ty≥
 ;
 
-160 
+157 
 Elf32_HÆf
  
 	me_machöe
 ;
 
-161 
+158 
 Elf32_W‹d
  
 	me_vîsi⁄
 ;
 
-162 
+159 
 Elf32_Addr
  
 	me_íåy
 ;
 
-163 
+160 
 Elf32_Off
  
 	me_phoff
 ;
 
-164 
+161 
 Elf32_Off
  
 	me_shoff
 ;
 
-165 
+162 
 Elf32_W‹d
  
 	me_Êags
 ;
 
-166 
+163 
 Elf32_HÆf
  
 	me_ehsize
 ;
 
-167 
+164 
 Elf32_HÆf
  
 	me_phítsize
 ;
 
-168 
+165 
 Elf32_HÆf
  
 	me_phnum
 ;
 
-169 
+166 
 Elf32_HÆf
  
 	me_shítsize
 ;
 
-170 
+167 
 Elf32_HÆf
  
 	me_shnum
 ;
 
-171 
+168 
 Elf32_HÆf
  
 	me_sh°∫dx
 ;
 
-177 
+174 
 	sElf32_Phdr
 
 
-179 
+176 
 Elf32_W‹d
  
 	mp_ty≥
 ;
 
-180 
+177 
 Elf32_Off
  
 	mp_off£t
 ;
 
-181 
+178 
 Elf32_Addr
  
 	mp_vaddr
 ;
 
-182 
+179 
 Elf32_Addr
  
 	mp_∑ddr
 ;
 
-183 
+180 
 Elf32_W‹d
  
 	mp_fûesz
 ;
 
-184 
+181 
 Elf32_W‹d
  
 	mp_memsz
 ;
 
-185 
+182 
 Elf32_W‹d
  
 	mp_Êags
 ;
 
-186 
+183 
 Elf32_W‹d
  
 	mp_Æign
 ;
 
-190 
+187 
 	#PT_NULL
  0
 
 	)
 
-191 
+188 
 	#PT_LOAD
  1
 
 	)
 
-192 
+189 
 	#PT_DYNAMIC
  2
 
 	)
 
-193 
+190 
 	#PT_INTERP
  3
 
 	)
 
-194 
+191 
 	#PT_NOTE
  4
 
 	)
 
-195 
+192 
 	#PT_SHLIB
  5
 
 	)
 
-196 
+193 
 	#PT_PHDR
  6
 
 	)
 
-197 
+194 
 	#PT_STACK
  0x6474e551
 
 	)
 
-200 
+197 
 	#PF_X
  1
 
 	)
 
-201 
+198 
 	#PF_W
  2
 
 	)
 
-202 
+199 
 	#PF_R
  4
 
 	)
 
-204 
+201 
 boﬁ
  
 £tup_°ack
  (**
 e•
 , *
-fûe_«me
+ßve_±r
 );
 
-205 
+202 
 boﬁ
  
 vÆid©e_£gmít
@@ -63953,7 +63947,7 @@ Elf32_Phdr
 fûe
  *);
 
-206 
+203 
 boﬁ
  
 lﬂd_£gmít
@@ -63969,7 +63963,7 @@ uöt8_t
 u∑ge
 ,
 
-207 
+204 
 uöt32_t
  
 ªad_byãs
@@ -63977,17 +63971,17 @@ uöt32_t
 zîo_byãs
 ,
 
-208 
+205 
 boﬁ
  
 wrôabÀ
 );
 
-214 
+211 
 boﬁ
 
 
-215 
+212 
 lﬂd
  (c⁄° *
 fûe_«me
@@ -63997,7 +63991,7 @@ eù
 e•
 )
 
-217 
+214 
 thªad
  *
 t
@@ -64005,25 +63999,25 @@ t
 	`thªad_cuºít
  ();
 
-218 
+215 
 Elf32_Ehdr
  
 ehdr
 ;
 
-219 
+216 
 fûe
  *fûê
 NULL
 ;
 
-220 
+217 
 off_t
  
 fûe_ofs
 ;
 
-221 
+218 
 boﬁ
  
 suc˚ss
@@ -64031,45 +64025,27 @@ suc˚ss
 Ál£
 ;
 
-222 
+219 
 i
 ;
 
-225 *
-fûe_«me_˝y
- = 
-	`∑Œoc_gë_∑ge
- (0);
-
-226 
-	`°æ˝y
- (
-fûe_«me_˝y
-, 
-fûe_«me
-, 
-PGSIZE
-);
-
-227 *
+222 *
 ¥ogøm_«me
 , *
 ßve_±r
-, *
-tokí
 ;
 
-228 
+223 
 ¥ogøm_«me
  = 
 	`°πok_r
  (
-fûe_«me_˝y
+fûe_«me
 , " ", &
 ßve_±r
 );
 
-231 
+226 
 t
 ->
 ∑gedú
@@ -64077,7 +64053,7 @@ t
 	`∑gedú_¸óã
  ();
 
-232 i‡(
+227 i‡(
 t
 ->
 ∑gedú
@@ -64085,15 +64061,15 @@ t
 NULL
 )
 
-233 
+228 
 d⁄e
 ;
 
-234 
+229 
 	`¥o˚ss_a˘iv©e
  ();
 
-237 
+232 
 fûe
  = 
 	`fûesys_›í
@@ -64101,23 +64077,23 @@ fûe
 ¥ogøm_«me
 );
 
-239 i‡(
+235 i‡(
 fûe
  =
 NULL
 )
 
-241 
+237 
 	`¥ötf
  ("lﬂd: %s: o≥¿Áûed\n", 
 ¥ogøm_«me
 );
 
-242 
+238 
 d⁄e
 ;
 
-246 i‡(
+242 i‡(
 	`fûe_ªad
  (
 fûe
@@ -64125,7 +64101,7 @@ fûe
 ehdr
 , Éhdr) != Éhdr
 
-247 || 
+243 || 
 	`memcmp
  (
 ehdr
@@ -64133,25 +64109,25 @@ ehdr
 e_idít
 , "\177ELF\1\1\1", 7)
 
-248 || 
+244 || 
 ehdr
 .
 e_ty≥
  != 2
 
-249 || 
+245 || 
 ehdr
 .
 e_machöe
  != 3
 
-250 || 
+246 || 
 ehdr
 .
 e_vîsi⁄
  != 1
 
-251 || 
+247 || 
 ehdr
 .
 e_phítsize
@@ -64159,23 +64135,23 @@ e_phítsize
 Elf32_Phdr
 )
 
-252 || 
+248 || 
 ehdr
 .
 e_phnum
  > 1024)
 
-254 
+250 
 	`¥ötf
  ("lﬂd: %s:Éº‹ÜﬂdögÉxecuèbÀ\n", 
 ¥ogøm_«me
 );
 
-255 
+251 
 d⁄e
 ;
 
-259 
+255 
 fûe_ofs
  = 
 ehdr
@@ -64183,7 +64159,7 @@ ehdr
 e_phoff
 ;
 
-260 
+256 
 i
  = 0; i < 
 ehdr
@@ -64191,13 +64167,13 @@ ehdr
 e_phnum
 ; i++)
 
-262 
+258 
 Elf32_Phdr
  
 phdr
 ;
 
-264 i‡(
+260 i‡(
 fûe_ofs
  < 0 || fûe_of†> 
 	`fûe_Àngth
@@ -64205,11 +64181,11 @@ fûe_ofs
 fûe
 ))
 
-265 
+261 
 d⁄e
 ;
 
-266 
+262 
 	`fûe_£ek
  (
 fûe
@@ -64217,7 +64193,7 @@ fûe
 fûe_ofs
 );
 
-268 i‡(
+264 i‡(
 	`fûe_ªad
  (
 fûe
@@ -64225,59 +64201,59 @@ fûe
 phdr
 , Öhdr) != Öhdr)
 
-269 
+265 
 d⁄e
 ;
 
-270 
+266 
 fûe_ofs
  + 
 phdr
 ;
 
-271 
+267 
 phdr
 .
 p_ty≥
 )
 
-273 
+269 
 PT_NULL
 :
 
-274 
+270 
 PT_NOTE
 :
 
-275 
+271 
 PT_PHDR
 :
 
-276 
+272 
 PT_STACK
 :
 
-280 
+276 
 PT_DYNAMIC
 :
 
-281 
+277 
 PT_INTERP
 :
 
-282 
+278 
 PT_SHLIB
 :
 
-283 
+279 
 d⁄e
 ;
 
-284 
+280 
 PT_LOAD
 :
 
-285 i‡(
+281 i‡(
 	`vÆid©e_£gmít
  (&
 phdr
@@ -64285,7 +64261,7 @@ phdr
 fûe
 ))
 
-287 
+283 
 boﬁ
  
 wrôabÀ
@@ -64297,7 +64273,7 @@ p_Êags
 PF_W
 ) != 0;
 
-288 
+284 
 uöt32_t
  
 fûe_∑ge
@@ -64309,7 +64285,7 @@ p_off£t
 PGMASK
 ;
 
-289 
+285 
 uöt32_t
  
 mem_∑ge
@@ -64321,7 +64297,7 @@ p_vaddr
 PGMASK
 ;
 
-290 
+286 
 uöt32_t
  
 ∑ge_off£t
@@ -64333,7 +64309,7 @@ p_vaddr
 PGMASK
 ;
 
-291 
+287 
 uöt32_t
  
 ªad_byãs
@@ -64341,13 +64317,13 @@ uöt32_t
 zîo_byãs
 ;
 
-292 i‡(
+288 i‡(
 phdr
 .
 p_fûesz
  > 0)
 
-296 
+292 
 ªad_byãs
  = 
 ∑ge_off£t
@@ -64357,7 +64333,7 @@ phdr
 p_fûesz
 ;
 
-297 
+293 
 zîo_byãs
  = (
 	`ROUND_UP
@@ -64371,15 +64347,15 @@ p_memsz
 PGSIZE
 )
 
-298 - 
+294 - 
 ªad_byãs
 );
 
-304 
+300 
 ªad_byãs
  = 0;
 
-305 
+301 
 zîo_byãs
  = 
 	`ROUND_UP
@@ -64393,7 +64369,7 @@ p_memsz
 PGSIZE
 );
 
-307 i‡(!
+303 i‡(!
 	`lﬂd_£gmít
  (
 fûe
@@ -64403,7 +64379,7 @@ fûe_∑ge
 mem_∑ge
 ,
 
-308 
+304 
 ªad_byãs
 , 
 zîo_byãs
@@ -64411,27 +64387,27 @@ zîo_byãs
 wrôabÀ
 ))
 
-309 
+305 
 d⁄e
 ;
 
-312 
+308 
 d⁄e
 ;
 
-318 i‡(!
+314 i‡(!
 	`£tup_°ack
  (
 e•
 , 
-fûe_«me
+ßve_±r
 ))
 
-319 
+315 
 d⁄e
 ;
 
-322 *
+318 *
 eù
  = ((*Ë()Ë
 ehdr
@@ -64439,37 +64415,31 @@ ehdr
 e_íåy
 ;
 
-324 
+320 
 suc˚ss
  = 
 åue
 ;
 
-326 
+322 
 d⁄e
 :
 
-328 
-	`∑Œoc_‰ì_∑ge
- (
-fûe_«me_˝y
-);
-
-329 
+324 
 	`fûe_˛o£
  (
 fûe
 );
 
-330  
+325  
 suc˚ss
 ;
 
-331 
+326 
 	}
 }
 
-335 
+330 
 boﬁ
  
 ö°Æl_∑ge
@@ -64481,11 +64451,11 @@ k∑ge
 wrôabÀ
 );
 
-339 
+334 
 boﬁ
 
 
-340 
+335 
 	$vÆid©e_£gmít
  (c⁄° 
 Elf32_Phdr
@@ -64495,7 +64465,7 @@ phdr
 fûe
  *file)
 
-343 i‡((
+338 i‡((
 phdr
 ->
 p_off£t
@@ -64505,11 +64475,11 @@ PGMASK
 p_vaddr
  & PGMASK))
 
-344  
+339  
 Ál£
 ;
 
-347 i‡(
+342 i‡(
 phdr
 ->
 p_off£t
@@ -64521,11 +64491,11 @@ Elf32_Off
 fûe
 ))
 
-348  
+343  
 Ál£
 ;
 
-351 i‡(
+346 i‡(
 phdr
 ->
 p_memsz
@@ -64533,21 +64503,21 @@ p_memsz
 p_fûesz
 )
 
-352  
+347  
 Ál£
 ;
 
-355 i‡(
+350 i‡(
 phdr
 ->
 p_memsz
  == 0)
 
-356  
+351  
 Ál£
 ;
 
-360 i‡(!
+355 i‡(!
 	`is_u£r_vaddr
  ((*Ë
 phdr
@@ -64555,11 +64525,11 @@ phdr
 p_vaddr
 ))
 
-361  
+356  
 Ál£
 ;
 
-362 i‡(!
+357 i‡(!
 	`is_u£r_vaddr
  ((*Ë(
 phdr
@@ -64569,11 +64539,11 @@ p_vaddr
 p_memsz
 )))
 
-363  
+358  
 Ál£
 ;
 
-367 i‡(
+362 i‡(
 phdr
 ->
 p_vaddr
@@ -64581,11 +64551,11 @@ p_vaddr
 p_memsz
  <Öhdr->p_vaddr)
 
-368  
+363  
 Ál£
 ;
 
-375 i‡(
+370 i‡(
 phdr
 ->
 p_vaddr
@@ -64593,23 +64563,23 @@ p_vaddr
 PGSIZE
 )
 
-376  
+371  
 Ál£
 ;
 
-379  
+374  
 åue
 ;
 
-380 
+375 
 	}
 }
 
-396 
+391 
 boﬁ
 
 
-397 
+392 
 	$lﬂd_£gmít
  (
 fûe
@@ -64623,7 +64593,7 @@ uöt8_t
 u∑ge
 ,
 
-398 
+393 
 uöt32_t
  
 ªad_byãs
@@ -64635,7 +64605,7 @@ boﬁ
 wrôabÀ
 )
 
-400 
+395 
 	`ASSERT
  ((
 ªad_byãs
@@ -64645,7 +64615,7 @@ zîo_byãs
 PGSIZE
  == 0);
 
-401 
+396 
 	`ASSERT
  (
 	`pg_ofs
@@ -64653,7 +64623,7 @@ PGSIZE
 u∑ge
 ) == 0);
 
-402 
+397 
 	`ASSERT
  (
 ofs
@@ -64661,7 +64631,7 @@ ofs
 PGSIZE
  == 0);
 
-404 
+399 
 	`fûe_£ek
  (
 fûe
@@ -64669,13 +64639,13 @@ fûe
 ofs
 );
 
-405 
+400 
 ªad_byãs
  > 0 || 
 zîo_byãs
  > 0)
 
-410 
+405 
 size_t
  
 ∑ge_ªad_byãs
@@ -64685,7 +64655,7 @@ size_t
 PGSIZE
  ?Ñead_bytes : PGSIZE;
 
-411 
+406 
 size_t
  
 ∑ge_zîo_byãs
@@ -64695,7 +64665,7 @@ PGSIZE
 ∑ge_ªad_byãs
 ;
 
-414 
+409 
 uöt8_t
  *
 k∑ge
@@ -64705,17 +64675,17 @@ k∑ge
 PAL_USER
 );
 
-415 i‡(
+410 i‡(
 k∑ge
  =
 NULL
 )
 
-416  
+411  
 Ál£
 ;
 
-419 i‡(
+414 i‡(
 	`fûe_ªad
  (
 fûe
@@ -64725,17 +64695,17 @@ k∑ge
 ∑ge_ªad_byãs
 ) != ()Öage_read_bytes)
 
-421 
+416 
 	`∑Œoc_‰ì_∑ge
  (
 k∑ge
 );
 
-422  
+417  
 Ál£
 ;
 
-424 
+419 
 	`mem£t
  (
 k∑ge
@@ -64745,7 +64715,7 @@ k∑ge
 ∑ge_zîo_byãs
 );
 
-427 i‡(!
+422 i‡(!
 	`ö°Æl_∑ge
  (
 u∑ge
@@ -64755,61 +64725,61 @@ k∑ge
 wrôabÀ
 ))
 
-429 
+424 
 	`∑Œoc_‰ì_∑ge
  (
 k∑ge
 );
 
-430  
+425  
 Ál£
 ;
 
-434 
+429 
 ªad_byãs
  -
 ∑ge_ªad_byãs
 ;
 
-435 
+430 
 zîo_byãs
  -
 ∑ge_zîo_byãs
 ;
 
-436 
+431 
 u∑ge
  +
 PGSIZE
 ;
 
-438  
+433  
 åue
 ;
 
-439 
+434 
 	}
 }
 
-443 
+438 
 boﬁ
 
 
-444 
+439 
 	$£tup_°ack
  (**
 e•
 , *
-fûe_«me
+ßve_±r
 )
 
-446 
+441 
 uöt8_t
  *
 k∑ge
 ;
 
-447 
+442 
 boﬁ
  
 suc˚ss
@@ -64817,37 +64787,31 @@ suc˚ss
 Ál£
 ;
 
-449 *
-ªvî£d_¨gv
-[
-ARG_MAX
-];
-
-451 
-uöt32_t
- 
-¨gv_addªs£s
-[
-ARG_MAX
-];
-
-452 *
+443 *
 tokí
-, *
-ßve_±r
 ;
 
-453 
+444 
 ¨gc
  = 0;
 
-454 
-i
-, 
-j
+447 
+uöt32_t
+ *
+¨gv_addªs£s
+ = (uöt32_t*Ë
+	`∑Œoc_gë_∑ge
+ (
+PAL_USER
+ | 
+PAL_ZERO
+);
+
+448 *
+¨gvs
 ;
 
-456 
+450 
 k∑ge
  = 
 	`∑Œoc_gë_∑ge
@@ -64857,13 +64821,13 @@ PAL_USER
 PAL_ZERO
 );
 
-457 i‡(
+451 i‡(
 k∑ge
  !
 NULL
 )
 
-459 
+453 
 suc˚ss
  = 
 	`ö°Æl_∑ge
@@ -64879,193 +64843,49 @@ k∑ge
 åue
 );
 
-460 i‡(
+454 i‡(
 suc˚ss
 )
 
-462 *
+456 *
 e•
  = 
 PHYS_BASE
 ;
 
-465 
-tokí
- = 
-	`°πok_r
- (
-fûe_«me
-, " ", &
-ßve_±r
-);Åokí !
-NULL
-;
-
-466 
-tokí
- = 
-	`°πok_r
- (
-NULL
-, " ", &
-ßve_±r
-))
-
-468 
-ªvî£d_¨gv
-[
-¨gc
-++] = 
-tokí
-;
-
-472 
-j
- = 0, 
-i
- = 
-¨gc
- - 1; i >= 0; --i, ++j)
-
-474 *
-e•
- -(1 + 
-	`°æí
- (
-ªvî£d_¨gv
-[
-i
-]));
-
-475 
-	`mem˝y
- (*
-e•
-, 
-ªvî£d_¨gv
-[
-i
-], 1 + 
-	`°æí
-(reversed_argv[i]));
-
-476 
-¨gv_addªs£s
-[
-j
-] = (
-uöt32_t
-)*
-e•
-;
-
-480 *
-e•
- = 
-	`ROUND_DOWN
- ((
-uöt32_t
-)*esp, 4);
-
-483 *
-e•
- -=  (*);
-
-484 
-	`mem˝y
- (*
-e•
-, 
-NULL
-, 0);
-
-487 
-i
- = 0; i < 
-¨gc
-; ++i)
-
-489 *
-e•
- -=  (*);
-
-490 
-	`mem˝y
- (*
-e•
-, &
-¨gv_addªs£s
-[
-i
-],  (*));
-
-494 *
-e•
- -=  (**);
-
-495 ** 
-¨gv_°¨t_addªss
- = *
-e•
- +  (**);
-
-496 
-	`mem˝y
- (*
-e•
-, &
-¨gv_°¨t_addªss
-,  (**));
-
-499 *
-e•
- -=  ();
-
-500 
-	`mem˝y
- (*
-e•
-, &
-¨gc
-,  ());
-
-503 *
-e•
- -=  ((*)());
-
-504 
-	`mem˝y
- (*
-e•
-, 
-NULL
-, 0);
-
-507 
+497 
 	`∑Œoc_‰ì_∑ge
  (
 k∑ge
 );
 
-509 
+499 
 	`hex_dump
  (
 PHYS_BASE
- - 50, PHYS_BASE - 50, 50, 1);
+-
+PGSIZE
+, PHYS_BASE - PGSIZE, PGSIZE, 1);
 
-511  
+502 
+	`∑Œoc_‰ì_∑ge
+ (
+¨gv_addªs£s
+);
+
+503  
 suc˚ss
 ;
 
-512 
+504 
 	}
 }
 
-523 
+515 
 boﬁ
 
 
-524 
+516 
 	$ö°Æl_∑ge
  (*
 u∑ge
@@ -65077,7 +64897,7 @@ boﬁ
 wrôabÀ
 )
 
-526 
+518 
 thªad
  *
 t
@@ -65085,7 +64905,7 @@ t
 	`thªad_cuºít
  ();
 
-530  (
+522  (
 	`∑gedú_gë_∑ge
  (
 t
@@ -65097,7 +64917,7 @@ u∑ge
 NULL
 
 
-531 && 
+523 && 
 	`∑gedú_£t_∑ge
  (
 t
@@ -65111,11 +64931,11 @@ k∑ge
 wrôabÀ
 ));
 
-532 
+524 
 	}
 }
 
-	@userprog/process.h
+	@src/userprog/process.h
 
 1 #i‚de‡
 USERPROG_PROCESS_H
@@ -65153,7 +64973,7 @@ tid_t
 ¥o˚ss_a˘iv©e
  ();
 
-	@userprog/syscall.c
+	@src/userprog/syscall.c
 
 1 
 	~"u£Ωrog/sysˇŒ.h
@@ -65219,7 +65039,7 @@ UNUSED
 	}
 }
 
-	@userprog/syscall.h
+	@src/userprog/syscall.h
 
 1 #i‚de‡
 USERPROG_SYSCALL_H
@@ -65235,7 +65055,7 @@ USERPROG_SYSCALL_H
 sysˇŒ_öô
  ();
 
-	@userprog/tss.c
+	@src/userprog/tss.c
 
 1 
 	~"u£Ωrog/tss.h
@@ -65489,7 +65309,7 @@ PGSIZE
 	}
 }
 
-	@userprog/tss.h
+	@src/userprog/tss.h
 
 1 #i‚de‡
 USERPROG_TSS_H
@@ -65523,7 +65343,7 @@ tss_gë
 tss_upd©e
  ();
 
-	@utils/setitimer-helper.c
+	@src/utils/setitimer-helper.c
 
 1 
 	~<î∫o.h
@@ -65719,7 +65539,7 @@ EXIT_FAILURE
 	}
 }
 
-	@utils/squish-pty.c
+	@src/utils/squish-pty.c
 
 1 
 	#_GNU_SOURCE
@@ -67041,7 +66861,7 @@ execvp
 Áû_io
  ("exec");
 
-	@utils/squish-unix.c
+	@src/utils/squish-unix.c
 
 1 
 	#_GNU_SOURCE
@@ -94118,832 +93938,6 @@ __exã∫_Æways_ölöe
 1174 
 __END_DECLS
 
-
-	@tests/filesys/base/full.inc
-
-3 
-	~"ã°s/fûesys/£q-ã°.h
-"
-
-4 
-	~"ã°s/maö.h
-"
-
-6 
-	gbuf
-[
-TEST_SIZE
-];
-
-8 
-size_t
-
-
-9 
-	$ªtu∫_ã°_size
- ()
-
-11  
-TEST_SIZE
-;
-
-12 
-	}
-}
-
-15 
-	$ã°_maö
- ()
-
-17 
-	`£q_ã°
- ("quux",
-
-18 
-buf
-,  buf,  buf,
-
-19 
-ªtu∫_ã°_size
-, 
-NULL
-);
-
-20 
-	}
-}
-
-	@tests/filesys/base/random.inc
-
-3 
-	~<øndom.h
->
-
-4 
-	~<°dio.h
->
-
-5 
-	~<°rög.h
->
-
-6 
-	~<sysˇŒ.h
->
-
-7 
-	~"ã°s/lib.h
-"
-
-8 
-	~"ã°s/maö.h
-"
-
-10 #i‡
-TEST_SIZE
- % 
-BLOCK_SIZE
- != 0
-
-11 #îr‹ 
-TEST_SIZE
- 
-mu°
- 
-be
- 
-a
- 
-mu…ùÀ
- 
-of
- 
-BLOCK_SIZE
-
-
-14 
-	#BLOCK_CNT
- (
-TEST_SIZE
- / 
-BLOCK_SIZE
-)
-
-	)
-
-16 
-	gbuf
-[
-TEST_SIZE
-];
-
-17 
-	g‹dî
-[
-BLOCK_CNT
-];
-
-20 
-	$ã°_maö
- ()
-
-22 c⁄° *
-fûe_«me
- = "bazzle";
-
-23 
-fd
-;
-
-24 
-size_t
- 
-i
-;
-
-26 
-	`øndom_öô
- (57);
-
-27 
-	`øndom_byãs
- (
-buf
-,  buf);
-
-29 
-i
- = 0; i < 
-BLOCK_CNT
-; i++)
-
-30 
-‹dî
-[
-i
-] = i;
-
-32 
-	`CHECK
- (
-	`¸óã
- (
-fûe_«me
-, 
-TEST_SIZE
-), "create \"%s\"", file_name);
-
-33 
-	`CHECK
- ((
-fd
- = 
-	`›í
- (
-fûe_«me
-)) > 1, "open \"%s\"", file_name);
-
-35 
-	`msg
- ("wrôê\"%s\" i¿øndom ordî", 
-fûe_«me
-);
-
-36 
-	`shufÊe
- (
-‹dî
-, 
-BLOCK_CNT
-,  *order);
-
-37 
-i
- = 0; i < 
-BLOCK_CNT
-; i++)
-
-39 
-size_t
- 
-ofs
- = 
-BLOCK_SIZE
- * 
-‹dî
-[
-i
-];
-
-40 
-	`£ek
- (
-fd
-, 
-ofs
-);
-
-41 i‡(
-	`wrôe
- (
-fd
-, 
-buf
- + 
-ofs
-, 
-BLOCK_SIZE
-) != BLOCK_SIZE)
-
-42 
-	`Áû
- ("wrôê%d byã†© off£à%zu faûed", (Ë
-BLOCK_SIZE
-, 
-ofs
-);
-
-45 
-	`msg
- ("ªad \"%s\" i¿øndom ordî", 
-fûe_«me
-);
-
-46 
-	`shufÊe
- (
-‹dî
-, 
-BLOCK_CNT
-,  *order);
-
-47 
-i
- = 0; i < 
-BLOCK_CNT
-; i++)
-
-49 
-block
-[
-BLOCK_SIZE
-];
-
-50 
-size_t
- 
-ofs
- = 
-BLOCK_SIZE
- * 
-‹dî
-[
-i
-];
-
-51 
-	`£ek
- (
-fd
-, 
-ofs
-);
-
-52 i‡(
-	`ªad
- (
-fd
-, 
-block
-, 
-BLOCK_SIZE
-) != BLOCK_SIZE)
-
-53 
-	`Áû
- ("ªad %d byã†© off£à%zu faûed", (Ë
-BLOCK_SIZE
-, 
-ofs
-);
-
-54 
-	`com∑ª_byãs
- (
-block
-, 
-buf
- + 
-ofs
-, 
-BLOCK_SIZE
-, ofs, 
-fûe_«me
-);
-
-57 
-	`msg
- ("˛o£ \"%s\"", 
-fûe_«me
-);
-
-58 
-	`˛o£
- (
-fd
-);
-
-59 
-	}
-}
-
-	@tests/filesys/base/seq-block.inc
-
-3 
-	~"ã°s/fûesys/£q-ã°.h
-"
-
-4 
-	~"ã°s/maö.h
-"
-
-6 
-	gbuf
-[
-TEST_SIZE
-];
-
-8 
-size_t
-
-
-9 
-	$ªtu∫_block_size
- ()
-
-11  
-BLOCK_SIZE
-;
-
-12 
-	}
-}
-
-15 
-	$ã°_maö
- ()
-
-17 
-	`£q_ã°
- ("noodle",
-
-18 
-buf
-,  buf,  buf,
-
-19 
-ªtu∫_block_size
-, 
-NULL
-);
-
-20 
-	}
-}
-
-	@tests/filesys/base/seq-random.inc
-
-3 
-	~<øndom.h
->
-
-4 
-	~"ã°s/fûesys/£q-ã°.h
-"
-
-5 
-	~"ã°s/maö.h
-"
-
-7 
-	gbuf
-[
-TEST_SIZE
-];
-
-9 
-size_t
-
-
-10 
-	$ªtu∫_øndom
- ()
-
-12  
-	`øndom_ul⁄g
- () % 1031 + 1;
-
-13 
-	}
-}
-
-16 
-	$ã°_maö
- ()
-
-18 
-	`øndom_öô
- (-1);
-
-19 
-	`£q_ã°
- ("nibble",
-
-20 
-buf
-,  buf,  buf,
-
-21 
-ªtu∫_øndom
-, 
-NULL
-);
-
-22 
-	}
-}
-
-	@tests/filesys/create.inc
-
-3 
-	~<sysˇŒ.h
->
-
-4 
-	~"ã°s/lib.h
-"
-
-5 
-	~"ã°s/maö.h
-"
-
-7 
-	gbuf
-[
-TEST_SIZE
-];
-
-10 
-	$ã°_maö
- ()
-
-12 c⁄° *
-fûe_«me
- = "blargle";
-
-13 
-	`CHECK
- (
-	`¸óã
- (
-fûe_«me
-, 
-TEST_SIZE
-), "create \"%s\"", file_name);
-
-14 
-	`check_fûe
- (
-fûe_«me
-, 
-buf
-, 
-TEST_SIZE
-);
-
-15 
-	}
-}
-
-	@tests/filesys/extended/grow-dir.inc
-
-3 
-	~<sysˇŒ.h
->
-
-4 
-	~<°dio.h
->
-
-5 
-	~"ã°s/fûesys/£q-ã°.h
-"
-
-6 
-	~"ã°s/lib.h
-"
-
-7 
-	~"ã°s/maö.h
-"
-
-9 
-	gbuf
-[512];
-
-11 
-size_t
-
-
-12 
-	$ªtu∫_block_size
- ()
-
-14   
-buf
-;
-
-15 
-	}
-}
-
-18 
-	$ã°_maö
- ()
-
-20 
-size_t
- 
-i
-;
-
-22 #ifde‡
-DIRECTORY
-
-
-23 
-	`CHECK
- (
-	`mkdú
- (
-DIRECTORY
-), "mkdir %s", DIRECTORY);
-
-24 
-	#DIR_PREFIX
- 
-DIRECTORY
- "/"
-
-	)
-
-26 
-	#DIR_PREFIX
- ""
-
-	)
-
-28 
-i
- = 0; i < 
-FILE_CNT
-; i++)
-
-30 
-fûe_«me
-[128];
-
-31 
-	`¢¥ötf
- (
-fûe_«me
-,  fûe_«me, "%sfûe%zu", 
-DIR_PREFIX
-, 
-i
-);
-
-33 
-	`msg
- ("¸ótögánd checkög \"%s\"", 
-fûe_«me
-);
-
-35 
-quõt
- = 
-åue
-;
-
-36 
-	`£q_ã°
- (
-fûe_«me
-,
-
-37 
-buf
-,  buf,  buf,
-
-38 
-ªtu∫_block_size
-, 
-NULL
-);
-
-39 
-quõt
- = 
-Ál£
-;
-
-41 
-	}
-}
-
-	@tests/filesys/extended/grow-seq.inc
-
-3 
-	~"ã°s/fûesys/£q-ã°.h
-"
-
-4 
-	~"ã°s/maö.h
-"
-
-6 
-	gbuf
-[
-TEST_SIZE
-];
-
-8 
-size_t
-
-
-9 
-	$ªtu∫_block_size
- ()
-
-12 
-	}
-}
-
-15 
-	$ã°_maö
- ()
-
-17 
-	`£q_ã°
- ("testme",
-
-18 
-buf
-,  buf, 0,
-
-19 
-ªtu∫_block_size
-, 
-NULL
-);
-
-20 
-	}
-}
-
-	@tests/userprog/rox-child.inc
-
-3 
-	~<sysˇŒ.h
->
-
-4 
-	~"ã°s/lib.h
-"
-
-5 
-	~"ã°s/maö.h
-"
-
-8 
-	$ã°_maö
- ()
-
-10 c⁄° *
-chûd_cmd
- = "chûd-rox " 
-CHILD_CNT
-;
-
-11 
-h™dÀ
-;
-
-12 
-pid_t
- 
-chûd
-;
-
-13 
-buf„r
-[16];
-
-16 
-	`CHECK
- ((
-h™dÀ
- = 
-	`›í
- ("child-rox")) > 1, "open \"child-rox\"");
-
-17 
-	`CHECK
- (
-	`ªad
- (
-h™dÀ
-, 
-buf„r
-,  buffer) == ()  buffer,
-
-19 
-	`£ek
- (
-h™dÀ
-, 0);
-
-20 
-	`CHECK
- (
-	`wrôe
- (
-h™dÀ
-, 
-buf„r
-,  buffer) == ()  buffer,
-
-24 
-	`CHECK
- ((
-chûd
- = 
-	`exec
- (
-chûd_cmd
-)) != -1, "exec \"%s\"", child_cmd);
-
-25 
-quõt
- = 
-åue
-;
-
-26 
-	`CHECK
- (
-	`waô
- (
-chûd
-) == 12, "wait for child");
-
-27 
-quõt
- = 
-Ál£
-;
-
-30 
-	`£ek
- (
-h™dÀ
-, 0);
-
-31 
-	`CHECK
- (
-	`wrôe
- (
-h™dÀ
-, 
-buf„r
-,  buffer) == ()  buffer,
-
-33 
-	}
-}
-
-	@tests/userprog/sample.inc
-
-1 
-	gßm∂e
-[] = {
-
-	@tests/vm/sample.inc
-
-1 
-	gßm∂e
-[] = {
 
 	@/usr/include/alloca.h
 
@@ -171536,330 +170530,330 @@ __END_DECLS
 .
 1
 /usr/include
-466
-11546
-devices/block.c
-devices/block.h
-devices/ide.c
-devices/ide.h
-devices/input.c
-devices/input.h
-devices/intq.c
-devices/intq.h
-devices/kbd.c
-devices/kbd.h
-devices/partition.c
-devices/partition.h
-devices/pit.c
-devices/pit.h
-devices/rtc.c
-devices/rtc.h
-devices/serial.c
-devices/serial.h
-devices/shutdown.c
-devices/shutdown.h
-devices/speaker.c
-devices/speaker.h
-devices/timer.c
-devices/timer.h
-devices/vga.c
-devices/vga.h
-examples/bubsort.c
-examples/cat.c
-examples/cmp.c
-examples/cp.c
-examples/echo.c
-examples/halt.c
-examples/hex-dump.c
-examples/insult.c
-examples/lineup.c
-examples/ls.c
-examples/matmult.c
-examples/mcat.c
-examples/mcp.c
-examples/mkdir.c
-examples/pwd.c
-examples/recursor.c
-examples/rm.c
-examples/shell.c
-filesys/directory.c
-filesys/directory.h
-filesys/file.c
-filesys/file.h
-filesys/filesys.c
-filesys/filesys.h
-filesys/free-map.c
-filesys/free-map.h
-filesys/fsutil.c
-filesys/fsutil.h
-filesys/inode.c
-filesys/inode.h
-filesys/off_t.h
-lib/arithmetic.c
-lib/ctype.h
-lib/debug.c
-lib/debug.h
-lib/inttypes.h
-lib/kernel/bitmap.c
-lib/kernel/bitmap.h
-lib/kernel/console.c
-lib/kernel/console.h
-lib/kernel/debug.c
-lib/kernel/hash.c
-lib/kernel/hash.h
-lib/kernel/list.c
-lib/kernel/list.h
-lib/kernel/stdio.h
-lib/limits.h
-lib/packed.h
-lib/random.c
-lib/random.h
-lib/round.h
-lib/stdarg.h
-lib/stdbool.h
-lib/stddef.h
-lib/stdint.h
-lib/stdio.c
-lib/stdio.h
-lib/stdlib.c
-lib/stdlib.h
-lib/string.c
-lib/string.h
-lib/syscall-nr.h
-lib/user/console.c
-lib/user/debug.c
-lib/user/entry.c
-lib/user/stdio.h
-lib/user/syscall.c
-lib/user/syscall.h
-lib/ustar.c
-lib/ustar.h
-tests/arc4.c
-tests/arc4.h
-tests/cksum.c
-tests/cksum.h
-tests/filesys/base/child-syn-read.c
-tests/filesys/base/child-syn-wrt.c
-tests/filesys/base/lg-create.c
-tests/filesys/base/lg-full.c
-tests/filesys/base/lg-random.c
-tests/filesys/base/lg-seq-block.c
-tests/filesys/base/lg-seq-random.c
-tests/filesys/base/sm-create.c
-tests/filesys/base/sm-full.c
-tests/filesys/base/sm-random.c
-tests/filesys/base/sm-seq-block.c
-tests/filesys/base/sm-seq-random.c
-tests/filesys/base/syn-read.c
-tests/filesys/base/syn-read.h
-tests/filesys/base/syn-remove.c
-tests/filesys/base/syn-write.c
-tests/filesys/base/syn-write.h
-tests/filesys/extended/child-syn-rw.c
-tests/filesys/extended/dir-empty-name.c
-tests/filesys/extended/dir-mk-tree.c
-tests/filesys/extended/dir-mkdir.c
-tests/filesys/extended/dir-open.c
-tests/filesys/extended/dir-over-file.c
-tests/filesys/extended/dir-rm-cwd.c
-tests/filesys/extended/dir-rm-parent.c
-tests/filesys/extended/dir-rm-root.c
-tests/filesys/extended/dir-rm-tree.c
-tests/filesys/extended/dir-rmdir.c
-tests/filesys/extended/dir-under-file.c
-tests/filesys/extended/dir-vine.c
-tests/filesys/extended/grow-create.c
-tests/filesys/extended/grow-dir-lg.c
-tests/filesys/extended/grow-file-size.c
-tests/filesys/extended/grow-root-lg.c
-tests/filesys/extended/grow-root-sm.c
-tests/filesys/extended/grow-seq-lg.c
-tests/filesys/extended/grow-seq-sm.c
-tests/filesys/extended/grow-sparse.c
-tests/filesys/extended/grow-tell.c
-tests/filesys/extended/grow-two-files.c
-tests/filesys/extended/mk-tree.c
-tests/filesys/extended/mk-tree.h
-tests/filesys/extended/syn-rw.c
-tests/filesys/extended/syn-rw.h
-tests/filesys/extended/tar.c
-tests/filesys/seq-test.c
-tests/filesys/seq-test.h
-tests/internal/list.c
-tests/internal/stdio.c
-tests/internal/stdlib.c
-tests/lib.c
-tests/lib.h
-tests/main.c
-tests/main.h
-tests/threads/alarm-negative.c
-tests/threads/alarm-priority.c
-tests/threads/alarm-simultaneous.c
-tests/threads/alarm-wait.c
-tests/threads/alarm-zero.c
-tests/threads/mlfqs-block.c
-tests/threads/mlfqs-fair.c
-tests/threads/mlfqs-load-1.c
-tests/threads/mlfqs-load-60.c
-tests/threads/mlfqs-load-avg.c
-tests/threads/mlfqs-recent-1.c
-tests/threads/priority-change.c
-tests/threads/priority-condvar.c
-tests/threads/priority-donate-chain.c
-tests/threads/priority-donate-lower.c
-tests/threads/priority-donate-multiple.c
-tests/threads/priority-donate-multiple2.c
-tests/threads/priority-donate-nest.c
-tests/threads/priority-donate-one.c
-tests/threads/priority-donate-sema.c
-tests/threads/priority-fifo.c
-tests/threads/priority-preempt.c
-tests/threads/priority-sema.c
-tests/threads/tests.c
-tests/threads/tests.h
-tests/userprog/args.c
-tests/userprog/bad-jump.c
-tests/userprog/bad-jump2.c
-tests/userprog/bad-read.c
-tests/userprog/bad-read2.c
-tests/userprog/bad-write.c
-tests/userprog/bad-write2.c
-tests/userprog/boundary.c
-tests/userprog/boundary.h
-tests/userprog/child-bad.c
-tests/userprog/child-close.c
-tests/userprog/child-rox.c
-tests/userprog/child-simple.c
-tests/userprog/close-bad-fd.c
-tests/userprog/close-normal.c
-tests/userprog/close-stdin.c
-tests/userprog/close-stdout.c
-tests/userprog/close-twice.c
-tests/userprog/create-bad-ptr.c
-tests/userprog/create-bound.c
-tests/userprog/create-empty.c
-tests/userprog/create-exists.c
-tests/userprog/create-long.c
-tests/userprog/create-normal.c
-tests/userprog/create-null.c
-tests/userprog/exec-arg.c
-tests/userprog/exec-bad-ptr.c
-tests/userprog/exec-missing.c
-tests/userprog/exec-multiple.c
-tests/userprog/exec-once.c
-tests/userprog/exit.c
-tests/userprog/halt.c
-tests/userprog/multi-child-fd.c
-tests/userprog/multi-recurse.c
-tests/userprog/no-vm/multi-oom.c
-tests/userprog/open-bad-ptr.c
-tests/userprog/open-boundary.c
-tests/userprog/open-empty.c
-tests/userprog/open-missing.c
-tests/userprog/open-normal.c
-tests/userprog/open-null.c
-tests/userprog/open-twice.c
-tests/userprog/read-bad-fd.c
-tests/userprog/read-bad-ptr.c
-tests/userprog/read-boundary.c
-tests/userprog/read-normal.c
-tests/userprog/read-stdout.c
-tests/userprog/read-zero.c
-tests/userprog/rox-child.c
-tests/userprog/rox-multichild.c
-tests/userprog/rox-simple.c
-tests/userprog/sc-bad-arg.c
-tests/userprog/sc-bad-sp.c
-tests/userprog/sc-boundary-2.c
-tests/userprog/sc-boundary.c
-tests/userprog/wait-bad-pid.c
-tests/userprog/wait-killed.c
-tests/userprog/wait-simple.c
-tests/userprog/wait-twice.c
-tests/userprog/write-bad-fd.c
-tests/userprog/write-bad-ptr.c
-tests/userprog/write-boundary.c
-tests/userprog/write-normal.c
-tests/userprog/write-stdin.c
-tests/userprog/write-zero.c
-tests/vm/child-inherit.c
-tests/vm/child-linear.c
-tests/vm/child-mm-wrt.c
-tests/vm/child-qsort-mm.c
-tests/vm/child-qsort.c
-tests/vm/child-sort.c
-tests/vm/mmap-bad-fd.c
-tests/vm/mmap-clean.c
-tests/vm/mmap-close.c
-tests/vm/mmap-exit.c
-tests/vm/mmap-inherit.c
-tests/vm/mmap-misalign.c
-tests/vm/mmap-null.c
-tests/vm/mmap-over-code.c
-tests/vm/mmap-over-data.c
-tests/vm/mmap-over-stk.c
-tests/vm/mmap-overlap.c
-tests/vm/mmap-read.c
-tests/vm/mmap-remove.c
-tests/vm/mmap-shuffle.c
-tests/vm/mmap-twice.c
-tests/vm/mmap-unmap.c
-tests/vm/mmap-write.c
-tests/vm/mmap-zero.c
-tests/vm/page-linear.c
-tests/vm/page-merge-mm.c
-tests/vm/page-merge-par.c
-tests/vm/page-merge-seq.c
-tests/vm/page-merge-stk.c
-tests/vm/page-parallel.c
-tests/vm/page-shuffle.c
-tests/vm/parallel-merge.c
-tests/vm/parallel-merge.h
-tests/vm/pt-bad-addr.c
-tests/vm/pt-bad-read.c
-tests/vm/pt-big-stk-obj.c
-tests/vm/pt-grow-bad.c
-tests/vm/pt-grow-pusha.c
-tests/vm/pt-grow-stack.c
-tests/vm/pt-grow-stk-sc.c
-tests/vm/pt-write-code-2.c
-tests/vm/pt-write-code.c
-tests/vm/qsort.c
-tests/vm/qsort.h
-threads/flags.h
-threads/init.c
-threads/init.h
-threads/interrupt.c
-threads/interrupt.h
-threads/intr-stubs.h
-threads/io.h
-threads/loader.h
-threads/malloc.c
-threads/malloc.h
-threads/palloc.c
-threads/palloc.h
-threads/pte.h
-threads/switch.h
-threads/synch.c
-threads/synch.h
-threads/thread.c
-threads/thread.h
-threads/vaddr.h
-userprog/exception.c
-userprog/exception.h
-userprog/gdt.c
-userprog/gdt.h
-userprog/pagedir.c
-userprog/pagedir.h
-userprog/process.c
-userprog/process.h
-userprog/syscall.c
-userprog/syscall.h
-userprog/tss.c
-userprog/tss.h
-utils/setitimer-helper.c
-utils/squish-pty.c
-utils/squish-unix.c
+456
+12537
+src/devices/block.c
+src/devices/block.h
+src/devices/ide.c
+src/devices/ide.h
+src/devices/input.c
+src/devices/input.h
+src/devices/intq.c
+src/devices/intq.h
+src/devices/kbd.c
+src/devices/kbd.h
+src/devices/partition.c
+src/devices/partition.h
+src/devices/pit.c
+src/devices/pit.h
+src/devices/rtc.c
+src/devices/rtc.h
+src/devices/serial.c
+src/devices/serial.h
+src/devices/shutdown.c
+src/devices/shutdown.h
+src/devices/speaker.c
+src/devices/speaker.h
+src/devices/timer.c
+src/devices/timer.h
+src/devices/vga.c
+src/devices/vga.h
+src/examples/bubsort.c
+src/examples/cat.c
+src/examples/cmp.c
+src/examples/cp.c
+src/examples/echo.c
+src/examples/halt.c
+src/examples/hex-dump.c
+src/examples/insult.c
+src/examples/lineup.c
+src/examples/ls.c
+src/examples/matmult.c
+src/examples/mcat.c
+src/examples/mcp.c
+src/examples/mkdir.c
+src/examples/pwd.c
+src/examples/recursor.c
+src/examples/rm.c
+src/examples/shell.c
+src/filesys/directory.c
+src/filesys/directory.h
+src/filesys/file.c
+src/filesys/file.h
+src/filesys/filesys.c
+src/filesys/filesys.h
+src/filesys/free-map.c
+src/filesys/free-map.h
+src/filesys/fsutil.c
+src/filesys/fsutil.h
+src/filesys/inode.c
+src/filesys/inode.h
+src/filesys/off_t.h
+src/lib/arithmetic.c
+src/lib/ctype.h
+src/lib/debug.c
+src/lib/debug.h
+src/lib/inttypes.h
+src/lib/kernel/bitmap.c
+src/lib/kernel/bitmap.h
+src/lib/kernel/console.c
+src/lib/kernel/console.h
+src/lib/kernel/debug.c
+src/lib/kernel/hash.c
+src/lib/kernel/hash.h
+src/lib/kernel/list.c
+src/lib/kernel/list.h
+src/lib/kernel/stdio.h
+src/lib/limits.h
+src/lib/packed.h
+src/lib/random.c
+src/lib/random.h
+src/lib/round.h
+src/lib/stdarg.h
+src/lib/stdbool.h
+src/lib/stddef.h
+src/lib/stdint.h
+src/lib/stdio.c
+src/lib/stdio.h
+src/lib/stdlib.c
+src/lib/stdlib.h
+src/lib/string.c
+src/lib/string.h
+src/lib/syscall-nr.h
+src/lib/user/console.c
+src/lib/user/debug.c
+src/lib/user/entry.c
+src/lib/user/stdio.h
+src/lib/user/syscall.c
+src/lib/user/syscall.h
+src/lib/ustar.c
+src/lib/ustar.h
+src/tests/arc4.c
+src/tests/arc4.h
+src/tests/cksum.c
+src/tests/cksum.h
+src/tests/filesys/base/child-syn-read.c
+src/tests/filesys/base/child-syn-wrt.c
+src/tests/filesys/base/lg-create.c
+src/tests/filesys/base/lg-full.c
+src/tests/filesys/base/lg-random.c
+src/tests/filesys/base/lg-seq-block.c
+src/tests/filesys/base/lg-seq-random.c
+src/tests/filesys/base/sm-create.c
+src/tests/filesys/base/sm-full.c
+src/tests/filesys/base/sm-random.c
+src/tests/filesys/base/sm-seq-block.c
+src/tests/filesys/base/sm-seq-random.c
+src/tests/filesys/base/syn-read.c
+src/tests/filesys/base/syn-read.h
+src/tests/filesys/base/syn-remove.c
+src/tests/filesys/base/syn-write.c
+src/tests/filesys/base/syn-write.h
+src/tests/filesys/extended/child-syn-rw.c
+src/tests/filesys/extended/dir-empty-name.c
+src/tests/filesys/extended/dir-mk-tree.c
+src/tests/filesys/extended/dir-mkdir.c
+src/tests/filesys/extended/dir-open.c
+src/tests/filesys/extended/dir-over-file.c
+src/tests/filesys/extended/dir-rm-cwd.c
+src/tests/filesys/extended/dir-rm-parent.c
+src/tests/filesys/extended/dir-rm-root.c
+src/tests/filesys/extended/dir-rm-tree.c
+src/tests/filesys/extended/dir-rmdir.c
+src/tests/filesys/extended/dir-under-file.c
+src/tests/filesys/extended/dir-vine.c
+src/tests/filesys/extended/grow-create.c
+src/tests/filesys/extended/grow-dir-lg.c
+src/tests/filesys/extended/grow-file-size.c
+src/tests/filesys/extended/grow-root-lg.c
+src/tests/filesys/extended/grow-root-sm.c
+src/tests/filesys/extended/grow-seq-lg.c
+src/tests/filesys/extended/grow-seq-sm.c
+src/tests/filesys/extended/grow-sparse.c
+src/tests/filesys/extended/grow-tell.c
+src/tests/filesys/extended/grow-two-files.c
+src/tests/filesys/extended/mk-tree.c
+src/tests/filesys/extended/mk-tree.h
+src/tests/filesys/extended/syn-rw.c
+src/tests/filesys/extended/syn-rw.h
+src/tests/filesys/extended/tar.c
+src/tests/filesys/seq-test.c
+src/tests/filesys/seq-test.h
+src/tests/internal/list.c
+src/tests/internal/stdio.c
+src/tests/internal/stdlib.c
+src/tests/lib.c
+src/tests/lib.h
+src/tests/main.c
+src/tests/main.h
+src/tests/threads/alarm-negative.c
+src/tests/threads/alarm-priority.c
+src/tests/threads/alarm-simultaneous.c
+src/tests/threads/alarm-wait.c
+src/tests/threads/alarm-zero.c
+src/tests/threads/mlfqs-block.c
+src/tests/threads/mlfqs-fair.c
+src/tests/threads/mlfqs-load-1.c
+src/tests/threads/mlfqs-load-60.c
+src/tests/threads/mlfqs-load-avg.c
+src/tests/threads/mlfqs-recent-1.c
+src/tests/threads/priority-change.c
+src/tests/threads/priority-condvar.c
+src/tests/threads/priority-donate-chain.c
+src/tests/threads/priority-donate-lower.c
+src/tests/threads/priority-donate-multiple.c
+src/tests/threads/priority-donate-multiple2.c
+src/tests/threads/priority-donate-nest.c
+src/tests/threads/priority-donate-one.c
+src/tests/threads/priority-donate-sema.c
+src/tests/threads/priority-fifo.c
+src/tests/threads/priority-preempt.c
+src/tests/threads/priority-sema.c
+src/tests/threads/tests.c
+src/tests/threads/tests.h
+src/tests/userprog/args.c
+src/tests/userprog/bad-jump.c
+src/tests/userprog/bad-jump2.c
+src/tests/userprog/bad-read.c
+src/tests/userprog/bad-read2.c
+src/tests/userprog/bad-write.c
+src/tests/userprog/bad-write2.c
+src/tests/userprog/boundary.c
+src/tests/userprog/boundary.h
+src/tests/userprog/child-bad.c
+src/tests/userprog/child-close.c
+src/tests/userprog/child-rox.c
+src/tests/userprog/child-simple.c
+src/tests/userprog/close-bad-fd.c
+src/tests/userprog/close-normal.c
+src/tests/userprog/close-stdin.c
+src/tests/userprog/close-stdout.c
+src/tests/userprog/close-twice.c
+src/tests/userprog/create-bad-ptr.c
+src/tests/userprog/create-bound.c
+src/tests/userprog/create-empty.c
+src/tests/userprog/create-exists.c
+src/tests/userprog/create-long.c
+src/tests/userprog/create-normal.c
+src/tests/userprog/create-null.c
+src/tests/userprog/exec-arg.c
+src/tests/userprog/exec-bad-ptr.c
+src/tests/userprog/exec-missing.c
+src/tests/userprog/exec-multiple.c
+src/tests/userprog/exec-once.c
+src/tests/userprog/exit.c
+src/tests/userprog/halt.c
+src/tests/userprog/multi-child-fd.c
+src/tests/userprog/multi-recurse.c
+src/tests/userprog/no-vm/multi-oom.c
+src/tests/userprog/open-bad-ptr.c
+src/tests/userprog/open-boundary.c
+src/tests/userprog/open-empty.c
+src/tests/userprog/open-missing.c
+src/tests/userprog/open-normal.c
+src/tests/userprog/open-null.c
+src/tests/userprog/open-twice.c
+src/tests/userprog/read-bad-fd.c
+src/tests/userprog/read-bad-ptr.c
+src/tests/userprog/read-boundary.c
+src/tests/userprog/read-normal.c
+src/tests/userprog/read-stdout.c
+src/tests/userprog/read-zero.c
+src/tests/userprog/rox-child.c
+src/tests/userprog/rox-multichild.c
+src/tests/userprog/rox-simple.c
+src/tests/userprog/sc-bad-arg.c
+src/tests/userprog/sc-bad-sp.c
+src/tests/userprog/sc-boundary-2.c
+src/tests/userprog/sc-boundary.c
+src/tests/userprog/wait-bad-pid.c
+src/tests/userprog/wait-killed.c
+src/tests/userprog/wait-simple.c
+src/tests/userprog/wait-twice.c
+src/tests/userprog/write-bad-fd.c
+src/tests/userprog/write-bad-ptr.c
+src/tests/userprog/write-boundary.c
+src/tests/userprog/write-normal.c
+src/tests/userprog/write-stdin.c
+src/tests/userprog/write-zero.c
+src/tests/vm/child-inherit.c
+src/tests/vm/child-linear.c
+src/tests/vm/child-mm-wrt.c
+src/tests/vm/child-qsort-mm.c
+src/tests/vm/child-qsort.c
+src/tests/vm/child-sort.c
+src/tests/vm/mmap-bad-fd.c
+src/tests/vm/mmap-clean.c
+src/tests/vm/mmap-close.c
+src/tests/vm/mmap-exit.c
+src/tests/vm/mmap-inherit.c
+src/tests/vm/mmap-misalign.c
+src/tests/vm/mmap-null.c
+src/tests/vm/mmap-over-code.c
+src/tests/vm/mmap-over-data.c
+src/tests/vm/mmap-over-stk.c
+src/tests/vm/mmap-overlap.c
+src/tests/vm/mmap-read.c
+src/tests/vm/mmap-remove.c
+src/tests/vm/mmap-shuffle.c
+src/tests/vm/mmap-twice.c
+src/tests/vm/mmap-unmap.c
+src/tests/vm/mmap-write.c
+src/tests/vm/mmap-zero.c
+src/tests/vm/page-linear.c
+src/tests/vm/page-merge-mm.c
+src/tests/vm/page-merge-par.c
+src/tests/vm/page-merge-seq.c
+src/tests/vm/page-merge-stk.c
+src/tests/vm/page-parallel.c
+src/tests/vm/page-shuffle.c
+src/tests/vm/parallel-merge.c
+src/tests/vm/parallel-merge.h
+src/tests/vm/pt-bad-addr.c
+src/tests/vm/pt-bad-read.c
+src/tests/vm/pt-big-stk-obj.c
+src/tests/vm/pt-grow-bad.c
+src/tests/vm/pt-grow-pusha.c
+src/tests/vm/pt-grow-stack.c
+src/tests/vm/pt-grow-stk-sc.c
+src/tests/vm/pt-write-code-2.c
+src/tests/vm/pt-write-code.c
+src/tests/vm/qsort.c
+src/tests/vm/qsort.h
+src/threads/flags.h
+src/threads/init.c
+src/threads/init.h
+src/threads/interrupt.c
+src/threads/interrupt.h
+src/threads/intr-stubs.h
+src/threads/io.h
+src/threads/loader.h
+src/threads/malloc.c
+src/threads/malloc.h
+src/threads/palloc.c
+src/threads/palloc.h
+src/threads/pte.h
+src/threads/switch.h
+src/threads/synch.c
+src/threads/synch.h
+src/threads/thread.c
+src/threads/thread.h
+src/threads/vaddr.h
+src/userprog/exception.c
+src/userprog/exception.h
+src/userprog/gdt.c
+src/userprog/gdt.h
+src/userprog/pagedir.c
+src/userprog/pagedir.h
+src/userprog/process.c
+src/userprog/process.h
+src/userprog/syscall.c
+src/userprog/syscall.h
+src/userprog/tss.c
+src/userprog/tss.h
+src/utils/setitimer-helper.c
+src/utils/squish-pty.c
+src/utils/squish-unix.c
 /usr/include/ctype.h
 /usr/include/errno.h
 /usr/include/fcntl.h
@@ -171882,16 +170876,6 @@ utils/squish-unix.c
 /usr/include/syscall.h
 /usr/include/termios.h
 /usr/include/unistd.h
-tests/filesys/base/full.inc
-tests/filesys/base/random.inc
-tests/filesys/base/seq-block.inc
-tests/filesys/base/seq-random.inc
-tests/filesys/create.inc
-tests/filesys/extended/grow-dir.inc
-tests/filesys/extended/grow-seq.inc
-tests/userprog/rox-child.inc
-tests/userprog/sample.inc
-tests/vm/sample.inc
 /usr/include/alloca.h
 /usr/include/bits/confname.h
 /usr/include/bits/environments.h

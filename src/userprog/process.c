@@ -18,8 +18,11 @@
 #include "threads/thread.h"
 #include "threads/vaddr.h"
 
+#define ARG_MAX 128
+
 static thread_func start_process NO_RETURN;
 static bool load (const char *cmdline, void (**eip) (void), void **esp);
+// static void push_argvs (void**esp, char *token, char *save_ptr, int *argc);
 
 /* Starts a new thread running a user program loaded from
    FILENAME.  The new thread may be scheduled (and may even exit)
@@ -198,7 +201,7 @@ struct Elf32_Phdr
 #define PF_W 2          /* Writable. */
 #define PF_R 4          /* Readable. */
 
-static bool setup_stack (void **esp, char *save_ptr);
+static bool setup_stack (void **esp, char *file_name);
 static bool validate_segment (const struct Elf32_Phdr *, struct file *);
 static bool load_segment (struct file *file, off_t ofs, uint8_t *upage,
                           uint32_t read_bytes, uint32_t zero_bytes,
@@ -219,8 +222,10 @@ load (const char *file_name, void (**eip) (void), void **esp)
   int i;
 
   /* Interpret the first argument as the name of the program to run */
-  char *program_name, *save_ptr;
-  program_name = strtok_r (file_name, " ", &save_ptr);
+  char *file_name_cpy = palloc_get_page (0);
+  strlcpy (file_name_cpy, file_name, PGSIZE);
+  char *program_name, *save_ptr, *token;
+  program_name = strtok_r (file_name_cpy, " ", &save_ptr);
 
   /* Allocate and activate page directory. */
   t->pagedir = pagedir_create ();
@@ -230,7 +235,6 @@ load (const char *file_name, void (**eip) (void), void **esp)
 
   /* Open executable file. */
   file = filesys_open (program_name);
-  //file = filesys_open (file_name);
 
   if (file == NULL) 
     {
@@ -311,7 +315,7 @@ load (const char *file_name, void (**eip) (void), void **esp)
     }
 
   /* Set up stack. */
-  if (!setup_stack (esp, save_ptr))
+  if (!setup_stack (esp, file_name))
     goto done;
 
   /* Start address. */
@@ -321,6 +325,7 @@ load (const char *file_name, void (**eip) (void), void **esp)
 
  done:
   /* We arrive here whether the load is successful or not. */
+  palloc_free_page (file_name_cpy); 
   file_close (file);
   return success;
 }
@@ -436,16 +441,17 @@ load_segment (struct file *file, off_t ofs, uint8_t *upage,
 /* Create a minimal stack by mapping a zeroed page at the top of
    user virtual memory. */
 static bool
-setup_stack (void **esp, char *save_ptr) 
+setup_stack (void **esp, char *file_name) 
 {
   uint8_t *kpage;
   bool success = false;
-  char *token;
-  int argc = 0;
-
+  /*An array of reversed argv for placement on stack*/
+  char *reversed_argv[ARG_MAX];
   /*An array of argument's addresses for placement on stack*/
-  uint32_t *argv_addresses = (uint32_t*) palloc_get_page (PAL_USER | PAL_ZERO);
-  char *argvs;
+  uint32_t argv_addresses[ARG_MAX];
+  char *token, *save_ptr;
+  int argc = 0;
+  int i, j;
 
   kpage = palloc_get_page (PAL_USER | PAL_ZERO);
   if (kpage != NULL) 
@@ -454,36 +460,39 @@ setup_stack (void **esp, char *save_ptr)
       if (success)
         {
           *esp = PHYS_BASE;
-
-          /* Tokenize arguments and push them to stack */
-          for (token = strtok_r (NULL, " ", &save_ptr); token != NULL;
+          /* Tokenize arguments and put them into the reversed argv array. */
+          for (token = strtok_r (file_name, " ", &save_ptr); token != NULL;
                 token = strtok_r (NULL, " ", &save_ptr))
             {
-              //*esp -= (strlen (token) + 1);
-              //memcpy (*esp, token, (strlen (token) + 1));
-              argvs = 
-              argv_addresses[argc] = (uint32_t)*esp;
-              ++argc;
+              reversed_argv[argc++] = token;
             }
 
-          /* Handle word alignment on stack */
-          ROUND_DOWN ((uint8_t)*esp, 4);
+          /* Push the reverserved argv to stack. */
+          for (j = 0, i = argc - 1; i >= 0; --i, ++j)
+            {
+              *esp -= (1 + strlen (reversed_argv[i]));
+              memcpy (*esp, reversed_argv[i], 1 + strlen(reversed_argv[i]));
+              argv_addresses[j] = (uint32_t)*esp;
+            }
 
-          /* Push null pointer sentinel to stack */
-          *esp -= sizeof (uint8_t);
+          // /* Handle word alignment on stack */
+          *esp = ROUND_DOWN ((uint32_t)*esp, 4);
+
+          // /* Push null pointer sentinel to stack */
+          *esp -= sizeof (char*);
           memcpy (*esp, NULL, 0);
 
-          int i;
-          /* Push argument addresses to stack */
+          // /* Push argument addresses to stack */
           for (i = 0; i < argc; ++i)
             {
               *esp -= sizeof (char*);
-              memcpy (*esp, argv_addresses[i], sizeof (char*));
+              memcpy (*esp, &argv_addresses[i], sizeof (char*));
             }
 
           /* Push argv */
           *esp -= sizeof (char**);
-          memcpy (*esp, *esp + 4, sizeof (char**));
+          char** argv_start_address = *esp + sizeof (char**);
+          memcpy (*esp, &argv_start_address, sizeof (char**));
 
           /* Push argc */
           *esp -= sizeof (int);
@@ -496,10 +505,8 @@ setup_stack (void **esp, char *save_ptr)
       else
         palloc_free_page (kpage);
     }
-  hex_dump (PHYS_BASE-PGSIZE, PHYS_BASE - PGSIZE, PGSIZE, 1);
+  hex_dump (PHYS_BASE - 50, PHYS_BASE - 50, 50, 1);
 
-  /* Free the array of argument addresses */
-  palloc_free_page (argv_addresses);
   return success;
 }
 
