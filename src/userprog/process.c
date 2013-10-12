@@ -505,7 +505,7 @@ setup_stack (void **esp, char *file_name)
       else
         palloc_free_page (kpage);
     }
-  hex_dump (PHYS_BASE - 50, PHYS_BASE - 50, 50, 1);
+  //hex_dump (PHYS_BASE - 50, PHYS_BASE - 50, 50, 1);
 
   return success;
 }
