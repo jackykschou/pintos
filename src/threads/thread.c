@@ -20,6 +20,8 @@
    of thread.h for details. */
 #define THREAD_MAGIC 0xcd6abf4b
 
+static int next_pid = 1;
+
 /* List of processes in THREAD_READY state, that is, processes
    that are ready to run but not actually running. */
 static struct list ready_list;
@@ -184,6 +186,12 @@ thread_create (const char *name, int priority,
   init_thread (t, name, priority);
   tid = t->tid = allocate_tid ();
 
+  #ifdef USERPROG
+  t->pid = tid;
+  list_push_back (&thread_current ()->child_list, &t->child_elem);
+  t->parent_thread = thread_current ();
+  #endif
+
   /* Prepare thread for first run by initializing its stack.
      Do this atomically so intermediate values for the 'stack' 
      member cannot be observed. */
@@ -303,6 +311,8 @@ thread_exit (void)
      and schedule another process.  That process will destroy us
      when it calls thread_schedule_tail(). */
   intr_disable ();
+  if (thread_current ()->parent_thread->child_waiting_for == thread_current ())
+    sema_up (&thread_current ()->wait_sema);
   list_remove (&thread_current()->allelem);
   thread_current ()->status = THREAD_DYING;
   schedule ();
@@ -500,6 +510,11 @@ init_thread (struct thread *t, const char *name, int priority)
   t->sleep_ticks = 0;
   t->original_priority = priority;
   t->thread_waiting_for = NULL;
+
+  #ifdef USERPROG
+  list_init (&t->child_list);
+  sema_init (&t->wait_sema, 0);
+  #endif
 
   list_push_back (&all_list, &t->allelem);
 }

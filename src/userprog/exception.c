@@ -79,6 +79,8 @@ kill (struct intr_frame *f)
      exceptions back to the process via signals, but we don't
      implement them. */
      
+  thread_current ()->exit_status = -1;
+
   /* The interrupt frame's code segment value tells us where the
      exception originated. */
   switch (f->cs)

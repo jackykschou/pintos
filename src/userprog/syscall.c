@@ -5,6 +5,7 @@
 #include "threads/thread.h"
 #include "threads/vaddr.h"
 #include "devices/shutdown.h"
+#include "lib/kernel/console.h"
 
 static void syscall_handler (struct intr_frame *);
 static void check_user_program_addresses (int num_args, void* address);
@@ -18,7 +19,9 @@ syscall_init (void)
 static void
 syscall_handler (struct intr_frame *f UNUSED) 
 {
-	printf ("system call!\n");
+  //halt ();
+
+	//printf ("system call!\n");
 	switch ((int)f->esp)
   	{
   		/* No arguments */
@@ -28,7 +31,7 @@ syscall_handler (struct intr_frame *f UNUSED)
   		/* One argument */
   		case SYS_EXIT:
   			check_user_program_addresses (1, f->esp);
-  			//exit (f->esp + sizeof (uint32_t));
+  			exit (f->esp + sizeof (uint32_t));
 
   		case SYS_EXEC:
   			check_user_program_addresses (1, f->esp);
@@ -74,8 +77,7 @@ syscall_handler (struct intr_frame *f UNUSED)
 
   		case SYS_WRITE:
   			check_user_program_addresses (3, f->esp);
-  			//write (f->esp + sizeof (uint32_t), f->esp + sizeof (uint32_t) * 2, f->esp + sizeof (uint32_t) * 3);
-    
+  			write (f->esp + sizeof (uint32_t), f->esp + sizeof (uint32_t) * 2, f->esp + sizeof (uint32_t) * 3);
         default:
         	break;
   	}
@@ -91,7 +93,9 @@ halt (void)
 void
 exit (int status)
 {
-	return NULL;
+  thread_current ()->exit_status = status;
+  printf ("%s: exit(%d)\n", thread_current ()->name,status);  //need name of process
+  thread_exit ();
 	NOT_REACHED ();
 }
 
@@ -104,7 +108,7 @@ exit (int status)
 // int
 // wait (pid_t pid)
 // {
-//   return NULL;
+
 // }
 
 // bool
@@ -137,11 +141,29 @@ exit (int status)
 //   return NULL;
 // }
 
-// int
-// write (int fd, const void *buffer, unsigned size)
-// {
-// 	return NULL;
-// }
+/* Writes to open file or console. Returns the size of what was written. 
+   Argument size may not equal the size written if space is limited. */
+int
+write (int fd, const void *buffer, unsigned size)
+{
+  printf("hello\n");
+    // int size_written = 0;  //Nothing written
+
+    // // /* Write to File (STDIN_FILENO) */
+    // // if(fd == 0)
+    // // {
+    // //   size_written = file_write( ,*buffer, size);  //Needs file name
+    // // }
+
+    // /* Write to Console (STDOUT_FILENO) */
+    // if(fd == 1) 
+    //   { 
+    //     putbuf(buffer, size);
+    //     size_written = size;  //Entire buffer written to console
+    //   }
+
+    // return size_written;
+}
 
 // void
 // seek (int fd, unsigned position) 

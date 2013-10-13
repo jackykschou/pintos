@@ -22,6 +22,7 @@
 
 static thread_func start_process NO_RETURN;
 static bool load (const char *cmdline, void (**eip) (void), void **esp);
+static struct thread* search_child_list (struct list *child_list, pid_t pid);
 // static void push_argvs (void**esp, char *token, char *save_ptr, int *argc);
 
 /* Starts a new thread running a user program loaded from
@@ -41,8 +42,12 @@ process_execute (const char *file_name)
     return TID_ERROR;
   strlcpy (fn_copy, file_name, PGSIZE);
 
+  char *program_name, *save_ptr;
+  program_name = strtok_r (file_name, " ", &save_ptr);
+
   /* Create a new thread to execute FILE_NAME. */
-  tid = thread_create (file_name, PRI_DEFAULT, start_process, fn_copy);
+  tid = thread_create (program_name, PRI_DEFAULT, start_process, fn_copy);
+
   if (tid == TID_ERROR)
     palloc_free_page (fn_copy); 
   return tid;
@@ -92,9 +97,36 @@ start_process (void *file_name_)
 int
 process_wait (tid_t child_tid UNUSED) 
 {
-  while (true)
-    ;
-  return -1;
+  printf("I am waiting hello\n");
+  struct thread *child_thread = search_child_list (&thread_current ()->child_list, child_tid);
+  if (child_thread == NULL)
+    {
+      return -1;
+    }
+  else
+    {
+      thread_current ()->child_waiting_for = child_thread;
+      sema_down (&thread_current ()->wait_sema);
+      list_remove (&child_thread->child_elem);
+      return child_thread->exit_status;
+    }
+}
+
+static struct thread*
+search_child_list (struct list *child_list, pid_t pid)
+{
+  struct list_elem *e;
+
+  for (e = list_begin (child_list); e != list_end (child_list);
+       e = list_next (e))
+    {
+      struct thread *t = list_entry (e, struct thread, child_elem);
+      if (t->pid == pid)
+        {
+          return t;
+        }
+    }
+    return NULL;
 }
 
 /* Free the current process's resources. */
@@ -505,7 +537,7 @@ setup_stack (void **esp, char *file_name)
       else
         palloc_free_page (kpage);
     }
-  //hex_dump (PHYS_BASE - 50, PHYS_BASE - 50, 50, 1);
+  //hex_dump (PHYS_BASE - PGSIZE, PHYS_BASE - PGSIZE, PGSIZE, 1);
 
   return success;
 }

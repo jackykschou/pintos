@@ -18,6 +18,7 @@ enum thread_status
 /* Thread identifier type.
    You can redefine this to whatever type you like. */
 typedef int tid_t;
+typedef int pid_t;
 #define TID_ERROR ((tid_t) -1)          /* Error value for tid_t. */
 
 /* Thread priorities. */
@@ -107,6 +108,15 @@ struct thread
 #ifdef USERPROG
     /* Owned by userprog/process.c. */
     uint32_t *pagedir;                  /* Page directory. */
+
+    pid_t pid;
+    struct list child_list;
+    struct list_elem child_elem;
+    int exit_status;
+    struct semaphore wait_sema;
+    struct thread *child_waiting_for;
+    struct thread *parent_thread;
+
 #endif
 
     /* Owned by thread.c. */
