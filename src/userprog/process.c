@@ -537,7 +537,7 @@ setup_stack (void **esp, char *file_name)
       else
         palloc_free_page (kpage);
     }
-  //hex_dump (PHYS_BASE - PGSIZE, PHYS_BASE - PGSIZE, PGSIZE, 1);
+  hex_dump (PHYS_BASE - PGSIZE, PHYS_BASE - PGSIZE, PGSIZE, 1);
 
   return success;
 }
