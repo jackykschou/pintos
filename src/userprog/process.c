@@ -97,7 +97,6 @@ start_process (void *file_name_)
 int
 process_wait (tid_t child_tid UNUSED) 
 {
-  printf("I am waiting hello\n");
   struct thread *child_thread = search_child_list (&thread_current ()->child_list, child_tid);
   if (child_thread == NULL)
     {
@@ -107,7 +106,6 @@ process_wait (tid_t child_tid UNUSED)
     {
       thread_current ()->child_waiting_for = child_thread;
       sema_down (&thread_current ()->wait_sema);
-      list_remove (&child_thread->child_elem);
       return child_thread->exit_status;
     }
 }
@@ -537,7 +535,7 @@ setup_stack (void **esp, char *file_name)
       else
         palloc_free_page (kpage);
     }
-  hex_dump (*esp, *esp, PHYS_BASE - *esp, 1);
+  //hex_dump (*esp, *esp, PHYS_BASE - *esp, 1);
 
   return success;
 }
