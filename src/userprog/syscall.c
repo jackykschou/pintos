@@ -37,6 +37,9 @@ syscall_handler (struct intr_frame *f UNUSED)
   // printf("hex %02hhx\n",f->esp);
   // printf("hex star %02hhx\n", *(uint32_t*)(f->esp));
 
+  /* Check the validity of the syscall number */
+  check_user_program_addresses (f->esp);
+  
 	switch (deref_address (f->esp, 0, uint32_t))
   	{
   		/* No arguments */
@@ -47,66 +50,80 @@ syscall_handler (struct intr_frame *f UNUSED)
 
   		/* One argument */
   		case SYS_EXIT:
-        //printf("1\n");
+        //printf("exit\n");
+        //We are checking the addresses of arguments for validity
+        check_stack_argument_addresses (f->esp, 1);
+        //printf("checked2\n");
   			exit (deref_address (f->esp, 1, int));
         break;
 
   		case SYS_EXEC:
         //printf("2\n");
+        check_stack_argument_addresses (f->esp, 1);
   			f->eax = exec (deref_address (f->esp, 1, char*));
         break;
 
   		case SYS_WAIT:
         //printf("3\n");
+        check_stack_argument_addresses (f->esp, 1);
   			f->eax = wait (deref_address (f->esp, 1, int));
         break;
 
   		case SYS_REMOVE:
         //printf("4\n");
+        check_stack_argument_addresses (f->esp, 1);
   			f->eax = remove (deref_address (f->esp, 1, char*));
         break;
 
   		case SYS_OPEN:
         //printf("5\n");
+        check_stack_argument_addresses (f->esp, 1);
   			f->eax = open (deref_address (f->esp, 1, char*));
         break;
 
   		case SYS_FILESIZE:
         //printf("6\n");
+        check_stack_argument_addresses (f->esp, 1);
   			f->eax = filesize (deref_address (f->esp, 1, int));
         break;
 
   		case SYS_TELL:
         //printf("7\n");
+        check_stack_argument_addresses (f->esp, 1);
   			f->eax = tell (deref_address (f->esp, 1, int));
         break;
 
   		case SYS_CLOSE:
         //printf("8\n");
+        check_stack_argument_addresses (f->esp, 1);
   			close (deref_address (f->esp, 1, int));
         break;
 
   	    /* Two arguments */
   		case SYS_CREATE:
         //printf("9\n");
+        check_stack_argument_addresses (f->esp, 2);
   			f->eax = create (deref_address (f->esp, 1, char*), deref_address (f->esp, 2, unsigned));
         break;
 
 
   		case SYS_SEEK:
         //printf("10\n");
+        check_stack_argument_addresses (f->esp, 2); 
   			seek (deref_address (f->esp, 1, int), deref_address (f->esp, 2, unsigned));
         break;
 
         /* Three arguments */
   		case SYS_READ:
         //printf("11\n");
+        check_stack_argument_addresses (f->esp, 3);
         check_user_program_addresses (deref_address (f->esp, 2, void*));
   			f->eax = read (deref_address (f->esp, 1, int), deref_address (f->esp, 2, void*), deref_address (f->esp, 3, unsigned));
         break;
 
   		case SYS_WRITE:
         //printf("12\n");
+        check_stack_argument_addresses (f->esp, 3);
   			check_user_program_addresses (deref_address (f->esp, 2, void*));
   			f->eax = write (deref_address (f->esp, 1, int), 
         deref_address (f->esp, 2, void*), deref_address (f->esp, 3, unsigned));
@@ -295,18 +312,32 @@ close (int fd)
   lock_release(&filesys_lock);
 }
 
+/* Checks the validity of a user address */ 
 static void
 check_user_program_addresses (void *address)
 {
-  // printf("1 %d\n", address);
-  // printf("1 %p\n", address);
+  //printf("1 %d\n", address);
+  //printf("1 %p\n", address);
 
-  // printf("2 %d\n", pagedir_get_page (thread_current ()->pagedir, address));
-  // printf("2 %p\n", pagedir_get_page (thread_current ()->pagedir, address));
+  //printf("2 %d\n", pagedir_get_page (thread_current ()->pagedir, address));
+  //printf("2 %p\n", pagedir_get_page (thread_current ()->pagedir, address));
 
-  //if (!is_user_vaddr(address) || pagedir_get_page (thread_current ()->pagedir, address) == NULL)
-          //exit (-1);  
 
+  if (address == NULL || !is_user_vaddr(address) || pagedir_get_page (thread_current ()->pagedir, address) == NULL)
+          exit (-1);  
+
+}
+
+/* Given the stack pointer, check the validity of the given number of arguments (32-bit addresses) following it */
+check_stack_argument_addresses(void *start, int arg_count)
+{
+  int i;
+  //printf("%d\n", arg_count);
+  for(i=1;i<=arg_count;i++)
+  {
+    //printf("%p\n", start + (i * sizeof(int)));
+    check_user_program_addresses(start + (i * sizeof(int)));
+  }
 }
 
 static void
