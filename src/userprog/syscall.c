@@ -17,6 +17,8 @@
 static void syscall_handler (struct intr_frame *);
 static void check_user_program_addresses (void *address);
 static struct thread* search_child_list_pid (struct list *child_list, pid_t pid);
+static void check_file (char *file);
+static void check_fd (int fd);
 
 struct lock filesys_lock;
 
@@ -39,72 +41,72 @@ syscall_handler (struct intr_frame *f UNUSED)
   	{
   		/* No arguments */
   		case SYS_HALT:
-        printf("0\n");
+        //printf("0\n");
   			halt ();
         break;
 
   		/* One argument */
   		case SYS_EXIT:
-        printf("1\n");
+        //printf("1\n");
   			exit (deref_address (f->esp, 1, int));
         break;
 
   		case SYS_EXEC:
-        printf("2\n");
+        //printf("2\n");
   			f->eax = exec (deref_address (f->esp, 1, char*));
         break;
 
   		case SYS_WAIT:
-        printf("3\n");
+        //printf("3\n");
   			f->eax = wait (deref_address (f->esp, 1, int));
         break;
 
   		case SYS_REMOVE:
-        printf("4\n");
+        //printf("4\n");
   			f->eax = remove (deref_address (f->esp, 1, char*));
         break;
 
   		case SYS_OPEN:
-        printf("5\n");
+        //printf("5\n");
   			f->eax = open (deref_address (f->esp, 1, char*));
         break;
 
   		case SYS_FILESIZE:
-        printf("6\n");
+        //printf("6\n");
   			f->eax = filesize (deref_address (f->esp, 1, int));
         break;
 
   		case SYS_TELL:
-        printf("7\n");
+        //printf("7\n");
   			f->eax = tell (deref_address (f->esp, 1, int));
         break;
 
   		case SYS_CLOSE:
-        printf("8\n");
+        //printf("8\n");
   			close (deref_address (f->esp, 1, int));
         break;
 
   	    /* Two arguments */
   		case SYS_CREATE:
-        printf("9\n");
+        //printf("9\n");
   			f->eax = create (deref_address (f->esp, 1, char*), deref_address (f->esp, 2, unsigned));
         break;
 
 
   		case SYS_SEEK:
-        printf("10\n");
+        //printf("10\n");
   			seek (deref_address (f->esp, 1, int), deref_address (f->esp, 2, unsigned));
         break;
 
         /* Three arguments */
   		case SYS_READ:
-        printf("11\n");
+        //printf("11\n");
         check_user_program_addresses (deref_address (f->esp, 2, void*));
   			f->eax = read (deref_address (f->esp, 1, int), deref_address (f->esp, 2, void*), deref_address (f->esp, 3, unsigned));
         break;
 
   		case SYS_WRITE:
-        printf("12\n");
+        //printf("12\n");
   			check_user_program_addresses (deref_address (f->esp, 2, void*));
   			f->eax = write (deref_address (f->esp, 1, int), 
         deref_address (f->esp, 2, void*), deref_address (f->esp, 3, unsigned));
@@ -134,6 +136,7 @@ exit (int status)
 pid_t
 exec (const char *file)
 {
+  check_file (file);
   lock_acquire (&filesys_lock);
   tid_t tid = process_execute (file);
   lock_release(&filesys_lock);
@@ -179,8 +182,10 @@ search_child_list_pid (struct list *child_list, pid_t pid)
 bool
 create (const char *file, unsigned initial_size)
 {
+  check_file (file);
   lock_acquire(&filesys_lock);
-  bool result = filesys_create(file, initial_size);
+  check_file(file);
+  bool result = filesys_create (file, initial_size);
   lock_release(&filesys_lock);
   return result;
 }
@@ -188,6 +193,7 @@ create (const char *file, unsigned initial_size)
 bool
 remove (const char *file)
 {
+  check_file (file);
   lock_acquire(&filesys_lock);
   bool result = filesys_remove(file);
   lock_release(&filesys_lock);
@@ -197,9 +203,10 @@ remove (const char *file)
 int
 open (const char *file)
 {
+  check_file (file);
   lock_acquire(&filesys_lock);
   int result = add_file_descriptor (filesys_open(file));
-  printf("new fd assigned: %d\n", result);
+  //printf("new fd assigned: %d\n", result);
   lock_release(&filesys_lock);
   return result;
 }
@@ -207,33 +214,22 @@ open (const char *file)
 int
 filesize (int fd) 
 {
-  off_t length = -1;
-  lock_acquire(&filesys_lock);
-
+  //check_fd (fd);
+  lock_acquire (&filesys_lock);
   struct file *file = get_file_struct(fd);
-
-  if (file != NULL)
-  {
-    length = file_length (get_file_struct (fd));
-  }
-
-  lock_release(&filesys_lock);
+  off_t length = file_length (get_file_struct (fd));
+  lock_release (&filesys_lock);
   return length;
 }
 
 int
 read (int fd, void *buffer, unsigned size)
 {
-  int result = -1;
+  //check_fd (fd);
   lock_acquire(&filesys_lock);
 
   struct file *file = get_file_struct(fd);
-
-  /* error case: no file in fd */
-  if (file != NULL)
-  {
-    result = file_read (get_file_struct (fd), buffer, size);
-  }
+  int result = file_read (get_file_struct (fd), buffer, size);
 
   lock_release(&filesys_lock);
   return result;
@@ -243,8 +239,8 @@ read (int fd, void *buffer, unsigned size)
    Argument size may not equal the size written if space is limited. */
 int
 write (int fd, const void *buffer, unsigned size)
-{
-
+{ 
+  //check_fd (fd);
   lock_acquire(&filesys_lock);
   int size_written = 0;  //Nothing written
 
@@ -273,6 +269,7 @@ write (int fd, const void *buffer, unsigned size)
 void
 seek (int fd, unsigned position) 
 {
+  //check_fd (fd);
   lock_acquire(&filesys_lock);
   struct file *file = get_file_struct(fd);
   file_seek (file, position);
@@ -282,6 +279,7 @@ seek (int fd, unsigned position)
 unsigned
 tell (int fd) 
 {
+  //check_fd (fd);
   struct file *file = get_file_struct(fd);
   return file_tell (file);
 }
@@ -289,6 +287,7 @@ tell (int fd)
 void
 close (int fd)
 {
+  //check_fd (fd);
   lock_acquire(&filesys_lock);
   struct file *file = get_file_struct(fd);
   file_close (file);
@@ -308,4 +307,18 @@ check_user_program_addresses (void *address)
   //if (!is_user_vaddr(address) || pagedir_get_page (thread_current ()->pagedir, address) == NULL)
           //exit (-1);  
 
+}
+
+static void
+check_file (char *file)
+{
+  if (file == NULL || !is_user_vaddr(file) || pagedir_get_page (thread_current ()->pagedir, file) == NULL)
+    exit (-1);
+}
+
+static void
+check_fd (int fd)
+{
+  if (fd < 0 || fd >= MAX_OPEN_FILES || get_file_struct (fd) == NULL)
+    exit (-1);
 }

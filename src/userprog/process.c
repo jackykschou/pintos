@@ -591,14 +591,10 @@ add_file_descriptor (struct file *file)
 void
 remove_file_descriptor (int fd)
 {
-  if (fd == 0 || fd == 1)
-  {
-    printf("file_desc: 0 and 1 are reserved and cannot be modified");
-  }
-  else
-  {
-    thread_current()->file_desc[fd] = NULL;
-  }
+  if (fd != 0 && fd != 1)
+    {
+      thread_current()->file_desc[fd] = NULL;
+    }
 }
 
 /* Check if a file (is opened) exists in a process with a given file descriptor. */
