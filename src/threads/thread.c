@@ -515,6 +515,7 @@ init_thread (struct thread *t, const char *name, int priority)
   #ifdef USERPROG
   list_init (&t->child_list);
   sema_init (&t->wait_sema, 0);
+  memset (t->file_desc, NULL, sizeof (struct file*) * MAX_OPEN_FILES); 
   #endif
 
   list_push_back (&all_list, &t->allelem);

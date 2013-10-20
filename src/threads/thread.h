@@ -6,6 +6,8 @@
 #include <stdint.h>
 #include "threads/synch.h"
 
+#define MAX_OPEN_FILES 128
+
 /* States in a thread's life cycle. */
 enum thread_status
   {
@@ -116,6 +118,7 @@ struct thread
     struct semaphore wait_sema;
     struct thread *child_waiting_for;
     struct thread *parent_thread;
+    struct file *file_desc[MAX_OPEN_FILES];
 
 #endif
 

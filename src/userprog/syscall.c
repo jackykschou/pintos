@@ -9,12 +9,14 @@
 #include "threads/synch.h"
 #include "filesys/file.h"
 #include "filesys/filesys.h"
+#include "userprog/process.h"
 
-#define deref_address(ADDRESS, TYPE)                    \
-        *((TYPE*) (ADDRESS))
+#define deref_address(ADDRESS, OFFSET, TYPE)                    \
+        *(TYPE*)(((uint32_t*)ADDRESS) + OFFSET)
 
 static void syscall_handler (struct intr_frame *);
-static void check_user_program_addresses (int num_args, void* address);
+static void check_user_program_addresses (void *address);
+static struct thread* search_child_list_pid (struct list *child_list, pid_t pid);
 
 struct lock filesys_lock;
 
@@ -33,70 +35,84 @@ syscall_handler (struct intr_frame *f UNUSED)
   // printf("hex %02hhx\n",f->esp);
   // printf("hex star %02hhx\n", *(uint32_t*)(f->esp));
 
-	switch (*(uint32_t*)(f->esp))
+	switch (deref_address (f->esp, 0, uint32_t))
   	{
   		/* No arguments */
   		case SYS_HALT:
+        printf("0\n");
   			halt ();
+        break;
 
   		/* One argument */
   		case SYS_EXIT:
-  			check_user_program_addresses (1, f->esp);
-  			exit (deref_address (f->esp + sizeof (uint32_t), int));
+        printf("1\n");
+  			exit (deref_address (f->esp, 1, int));
+        break;
 
   		case SYS_EXEC:
-  			check_user_program_addresses (1, f->esp);
-  			//exec (deref_address (f->esp + sizeof (uint32_t), char*));
+        printf("2\n");
+  			f->eax = exec (deref_address (f->esp, 1, char*));
+        break;
 
   		case SYS_WAIT:
-  			check_user_program_addresses (1, f->esp);
-  			//wait (f->esp + sizeof (uint32_t));
+        printf("3\n");
+  			f->eax = wait (deref_address (f->esp, 1, int));
+        break;
 
   		case SYS_REMOVE:
-  			check_user_program_addresses (1, f->esp);
-  			remove (f->esp + sizeof (uint32_t));
+        printf("4\n");
+  			f->eax = remove (deref_address (f->esp, 1, char*));
+        break;
 
   		case SYS_OPEN:
-  			check_user_program_addresses (1, f->esp);
-  			open (f->esp + sizeof (uint32_t));
+        printf("5\n");
+  			f->eax = open (deref_address (f->esp, 1, char*));
+        break;
 
   		case SYS_FILESIZE:
-  			check_user_program_addresses (1, f->esp);
-  			//filesize (f->esp + sizeof (uint32_t));
+        printf("6\n");
+  			f->eax = filesize (deref_address (f->esp, 1, int));
+        break;
 
   		case SYS_TELL:
-  			check_user_program_addresses (1, f->esp);
-  			//tell (f->esp + sizeof (uint32_t));
+        printf("7\n");
+  			f->eax = tell (deref_address (f->esp, 1, int));
+        break;
 
   		case SYS_CLOSE:
-  			check_user_program_addresses (1, f->esp);
-  			//close (f->esp + sizeof (uint32_t));
+        printf("8\n");
+  			close (deref_address (f->esp, 1, int));
+        break;
 
   	    /* Two arguments */
   		case SYS_CREATE:
-  			check_user_program_addresses (2, f->esp);
-  			//create (f->esp + sizeof (uint32_t), f->esp + sizeof (uint32_t) * 2);
+        printf("9\n");
+  			f->eax = create (deref_address (f->esp, 1, char*), deref_address (f->esp, 2, unsigned));
+        break;
+
 
   		case SYS_SEEK:
-  			check_user_program_addresses (2, f->esp);
-  			seek (f->esp + sizeof (uint32_t), f->esp + sizeof (uint32_t) * 2);
+        printf("10\n");
+  			seek (deref_address (f->esp, 1, int), deref_address (f->esp, 2, unsigned));
+        break;
 
         /* Three arguments */
   		case SYS_READ:
-  			check_user_program_addresses (3, f->esp);
-  			//read (f->esp + sizeof (uint32_t), f->esp + sizeof (uint32_t) * 2, f->esp + sizeof (uint32_t) * 3);
+        printf("11\n");
+        check_user_program_addresses (deref_address (f->esp, 2, void*));
+  			f->eax = read (deref_address (f->esp, 1, int), deref_address (f->esp, 2, void*), deref_address (f->esp, 3, unsigned));
+        break;
 
   		case SYS_WRITE:
-  			check_user_program_addresses (3, f->esp);
-  			f->eax = write (deref_address (f->esp + sizeof (uint32_t), int), 
-          deref_address (f->esp + sizeof (uint32_t) * 2, void*), deref_address (f->esp + sizeof (uint32_t) * 3, unsigned));
+        printf("12\n");
+  			check_user_program_addresses (deref_address (f->esp, 2, void*));
+  			f->eax = write (deref_address (f->esp, 1, int), 
+        deref_address (f->esp, 2, void*), deref_address (f->esp, 3, unsigned));
+        break;
 
       default:
       	break;
   	}
-
-    return;
-
 }
 
 void
@@ -115,23 +131,56 @@ exit (int status)
 	NOT_REACHED ();
 }
 
-// pid_t
-// exec (const char *file)
-// {
-//   return NULL;
-// }
+pid_t
+exec (const char *file)
+{
+  lock_acquire (&filesys_lock);
+  tid_t tid = process_execute (file);
+  lock_release(&filesys_lock);
+  if (tid == TID_ERROR)
+    return -1;
+  else
+    return tid;
+}
 
-// int
-// wait (pid_t pid)
-// {
+int
+wait (pid_t pid)
+{
+  struct thread *child_thread = search_child_list_pid (&thread_current ()->child_list, pid);
+  if (child_thread == NULL)
+    {
+      return -1;
+    }
+  else
+    {
+      thread_current ()->child_waiting_for = child_thread;
+      sema_down (&thread_current ()->wait_sema);
+      return child_thread->exit_status;
+    } 
+}
 
-// }
+static struct thread*
+search_child_list_pid (struct list *child_list, pid_t pid)
+{
+  struct list_elem *e;
+
+  for (e = list_begin (child_list); e != list_end (child_list);
+       e = list_next (e))
+    {
+      struct thread *t = list_entry (e, struct thread, child_elem);
+      if (t->pid == pid)
+        {
+          return t;
+        }
+    }
+    return NULL;
+}
 
 bool
 create (const char *file, unsigned initial_size)
 {
   lock_acquire(&filesys_lock);
-  bool result = filesys_create(*file, initial_size);
+  bool result = filesys_create(file, initial_size);
   lock_release(&filesys_lock);
   return result;
 }
@@ -140,7 +189,7 @@ bool
 remove (const char *file)
 {
   lock_acquire(&filesys_lock);
-  bool result = filesys_remove(*file);
+  bool result = filesys_remove(file);
   lock_release(&filesys_lock);
   return result;
 }
@@ -149,26 +198,46 @@ int
 open (const char *file)
 {
   lock_acquire(&filesys_lock);
-  int result = filesys_open(*file);
+  int result = add_file_descriptor (filesys_open(file));
+  printf("new fd assigned: %d\n", result);
   lock_release(&filesys_lock);
   return result;
 }
 
-// int
-// filesize (int fd) 
-// {
-//   return NULL;
-// }
+int
+filesize (int fd) 
+{
+  off_t length = -1;
+  lock_acquire(&filesys_lock);
 
-// int
-// read (int fd, void *buffer, unsigned size)
-// {
-//   int result = -1;
-//   lock_acquire(&filesys_lock);
-//   result = file_read(*file, *buffer, size);
-//   lock_release(&filesys_lock);
-//   return result;
-// }
+  struct file *file = get_file_struct(fd);
+
+  if (file != NULL)
+  {
+    length = file_length (get_file_struct (fd));
+  }
+
+  lock_release(&filesys_lock);
+  return length;
+}
+
+int
+read (int fd, void *buffer, unsigned size)
+{
+  int result = -1;
+  lock_acquire(&filesys_lock);
+
+  struct file *file = get_file_struct(fd);
+
+  /* error case: no file in fd */
+  if (file != NULL)
+  {
+    result = file_read (get_file_struct (fd), buffer, size);
+  }
+
+  lock_release(&filesys_lock);
+  return result;
+}
 
 /* Writes to open file or console. Returns the size of what was written. 
    Argument size may not equal the size written if space is limited. */
@@ -179,17 +248,23 @@ write (int fd, const void *buffer, unsigned size)
   lock_acquire(&filesys_lock);
   int size_written = 0;  //Nothing written
 
-    // // /* Write to File (STDIN_FILENO) */
-    // // if(fd == 0)
-    // // {
-    // //   size_written = file_write( ,*buffer, size);  //Needs file name
-    // // }
-    /* Write to Console (STDOUT_FILENO) */
-    if(fd == 1) 
-      { 
-        putbuf(buffer, size);
-        size_written = size;  //Entire buffer written to console
-      }
+  struct file *file = get_file_struct(fd);
+  
+  /* Write to File (STDIN_FILENO) */
+  // if(fd == 0)
+  //   {
+  //     size_written = file_write(file, buffer, size);  //Needs file name
+  //   }
+  /* Write to Console (STDOUT_FILENO) */
+  if(fd == 1) 
+    { 
+      putbuf (buffer, size);
+      size_written = size;  //Entire buffer written to console
+    }
+  else if (fd > 1)
+    {
+      size_written = file_write(file, buffer, size);  //Needs file name
+    }
 
   lock_release(&filesys_lock);
   return size_written;
@@ -198,76 +273,39 @@ write (int fd, const void *buffer, unsigned size)
 void
 seek (int fd, unsigned position) 
 {
-  return NULL;
+  lock_acquire(&filesys_lock);
+  struct file *file = get_file_struct(fd);
+  file_seek (file, position);
+  lock_release(&filesys_lock);
 }
 
-// unsigned
-// tell (int fd) 
-// {
-//   return NULL;
-// }
+unsigned
+tell (int fd) 
+{
+  struct file *file = get_file_struct(fd);
+  return file_tell (file);
+}
 
-// void
-// close (int fd)
-// {
-//   return NULL;
-// }
-
-// mapid_t
-// mmap (int fd, void *addr)
-// {
-//   return NULL;
-// }
-
-// void
-// munmap (mapid_t mapid)
-// {
-//   return NULL;
-// }
-
-// bool
-// chdir (const char *dir)
-// {
-//   return NULL;
-// }
-
-// bool
-// mkdir (const char *dir)
-// {
-//   return NULL;
-// }
-
-// bool
-// readdir (int fd, char name[READDIR_MAX_LEN + 1]) 
-// {
-//   return NULL;
-// }
-
-// bool
-// isdir (int fd) 
-// {
-//   return NULL;
-// }
-
-// int
-// inumber (int fd) 
-// {
-//   return NULL;
-// }
-
+void
+close (int fd)
+{
+  lock_acquire(&filesys_lock);
+  struct file *file = get_file_struct(fd);
+  file_close (file);
+  remove_file_descriptor (fd);
+  lock_release(&filesys_lock);
+}
 
 static void
-check_user_program_addresses (int num_args, void* address)
+check_user_program_addresses (void *address)
 {
-	int i = 1;
-	for (; i <= num_args; ++i)
-		{
-			if ((address + i * sizeof (uint32_t)) == NULL || !is_user_vaddr(address + i * sizeof (uint32_t)) 
-				|| pagedir_get_page (thread_current ()->pagedir, address + i * sizeof (uint32_t)) == NULL){
+  // printf("1 %d\n", address);
+  // printf("1 %p\n", address);
 
-          printf("failed user addr check");
-          exit (-1);    
+  // printf("2 %d\n", pagedir_get_page (thread_current ()->pagedir, address));
+  // printf("2 %p\n", pagedir_get_page (thread_current ()->pagedir, address));
 
-      }
-		}
+  //if (!is_user_vaddr(address) || pagedir_get_page (thread_current ()->pagedir, address) == NULL)
+          //exit (-1);  
+
 }

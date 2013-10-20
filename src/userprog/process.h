@@ -8,4 +8,10 @@ int process_wait (tid_t);
 void process_exit (void);
 void process_activate (void);
 
+/* File descriptor operations */
+char* get_file_name (int fd);
+struct file* get_file_struct (int fd);
+int add_file_descriptor (struct file *file);
+void remove_file_descriptor (int fd);
+
 #endif /* userprog/process.h */

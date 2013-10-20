@@ -22,8 +22,7 @@
 
 static thread_func start_process NO_RETURN;
 static bool load (const char *cmdline, void (**eip) (void), void **esp);
-static struct thread* search_child_list (struct list *child_list, pid_t pid);
-// static void push_argvs (void**esp, char *token, char *save_ptr, int *argc);
+static struct thread* search_child_list_tid (struct list *child_list, tid_t tid);
 
 /* Starts a new thread running a user program loaded from
    FILENAME.  The new thread may be scheduled (and may even exit)
@@ -97,7 +96,7 @@ start_process (void *file_name_)
 int
 process_wait (tid_t child_tid UNUSED) 
 {
-  struct thread *child_thread = search_child_list (&thread_current ()->child_list, child_tid);
+  struct thread *child_thread = search_child_list_tid (&thread_current ()->child_list, child_tid);
   if (child_thread == NULL)
     {
       return -1;
@@ -111,7 +110,7 @@ process_wait (tid_t child_tid UNUSED)
 }
 
 static struct thread*
-search_child_list (struct list *child_list, pid_t pid)
+search_child_list_tid (struct list *child_list, tid_t tid)
 {
   struct list_elem *e;
 
@@ -119,7 +118,7 @@ search_child_list (struct list *child_list, pid_t pid)
        e = list_next (e))
     {
       struct thread *t = list_entry (e, struct thread, child_elem);
-      if (t->pid == pid)
+      if (t->tid == tid)
         {
           return t;
         }
@@ -558,4 +557,53 @@ install_page (void *upage, void *kpage, bool writable)
      address, then map our page there. */
   return (pagedir_get_page (t->pagedir, upage) == NULL
           && pagedir_set_page (t->pagedir, upage, kpage, writable));
+}
+
+/* Return the file pointer at the specified index */
+struct file*
+get_file_struct (int fd)
+{
+  return thread_current()->file_desc[fd];
+}
+
+/* Add a fd pointer to the file given, using the next available space. Returns the index of the file descriptor*/
+int
+add_file_descriptor (struct file *file)
+{
+  if (file == NULL)
+    return -1;
+
+  /* 0 and 1 are reserved - can't put files here */
+  int fd;
+  for (fd = 2; fd < MAX_OPEN_FILES; fd++)
+  {
+    /* if the current pointer is null, we can put the file ptr here */
+    if (thread_current()->file_desc[fd] == NULL)
+    {
+      thread_current()->file_desc[fd] = file;
+      return fd;
+    }
+  }
+  return -1;
+}
+
+/* Remove the ptr to a file at the specified file_desc index */
+void
+remove_file_descriptor (int fd)
+{
+  if (fd == 0 || fd == 1)
+  {
+    printf("file_desc: 0 and 1 are reserved and cannot be modified");
+  }
+  else
+  {
+    thread_current()->file_desc[fd] = NULL;
+  }
+}
+
+/* Check if a file (is opened) exists in a process with a given file descriptor. */
+bool
+check_file_descriptor (int fd)
+{
+  return thread_current ()->file_desc[fd] != NULL;
 }
