@@ -224,6 +224,7 @@ open (const char *file)
   check_file (file);
   lock_acquire(&filesys_lock);
   int result = add_file_descriptor (filesys_open(file));
+  printf("new fd assigned: %d\n", result);
   lock_release(&filesys_lock);
   return result;
 }

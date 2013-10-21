@@ -224,6 +224,7 @@ open (const char *file)
   check_file (file);
   lock_acquire(&filesys_lock);
   int result = add_file_descriptor (filesys_open(file));
+  printf("new fd assigned: %d\n", result);
   lock_release(&filesys_lock);
   return result;
 }
@@ -341,5 +342,8 @@ static void
 check_fd (int fd)
 {
   if (fd < 0 || fd >= MAX_OPEN_FILES || get_file_struct (fd) == NULL)
+  {
+    printf("bye bye\n");
     exit (-1);
+  }
 }

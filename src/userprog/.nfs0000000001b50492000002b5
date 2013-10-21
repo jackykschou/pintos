@@ -117,15 +117,14 @@ syscall_handler (struct intr_frame *f UNUSED)
   		case SYS_READ:
         //printf("11\n");
         check_stack_argument_addresses (f->esp, 3);
+        check_user_program_addresses (deref_address (f->esp, 2, void*));
   			f->eax = read (deref_address (f->esp, 1, int), deref_address (f->esp, 2, void*), deref_address (f->esp, 3, unsigned));
         break;
 
   		case SYS_WRITE:
         //printf("12\n");
         check_stack_argument_addresses (f->esp, 3);
-        if (deref_address (f->esp, 2, void*) == NULL || !is_user_vaddr(deref_address (f->esp, 2, void*)) 
-          || pagedir_get_page (thread_current ()->pagedir, deref_address (f->esp, 2, void*)) == NULL)
-          exit (-1); 
+  			check_user_program_addresses (deref_address (f->esp, 2, void*));
   			f->eax = write (deref_address (f->esp, 1, int), 
         deref_address (f->esp, 2, void*), deref_address (f->esp, 3, unsigned));
         break;
@@ -224,6 +223,7 @@ open (const char *file)
   check_file (file);
   lock_acquire(&filesys_lock);
   int result = add_file_descriptor (filesys_open(file));
+  //printf("new fd assigned: %d\n", result);
   lock_release(&filesys_lock);
   return result;
 }
@@ -231,7 +231,7 @@ open (const char *file)
 int
 filesize (int fd) 
 {
-  check_fd (fd);
+  //check_fd (fd);
   lock_acquire (&filesys_lock);
   struct file *file = get_file_struct(fd);
   off_t length = file_length (get_file_struct (fd));
@@ -242,7 +242,7 @@ filesize (int fd)
 int
 read (int fd, void *buffer, unsigned size)
 {
-  check_fd (fd);
+  //check_fd (fd);
   lock_acquire(&filesys_lock);
 
   struct file *file = get_file_struct(fd);
@@ -257,16 +257,18 @@ read (int fd, void *buffer, unsigned size)
 int
 write (int fd, const void *buffer, unsigned size)
 { 
-  if (fd != 0 && fd != 1)
-    check_fd (fd);
-  else if (fd == 0)
-    exit (-1);
-
+  //check_fd (fd);
   lock_acquire(&filesys_lock);
   int size_written = 0;  //Nothing written
+
   struct file *file = get_file_struct(fd);
   
-  
+  /* Write to File (STDIN_FILENO) */
+  // if(fd == 0)
+  //   {
+  //     size_written = file_write(file, buffer, size);  //Needs file name
+  //   }
+  /* Write to Console (STDOUT_FILENO) */
   if(fd == 1) 
     { 
       putbuf (buffer, size);
@@ -302,7 +304,7 @@ tell (int fd)
 void
 close (int fd)
 {
-  check_fd (fd);
+  //check_fd (fd);
   lock_acquire(&filesys_lock);
   struct file *file = get_file_struct(fd);
   file_close (file);
