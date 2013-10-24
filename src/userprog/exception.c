@@ -80,8 +80,7 @@ kill (struct intr_frame *f)
      exceptions back to the process via signals, but we don't
      implement them. */
   
-  if (thread_current ()->parent_thread->child_waiting_for == thread_current ())
-    thread_current ()->parent_thread->child_exit_status = -1;
+  thread_current ()->wait_node->exit_status = -1;
 
   /* The interrupt frame's code segment value tells us where the
      exception originated. */

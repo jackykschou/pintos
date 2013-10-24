@@ -28,14 +28,6 @@ typedef int pid_t;
 #define PRI_DEFAULT 31                  /* Default priority. */
 #define PRI_MAX 63                      /* Highest priority. */
 
-struct wait_node
-  {
-    pid_t pid;
-    int exit_status;
-    struct semaphore wait_sema;
-    struct list_elem elem;
-  };
-
 /* A kernel thread or user process.
 
    Each thread structure is stored in its own 4 kB page.  The
@@ -120,11 +112,17 @@ struct thread
     uint32_t *pagedir;                  /* Page directory. */
 
     pid_t pid;
-    struct list child_wait_node_list;
-    struct semaphore load_sema;
+    struct list child_list;
+    struct list_elem child_elem;
+    int child_exit_status;
+    struct semaphore wait_sema;
+    struct semaphore exec_sema;
+    {
+      /* data */
+    };
+    struct thread *child_waiting_for;
     struct thread *parent_thread;
     struct file *file_desc[MAX_OPEN_FILES];
-    struct wait_node *wait_node;
 
     bool load_success;
 #endif

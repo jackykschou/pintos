@@ -16,121 +16,134 @@
 
 static void syscall_handler (struct intr_frame *);
 static void check_user_program_addresses (void *address);
-static struct wait_node* search_child_wait_node_list (struct list *child_wait_node_list, pid_t pid);
-static void free_child_wait_node_list (struct list *child_wait_node_list);
+static struct thread* search_child_list_pid (struct list *child_list, pid_t pid);
 static void check_file (char *file);
 static void check_fd (int fd);
 
 struct lock filesys_lock;
+bool print_syscalls;
 
 void
 syscall_init (void) 
 {
   lock_init (&filesys_lock);
+  print_syscalls = true;
   intr_register_int (0x30, 3, INTR_ON, syscall_handler, "syscall");
 }
 
 static void
 syscall_handler (struct intr_frame *f UNUSED) 
 {
-	//printf ("system call!\n");
+        //printf ("system call!\n");
 
   // printf("hex %02hhx\n",f->esp);
   // printf("hex star %02hhx\n", *(uint32_t*)(f->esp));
 
   /* Check the validity of the syscall number */
   check_user_program_addresses (f->esp);
-  
-	switch (deref_address (f->esp, 0, uint32_t))
-  	{
-  		/* No arguments */
-  		case SYS_HALT:
+
+        switch (deref_address (f->esp, 0, uint32_t))
+          {
+                  /* No arguments */
+                  case SYS_HALT:
         //printf("0\n");
-  			halt ();
+                          halt ();
         break;
 
-  		/* One argument */
-  		case SYS_EXIT:
-        // printf("exit\n");
+                  /* One argument */
+                  case SYS_EXIT:
+        //printf("exit\n");
         //We are checking the addresses of arguments for validity
         check_stack_argument_addresses (f->esp, 1);
         //printf("checked2\n");
-  			exit (deref_address (f->esp, 1, int));
+                          exit (deref_address (f->esp, 1, int));
         break;
 
-  		case SYS_EXEC:
-        // printf("2\n");
+                  case SYS_EXEC:
         check_stack_argument_addresses (f->esp, 1);
-  			f->eax = exec (deref_address (f->esp, 1, char*));
+        if(print_syscalls)
+          printf("exec: (%s)\n", deref_address (f->esp, 1, char*));
+                          f->eax = exec (deref_address (f->esp, 1, char*));
         break;
 
-  		case SYS_WAIT:
-        // printf("3\n");
+                  case SYS_WAIT:
         check_stack_argument_addresses (f->esp, 1);
-  			f->eax = wait (deref_address (f->esp, 1, int));
+        if(print_syscalls)
+          printf("wait: (%d)\n", deref_address (f->esp, 1, int));
+                          f->eax = wait (deref_address (f->esp, 1, int));
         break;
 
-  		case SYS_REMOVE:
-        // printf("4\n");
+                  case SYS_REMOVE:
         check_stack_argument_addresses (f->esp, 1);
-  			f->eax = remove (deref_address (f->esp, 1, char*));
+        if(print_syscalls)
+          printf("remove: (%s)\n", deref_address (f->esp, 1, char*));
+                          f->eax = remove (deref_address (f->esp, 1, char*));
         break;
 
-  		case SYS_OPEN:
-        // printf("5\n");
+                  case SYS_OPEN:
         check_stack_argument_addresses (f->esp, 1);
-  			f->eax = open (deref_address (f->esp, 1, char*));
+        if(print_syscalls)
+          printf("open: (%s)\n", deref_address (f->esp, 1, char*));
+                          f->eax = open (deref_address (f->esp, 1, char*));
         break;
 
-  		case SYS_FILESIZE:
-        // printf("6\n");
+                  case SYS_FILESIZE:
         check_stack_argument_addresses (f->esp, 1);
-  			f->eax = filesize (deref_address (f->esp, 1, int));
+        if(print_syscalls)
+          printf("filesize: (%d)\n", deref_address (f->esp, 1, int));
+                          f->eax = filesize (deref_address (f->esp, 1, int));
         break;
 
-  		case SYS_TELL:
-        // printf("7\n");
+                  case SYS_TELL:
         check_stack_argument_addresses (f->esp, 1);
-  			f->eax = tell (deref_address (f->esp, 1, int));
+        if(print_syscalls)
+          printf("tell: (%d)\n", deref_address (f->esp, 1, int));
+                          f->eax = tell (deref_address (f->esp, 1, int));
         break;
 
-  		case SYS_CLOSE:
-        // printf("8\n");
+                  case SYS_CLOSE:
         check_stack_argument_addresses (f->esp, 1);
-  			close (deref_address (f->esp, 1, int));
+        if(print_syscalls)
+          printf("close: (%d)\n", deref_address (f->esp, 1, int));
+                          close (deref_address (f->esp, 1, int));
         break;
 
-  	    /* Two arguments */
-  		case SYS_CREATE:
-        // printf("9\n");
+              /* Two arguments */
+                  case SYS_CREATE:
         check_stack_argument_addresses (f->esp, 2);
-  			f->eax = create (deref_address (f->esp, 1, char*), deref_address (f->esp, 2, unsigned));
+        if(print_syscalls)
+          printf("create: (%s, %d)\n", deref_address (f->esp, 1, char*), deref_address (f->esp, 2, unsigned));
+                          f->eax = create (deref_address (f->esp, 1, char*), deref_address (f->esp, 2, unsigned));
         break;
 
-
-  		case SYS_SEEK:
-        // printf("10\n");
-        check_stack_argument_addresses (f->esp, 2); 
-  			seek (deref_address (f->esp, 1, int), deref_address (f->esp, 2, unsigned));
+                  case SYS_SEEK:
+        check_stack_argument_addresses (f->esp, 2);
+        if(print_syscalls)
+          printf("close: (%d)\n", deref_address (f->esp, 1, unsigned));
+                          seek (deref_address (f->esp, 1, int), deref_address (f->esp, 2, unsigned));
         break;
 
         /* Three arguments */
-  		case SYS_READ:
-        // printf("11\n");
+                  case SYS_READ:
         check_stack_argument_addresses (f->esp, 3);
-  			f->eax = read (deref_address (f->esp, 1, int), deref_address (f->esp, 2, void*), deref_address (f->esp, 3, unsigned));
+        if(print_syscalls)
+          printf("read: (%d, %p, %d)\n", deref_address (f->esp, 1, int), deref_address (f->esp, 2, void*), deref_address (f->esp, 3, unsigned));
+        check_user_program_addresses (deref_address (f->esp, 2, void*));
+                          f->eax = read (deref_address (f->esp, 1, int), deref_address (f->esp, 2, void*), deref_address (f->esp, 3, unsigned));
         break;
 
-  		case SYS_WRITE:
-        // printf("12\n");
+                  case SYS_WRITE:
         check_stack_argument_addresses (f->esp, 3);
-  			f->eax = write (deref_address (f->esp, 1, int), 
-        deref_address (f->esp, 2, void*), deref_address (f->esp, 3, unsigned));
+        if(print_syscalls)
+          printf("write: (%d, %p, %d)\n", deref_address (f->esp, 1, int), deref_address (f->esp, 2, void*), deref_address (f->esp, 3, unsigned));
+                          f->eax = write (deref_address (f->esp, 1, int), deref_address (f->esp, 2, void*), deref_address (f->esp, 3, unsigned));
+        //hex_dump (f->esp, f->esp, 0xc0000000 - f->esp, 1);
+
         break;
 
       default:
-      	break;
-  	}
+              break;
+          }
 }
 
 void
@@ -143,9 +156,9 @@ halt (void)
 void
 exit (int status)
 {
-  thread_current ()->wait_node->exit_status = status;
+  if (thread_current ()->parent_thread->child_waiting_for == thread_current ())
+    thread_current ()->parent_thread->child_exit_status = status;
   printf ("%s: exit(%d)\n", thread_current ()->name,status);  //need name of process
-  free_child_wait_node_list (&thread_current ()->child_wait_node_list);
   thread_exit ();
 	NOT_REACHED ();
 }
@@ -159,11 +172,12 @@ exec (const char *file)
   tid_t tid = process_execute (file);
   // printf("thread %d going to sleep\n", thread_current ()->tid);
   lock_release(&filesys_lock);
-  sema_down (&(thread_current ()->load_sema));
+  sema_down (&(thread_current ()->exec_sema));
 
    // printf("thread %d load success? %d\n", thread_current ()->tid, thread_current ()->load_success);
 
   if (tid == TID_ERROR || !thread_current ()->load_success)
+  // if (tid == TID_ERROR)
     return -1;
   else
     return tid;
@@ -172,50 +186,37 @@ exec (const char *file)
 int
 wait (pid_t pid)
 {
-  // printf("arg: %d\n", pid);
-  struct wait_node *child_wait_node = search_child_wait_node_list (&thread_current ()->child_wait_node_list, pid);
-  if (child_wait_node == NULL)
+  printf("arg: %d\n", pid);
+  struct thread *child_thread = search_child_list_pid (&thread_current ()->child_list, pid);
+  if (child_thread == NULL)
     {
+      printf("wrong!\n");
       return -1;
     }
   else
     {
-      sema_down (&child_wait_node->wait_sema);
-      list_remove (&child_wait_node->elem);
-      int exit_status = child_wait_node->exit_status;
-      free (child_wait_node);
-      return exit_status;
+      // printf("wait for child: %d\n", pid);
+      thread_current ()->child_waiting_for = child_thread;
+      sema_down (&thread_current ()->wait_sema);
+      return thread_current ()->child_exit_status;
     } 
 }
 
-static struct wait_node*
-search_child_wait_node_list (struct list *child_wait_node_list, pid_t pid)
+static struct thread*
+search_child_list_pid (struct list *child_list, pid_t pid)
 {
   struct list_elem *e;
 
-  for (e = list_begin (child_wait_node_list); e != list_end (child_wait_node_list);
+  for (e = list_begin (child_list); e != list_end (child_list);
        e = list_next (e))
     {
-      struct wait_node *n = list_entry (e, struct wait_node, elem);
-      if (n->pid == pid)
+      struct thread *t = list_entry (e, struct thread, child_elem);
+      if (t->pid == pid)
         {
-          return n;
+          return t;
         }
     }
     return NULL;
-}
-
-static void
-free_child_wait_node_list (struct list *child_wait_node_list)
-{
-  struct list_elem *e;
-
-  for (e = list_begin (child_wait_node_list); e != list_end (child_wait_node_list);
-       e = list_next (e))
-    {
-      struct wait_node *n = list_entry (e, struct wait_node, elem);
-      free (n);      
-    }
 }
 
 bool

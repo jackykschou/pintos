@@ -188,14 +188,7 @@ thread_create (const char *name, int priority,
 
   #ifdef USERPROG
   t->pid = tid;
-
-  struct wait_node *n = (struct wait_node*) malloc (sizeof (struct wait_node));
-  t->wait_node = n;
-  n->pid = t->pid;
-  sema_init (&n->wait_sema, 0);
-
-  list_push_back (&thread_current ()->child_wait_node_list, &n->elem);
-
+  list_push_back (&thread_current ()->child_list, &t->child_elem);
   t->parent_thread = thread_current ();
   #endif
 
@@ -317,7 +310,9 @@ thread_exit (void)
      and schedule another process.  That process will destroy us
      when it calls thread_schedule_tail(). */
   intr_disable ();
-  sema_up (&thread_current ()->wait_node->wait_sema);
+  if ((thread_current ()->parent_thread->child_waiting_for) == thread_current ())
+    sema_up (&thread_current ()->parent_thread->wait_sema);
+  list_remove (&thread_current ()->child_elem);
   list_remove (&thread_current()->allelem);
   thread_current ()->status = THREAD_DYING;
   schedule ();
@@ -517,9 +512,10 @@ init_thread (struct thread *t, const char *name, int priority)
   t->thread_waiting_for = NULL;
 
   #ifdef USERPROG
-  list_init (&t->child_wait_node_list);
-  sema_init (&t->load_sema, 0);
-  t->load_success = -1;
+  list_init (&t->child_list);
+  sema_init (&t->wait_sema, 0);
+  sema_init (&t->exec_sema, 0);
+  t->load_success = false;
   memset (t->file_desc, NULL, sizeof (struct file*) * MAX_OPEN_FILES); 
   #endif
 
@@ -676,5 +672,18 @@ thread_pop_list_first_highest_priority (struct list *l)
 
   return t;
 }
+
+// bool
+// thread_check_load_success (tid_t tid)
+// {
+//   ASSERT (!list_empty (&all_list));
+
+//   struct list_elem *e;
+  
+//   for (e = list_begin (&all_list); e != list_end (&all_list); e = list_next (e))
+//     if ((list_entry (e, struct thread, elem)->tid) == tid)
+//       return list_entry (e, struct thread, elem)->load_success;
+//   NOT_REACHED ();
+// }
 
 /* ******************************End of newly added functions****************************** */

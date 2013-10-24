@@ -22,7 +22,7 @@
 
 static thread_func start_process NO_RETURN;
 static bool load (const char *cmdline, void (**eip) (void), void **esp);
-static struct wait_node* search_child_wait_node_list (struct list *child_wait_node_list, pid_t pid);
+static struct thread* search_child_list_tid (struct list *child_list, tid_t tid);
 
 /* Starts a new thread running a user program loaded from
    FILENAME.  The new thread may be scheduled (and may even exit)
@@ -91,11 +91,11 @@ start_process (void *file_name_)
 
   success = load (file_name, &if_.eip, &if_.esp);
   
-  thread_current ()->parent_thread->load_success = success;
+  // thread_current ()->parent_thread->load_success = success;
 
   // printf("thread %d finish load\n", thread_current ()->pid);
   // printf("thread %d parent_thread id: %d\n", thread_current ()->pid, thread_current ()->parent_thread->pid);
-  sema_up (&(thread_current ()->parent_thread->load_sema));
+  // sema_up (&(thread_current ()->parent_thread->wait_sema));
 
   /* If load failed, quit. */
   palloc_free_page (file_name);
@@ -128,33 +128,31 @@ start_process (void *file_name_)
 int
 process_wait (tid_t child_tid UNUSED) 
 {
-  struct wait_node *child_wait_node = search_child_wait_node_list (&thread_current ()->child_wait_node_list, child_tid);
-  if (child_wait_node == NULL)
+  struct thread *child_thread = search_child_list_tid (&thread_current ()->child_list, child_tid);
+  if (child_thread == NULL)
     {
       return -1;
     }
   else
     {
-      sema_down (&child_wait_node->wait_sema);
-      list_remove (&child_wait_node->elem);
-      int exit_status = child_wait_node->exit_status;
-      free (child_wait_node);
-      return exit_status;
+      thread_current ()->child_waiting_for = child_thread;
+      sema_down (&thread_current ()->wait_sema);
+      return thread_current ()->child_exit_status;
     }
 }
 
-static struct wait_node*
-search_child_wait_node_list (struct list *child_wait_node_list, pid_t tid)
+static struct thread*
+search_child_list_tid (struct list *child_list, tid_t tid)
 {
   struct list_elem *e;
 
-  for (e = list_begin (child_wait_node_list); e != list_end (child_wait_node_list);
+  for (e = list_begin (child_list); e != list_end (child_list);
        e = list_next (e))
     {
-      struct wait_node *n = list_entry (e, struct wait_node, elem);
-      if (n->pid == tid)
+      struct thread *t = list_entry (e, struct thread, child_elem);
+      if (t->tid == tid)
         {
-          return n;
+          return t;
         }
     }
     return NULL;
