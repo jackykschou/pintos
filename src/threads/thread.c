@@ -672,4 +672,17 @@ thread_pop_list_first_highest_priority (struct list *l)
   return t;
 }
 
+// bool
+// thread_check_load_success (tid_t tid)
+// {
+//   ASSERT (!list_empty (&all_list));
+
+//   struct list_elem *e;
+  
+//   for (e = list_begin (&all_list); e != list_end (&all_list); e = list_next (e))
+//     if ((list_entry (e, struct thread, elem)->tid) == tid)
+//       return list_entry (e, struct thread, elem)->load_success;
+//   NOT_REACHED ();
+// }
+
 /* ******************************End of newly added functions****************************** */

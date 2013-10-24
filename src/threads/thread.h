@@ -114,7 +114,7 @@ struct thread
     pid_t pid;
     struct list child_list;
     struct list_elem child_elem;
-    int exit_status;
+    int child_exit_status;
     struct semaphore wait_sema;
     struct thread *child_waiting_for;
     struct thread *parent_thread;
@@ -165,5 +165,6 @@ int thread_get_load_avg (void);
 /* Newly add function declaration. */
 struct thread *thread_get_first_list_highest_priority (struct list *l);
 struct thread *thread_pop_list_first_highest_priority (struct list *l);
+bool thread_check_load_success (tid_t tid);
 
 #endif /* threads/thread.h */

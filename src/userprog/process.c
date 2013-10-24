@@ -31,24 +31,32 @@ static struct thread* search_child_list_tid (struct list *child_list, tid_t tid)
 tid_t
 process_execute (const char *file_name) 
 {
-  char *fn_copy;
+  char *fn_copy, *fn_copy2;
   tid_t tid;
 
-  /* Make a copy of FILE_NAME.
+
+  /* Make a copies of FILE_NAME.
      Otherwise there's a race between the caller and load(). */
   fn_copy = palloc_get_page (0);
-  if (fn_copy == NULL)
+  fn_copy2 = palloc_get_page (0);
+
+  if (fn_copy == NULL || fn_copy2 == NULL)
     return TID_ERROR;
+
   strlcpy (fn_copy, file_name, PGSIZE);
+  strlcpy (fn_copy2, file_name, PGSIZE);
 
   char *program_name, *save_ptr;
-  program_name = strtok_r (file_name, " ", &save_ptr);
-
+  program_name = strtok_r (fn_copy2, " ", &save_ptr);
   /* Create a new thread to execute FILE_NAME. */
   tid = thread_create (program_name, PRI_DEFAULT, start_process, fn_copy);
 
   if (tid == TID_ERROR)
+  {
     palloc_free_page (fn_copy); 
+    palloc_free_page (fn_copy2);
+  }
+
   return tid;
 }
 
@@ -72,7 +80,11 @@ start_process (void *file_name_)
   /* If load failed, quit. */
   palloc_free_page (file_name);
   if (!success) 
+  {
     thread_exit ();
+  }
+
+  //sema_up (&thread_current ()->parent_thread->wait_sema);
 
   /* Start the user process by simulating a return from an
      interrupt, implemented by intr_exit (in
@@ -105,7 +117,7 @@ process_wait (tid_t child_tid UNUSED)
     {
       thread_current ()->child_waiting_for = child_thread;
       sema_down (&thread_current ()->wait_sema);
-      return child_thread->exit_status;
+      return thread_current ()->child_exit_status;
     }
 }
 
@@ -352,10 +364,15 @@ load (const char *file_name, void (**eip) (void), void **esp)
 
   success = true;
 
+
  done:
   /* We arrive here whether the load is successful or not. */
+
   palloc_free_page (file_name_cpy); 
-  file_close (file);
+  if(success)
+    file_deny_write(file);
+  else
+    file_close (file);
   return success;
 }
 

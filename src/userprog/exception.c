@@ -4,6 +4,7 @@
 #include "userprog/gdt.h"
 #include "threads/interrupt.h"
 #include "threads/thread.h"
+#include "userprog/syscall.h"
 
 /* Number of page faults processed. */
 static long long page_fault_cnt;
@@ -78,8 +79,9 @@ kill (struct intr_frame *f)
      the kernel.  Real Unix-like operating systems pass most
      exceptions back to the process via signals, but we don't
      implement them. */
-     
-  thread_current ()->exit_status = -1;
+  
+  if (thread_current ()->parent_thread->child_waiting_for == thread_current ())
+    thread_current ()->parent_thread->child_exit_status = -1;
 
   /* The interrupt frame's code segment value tells us where the
      exception originated. */
@@ -153,14 +155,19 @@ page_fault (struct intr_frame *f)
   /* To implement virtual memory, delete the rest of the function
      body, and replace it with code that brings in the page to
      which fault_addr refers. */
-  printf ("Page fault at %p: %s error %s page in %s context.\n",
-          fault_addr,
-          not_present ? "not present" : "rights violation",
-          write ? "writing" : "reading",
-          user ? "user" : "kernel");
+  // printf ("Page fault at %p: %s error %s page in %s context.\n",
+  //         fault_addr,
+  //         not_present ? "not present" : "rights violation",
+  //         write ? "writing" : "reading",
+  //         user ? "user" : "kernel");
 
   //printf("There is no crying in Pintos!\n");
 
-  kill (f);
+  // kill (f);
+
+  if (not_present || user)
+  {
+    exit (-1);
+  }
 }
 
