@@ -125,6 +125,7 @@ struct thread
     struct thread *parent_thread;
     struct file *file_desc[MAX_OPEN_FILES];
     struct wait_node *wait_node;
+    struct file *executable;
 
     bool load_success;
 #endif

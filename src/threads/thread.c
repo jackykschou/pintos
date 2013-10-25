@@ -197,6 +197,7 @@ thread_create (const char *name, int priority,
   list_push_back (&thread_current ()->child_wait_node_list, &n->elem);
 
   t->parent_thread = thread_current ();
+
   #endif
 
   /* Prepare thread for first run by initializing its stack.
@@ -676,5 +677,7 @@ thread_pop_list_first_highest_priority (struct list *l)
 
   return t;
 }
+
+
 
 /* ******************************End of newly added functions****************************** */

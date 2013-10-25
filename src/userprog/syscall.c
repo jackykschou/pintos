@@ -17,7 +17,6 @@
 static void syscall_handler (struct intr_frame *);
 static void check_user_program_addresses (void *address);
 static struct wait_node* search_child_wait_node_list (struct list *child_wait_node_list, pid_t pid);
-static void free_child_wait_node_list (struct list *child_wait_node_list);
 static void check_file (char *file);
 static void check_fd (int fd);
 
@@ -143,9 +142,9 @@ halt (void)
 void
 exit (int status)
 {
+  // printf("hello\n");
   thread_current ()->wait_node->exit_status = status;
   printf ("%s: exit(%d)\n", thread_current ()->name,status);  //need name of process
-  free_child_wait_node_list (&thread_current ()->child_wait_node_list);
   thread_exit ();
 	NOT_REACHED ();
 }
@@ -153,11 +152,9 @@ exit (int status)
 pid_t
 exec (const char *file)
 {
-  // printf("thread %d start exec\n", thread_current ()->tid);
   check_file (file);
   lock_acquire (&filesys_lock);
   tid_t tid = process_execute (file);
-  // printf("thread %d going to sleep\n", thread_current ()->tid);
   lock_release(&filesys_lock);
   sema_down (&(thread_current ()->load_sema));
 
@@ -203,19 +200,6 @@ search_child_wait_node_list (struct list *child_wait_node_list, pid_t pid)
         }
     }
     return NULL;
-}
-
-static void
-free_child_wait_node_list (struct list *child_wait_node_list)
-{
-  struct list_elem *e;
-
-  for (e = list_begin (child_wait_node_list); e != list_end (child_wait_node_list);
-       e = list_next (e))
-    {
-      struct wait_node *n = list_entry (e, struct wait_node, elem);
-      free (n);      
-    }
 }
 
 bool

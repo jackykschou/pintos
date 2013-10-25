@@ -23,6 +23,7 @@
 static thread_func start_process NO_RETURN;
 static bool load (const char *cmdline, void (**eip) (void), void **esp);
 static struct wait_node* search_child_wait_node_list (struct list *child_wait_node_list, pid_t pid);
+static void free_child_wait_node_list (struct list *child_wait_node_list);
 
 /* Starts a new thread running a user program loaded from
    FILENAME.  The new thread may be scheduled (and may even exit)
@@ -87,15 +88,12 @@ start_process (void *file_name_)
   if_.cs = SEL_UCSEG;
   if_.eflags = FLAG_IF | FLAG_MBS;
 
-  // printf("thread %d starting load\n", thread_current ()->pid);
-
   success = load (file_name, &if_.eip, &if_.esp);
   
   thread_current ()->parent_thread->load_success = success;
 
-  // printf("thread %d finish load\n", thread_current ()->pid);
-  // printf("thread %d parent_thread id: %d\n", thread_current ()->pid, thread_current ()->parent_thread->pid);
   sema_up (&(thread_current ()->parent_thread->load_sema));
+
 
   /* If load failed, quit. */
   palloc_free_page (file_name);
@@ -103,8 +101,6 @@ start_process (void *file_name_)
   {
     thread_exit ();
   }
-
-  //sema_up (&thread_current ()->parent_thread->wait_sema);
 
   /* Start the user process by simulating a return from an
      interrupt, implemented by intr_exit (in
@@ -122,9 +118,7 @@ start_process (void *file_name_)
    child of the calling process, or if process_wait() has already
    been successfully called for the given TID, returns -1
    immediately, without waiting.
-
-   This function will be implemented in problem 2-2.  For now, it
-   does nothing. */
+ */
 int
 process_wait (tid_t child_tid UNUSED) 
 {
@@ -166,6 +160,13 @@ process_exit (void)
 {
   struct thread *cur = thread_current ();
   uint32_t *pd;
+
+  free_child_wait_node_list (&cur->child_wait_node_list);
+
+  if (cur->executable != NULL)
+  {
+    file_close (cur->executable);
+  }
 
   /* Destroy the current process's page directory and switch back
      to the kernel-only page directory. */
@@ -392,9 +393,15 @@ load (const char *file_name, void (**eip) (void), void **esp)
 
   palloc_free_page (file_name_cpy); 
   if(success)
+  {
+    thread_current ()->executable = file;
     file_deny_write(file);
+  }
   else
+  {
+    thread_current ()->executable = NULL;
     file_close (file);
+  }
   return success;
 }
 
@@ -636,9 +643,16 @@ remove_file_descriptor (int fd)
     }
 }
 
-/* Check if a file (is opened) exists in a process with a given file descriptor. */
-bool
-check_file_descriptor (int fd)
+static void
+free_child_wait_node_list (struct list *child_wait_node_list)
 {
-  return thread_current ()->file_desc[fd] != NULL;
+  struct list_elem *e;
+
+  for (e = list_begin (child_wait_node_list); e != list_end (child_wait_node_list);
+       e = list_next (e))
+    {
+      struct wait_node *n = list_entry (e, struct wait_node, elem);
+      free (n);      
+    }
 }
+
