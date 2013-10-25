@@ -7,7 +7,7 @@
 
 void syscall_init (void);
 
-/* Projects 2 and later. */
+/* System call declarations added in project 2 and later. */
 void halt (void) NO_RETURN;
 void exit (int status) NO_RETURN;
 pid_t exec (const char *file);

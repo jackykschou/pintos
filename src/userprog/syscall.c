@@ -11,17 +11,23 @@
 #include "filesys/filesys.h"
 #include "userprog/process.h"
 
+ /* Dereference the pointer at ADDRESS + OFFSET. (4 byte address)
+ as the type TYPE. */
 #define deref_address(ADDRESS, OFFSET, TYPE)                    \
         *(TYPE*)(((uint32_t*)ADDRESS) + OFFSET)
 
+static struct lock filesys_lock;
+
 static void syscall_handler (struct intr_frame *);
+
+/* Newly added function declarations. */
 static void check_user_program_addresses (void *address);
-static struct wait_node* search_child_wait_node_list (struct list *child_wait_node_list, pid_t pid);
 static void check_file (char *file);
 static void check_fd (int fd);
+static struct wait_node *search_child_wait_node_list_pid (struct list *child_wait_node_list, pid_t pid);
+static void check_stack_argument_addresses (void *start, int arg_count);
 
-struct lock filesys_lock;
-
+/* Initializes syscall handler. */
 void
 syscall_init (void) 
 {
@@ -29,99 +35,80 @@ syscall_init (void)
   intr_register_int (0x30, 3, INTR_ON, syscall_handler, "syscall");
 }
 
+/* The system call handler. Checks the validity of the tokenized arguments. */
 static void
 syscall_handler (struct intr_frame *f UNUSED) 
 {
-	//printf ("system call!\n");
-
-  // printf("hex %02hhx\n",f->esp);
-  // printf("hex star %02hhx\n", *(uint32_t*)(f->esp));
-
   /* Check the validity of the syscall number */
   check_user_program_addresses (f->esp);
-  
+
+  /* Check the validity of arguments, call the system_call. Stores return values in EAX, if any. */
 	switch (deref_address (f->esp, 0, uint32_t))
   	{
   		/* No arguments */
   		case SYS_HALT:
-        //printf("0\n");
   			halt ();
         break;
 
-  		/* One argument */
+  		/* One argument system calls*/
   		case SYS_EXIT:
-        // printf("exit\n");
-        //We are checking the addresses of arguments for validity
         check_stack_argument_addresses (f->esp, 1);
-        //printf("checked2\n");
   			exit (deref_address (f->esp, 1, int));
         break;
 
   		case SYS_EXEC:
-        // printf("2\n");
         check_stack_argument_addresses (f->esp, 1);
   			f->eax = exec (deref_address (f->esp, 1, char*));
         break;
 
   		case SYS_WAIT:
-        // printf("3\n");
         check_stack_argument_addresses (f->esp, 1);
   			f->eax = wait (deref_address (f->esp, 1, int));
         break;
 
   		case SYS_REMOVE:
-        // printf("4\n");
         check_stack_argument_addresses (f->esp, 1);
   			f->eax = remove (deref_address (f->esp, 1, char*));
         break;
 
   		case SYS_OPEN:
-        // printf("5\n");
         check_stack_argument_addresses (f->esp, 1);
   			f->eax = open (deref_address (f->esp, 1, char*));
         break;
 
   		case SYS_FILESIZE:
-        // printf("6\n");
         check_stack_argument_addresses (f->esp, 1);
   			f->eax = filesize (deref_address (f->esp, 1, int));
         break;
 
   		case SYS_TELL:
-        // printf("7\n");
         check_stack_argument_addresses (f->esp, 1);
   			f->eax = tell (deref_address (f->esp, 1, int));
         break;
 
   		case SYS_CLOSE:
-        // printf("8\n");
         check_stack_argument_addresses (f->esp, 1);
   			close (deref_address (f->esp, 1, int));
         break;
 
-  	    /* Two arguments */
+  	    /* Two arguments system calls*/
   		case SYS_CREATE:
-        // printf("9\n");
         check_stack_argument_addresses (f->esp, 2);
   			f->eax = create (deref_address (f->esp, 1, char*), deref_address (f->esp, 2, unsigned));
         break;
 
-
   		case SYS_SEEK:
-        // printf("10\n");
         check_stack_argument_addresses (f->esp, 2); 
   			seek (deref_address (f->esp, 1, int), deref_address (f->esp, 2, unsigned));
         break;
 
-        /* Three arguments */
+        /* Three arguments system calls*/
   		case SYS_READ:
-        // printf("11\n");
         check_stack_argument_addresses (f->esp, 3);
   			f->eax = read (deref_address (f->esp, 1, int), deref_address (f->esp, 2, void*), deref_address (f->esp, 3, unsigned));
         break;
 
   		case SYS_WRITE:
-        // printf("12\n");
         check_stack_argument_addresses (f->esp, 3);
   			f->eax = write (deref_address (f->esp, 1, int), 
         deref_address (f->esp, 2, void*), deref_address (f->esp, 3, unsigned));
@@ -132,6 +119,7 @@ syscall_handler (struct intr_frame *f UNUSED)
   	}
 }
 
+/* Halt system call. */
 void
 halt (void) 
 {
@@ -139,234 +127,270 @@ halt (void)
 	NOT_REACHED ();
 }
 
+/* Exit system call. */
 void
 exit (int status)
 {
-  // printf("hello\n");
+  /* Assign the exit status to the wait_node. */
   thread_current ()->wait_node->exit_status = status;
-  printf ("%s: exit(%d)\n", thread_current ()->name,status);  //need name of process
+  printf ("%s: exit(%d)\n", thread_current ()->name,status);
   thread_exit ();
 	NOT_REACHED ();
 }
 
+/* exec system call */
 pid_t
 exec (const char *file)
 {
+  pid_t pid;
   check_file (file);
   lock_acquire (&filesys_lock);
-  tid_t tid = process_execute (file);
+  pid = process_execute (file);
   lock_release(&filesys_lock);
+  /* Block the process while wait for knowing whether file is successfully loaded. */
   sema_down (&(thread_current ()->load_sema));
-
-   // printf("thread %d load success? %d\n", thread_current ()->tid, thread_current ()->load_success);
-
-  if (tid == TID_ERROR || !thread_current ()->load_success)
+  if (pid == TID_ERROR || !thread_current ()->load_success)
     return -1;
-  else
-    return tid;
+  return pid;
 }
 
+/* wait system call. */
 int
 wait (pid_t pid)
 {
-  // printf("arg: %d\n", pid);
-  struct wait_node *child_wait_node = search_child_wait_node_list (&thread_current ()->child_wait_node_list, pid);
+  struct wait_node *child_wait_node;
+  int exit_status;
+
+  /* Check if the process with the given pid is if child, if not, return -1. */
+  child_wait_node = search_child_wait_node_list_pid (&thread_current ()->child_wait_node_list, pid);
   if (child_wait_node == NULL)
     {
       return -1;
     }
-  else
-    {
-      sema_down (&child_wait_node->wait_sema);
-      list_remove (&child_wait_node->elem);
-      int exit_status = child_wait_node->exit_status;
-      free (child_wait_node);
-      return exit_status;
-    } 
+  /* Block the process and wait for the child to be terminated. */
+  sema_down (&child_wait_node->wait_sema);
+  list_remove (&child_wait_node->elem);
+  exit_status = child_wait_node->exit_status;
+  free (child_wait_node);
+  return exit_status; 
 }
 
-static struct wait_node*
-search_child_wait_node_list (struct list *child_wait_node_list, pid_t pid)
-{
-  struct list_elem *e;
-
-  for (e = list_begin (child_wait_node_list); e != list_end (child_wait_node_list);
-       e = list_next (e))
-    {
-      struct wait_node *n = list_entry (e, struct wait_node, elem);
-      if (n->pid == pid)
-        {
-          return n;
-        }
-    }
-    return NULL;
-}
-
+/* create system call. */
 bool
 create (const char *file, unsigned initial_size)
 {
+  bool result;
+
   check_file (file);
-  lock_acquire(&filesys_lock);
-  bool result = filesys_create (file, initial_size);
-  lock_release(&filesys_lock);
+  lock_acquire (&filesys_lock);
+  result = filesys_create (file, initial_size);
+  lock_release (&filesys_lock);
   return result;
 }
 
+/* remove system call. */
 bool
 remove (const char *file)
 {
+  bool result;
+
   check_file (file);
   lock_acquire (&filesys_lock);
-  bool result = filesys_remove(file);
-  lock_release(&filesys_lock);
+  result = filesys_remove (file);
+  lock_release (&filesys_lock);
   return result;
 }
 
+/* open system call. */
 int
 open (const char *file)
 {
+  int result;
+
   check_file (file);
-  lock_acquire(&filesys_lock);
-  int result = add_file_descriptor (filesys_open(file));
-  lock_release(&filesys_lock);
+  lock_acquire (&filesys_lock);
+  /* If the file is successfully opened, assign a file descriptor to the file, otherwise return -1. */
+  result = add_file_descriptor (filesys_open (file));
+  lock_release (&filesys_lock);
   return result;
 }
 
+/* filesize system call. */
 int
 filesize (int fd) 
 {
+  int length;
+  struct file *file;
+
   check_fd (fd);
   lock_acquire (&filesys_lock);
-  struct file *file = get_file_struct(fd);
-  off_t length = file_length (get_file_struct (fd));
+  /* Obtain the file structure. */
+  file = get_file_struct (fd);
+  length = file_length (get_file_struct (fd));
   lock_release (&filesys_lock);
   return length;
 }
 
+/* read system call. */
 int
 read (int fd, void *buffer, unsigned size)
 {
-  //check good
-  check_fd (fd);
-  check_file(buffer);
-
-  lock_acquire(&filesys_lock);
   int size_read = 0;
+  int i;
 
+  check_file (buffer);
+  lock_acquire (&filesys_lock);
+
+  /* Reads STDIN. */
   if (fd == 0)
+    {
+      for (i = 0; i < size; i++)
       {
-        int i;
-        for(i = 0; i < size; i++)
-        {
-          char temp = input_getc();
-          *(((char*)buffer)+ i) = temp;
-        }
-        size_read = size;
+        char temp = input_getc();
+        *(((char *)buffer) + i) = temp;
       }
+      size_read = size;
+    }
+  /* Tries to read STDOUT, exit. */
   else if (fd == 1)
-      {
-         exit(-1);
-      }
+    {
+      lock_release (&filesys_lock);
+      exit (-1);
+    }
+  /* Reads the file at FD. */
   else
-      { 
-        check_fd(fd);
-        struct file *file = get_file_struct(fd);
-        size_read = file_read (get_file_struct (fd), buffer, size);
-      }
-
-  
-
-  lock_release(&filesys_lock);
+    { 
+      check_fd (fd);
+      struct file *file = get_file_struct(fd);
+      size_read = file_read (get_file_struct (fd), buffer, size);
+    }
+  lock_release (&filesys_lock);
   return size_read;
 }
 
-/* Writes to open file or console. Returns the size of what was written. 
-   Argument size may not equal the size written if space is limited. */
+/* write system call. */
 int
 write (int fd, const void *buffer, unsigned size)
 {   
-  check_file(buffer);
+  int size_written = 0;
+  struct file *file;
 
-  lock_acquire(&filesys_lock);
-  int size_written = 0;  //Nothing written
-
-    if (fd == 0)
-      {
-        exit(-1);
-      }
-    else if (fd == 1)
-      {
-        putbuf (buffer, size);
-        size_written = size;  //Entire buffer written to console
-      }
-    else
-      { 
-        check_fd(fd);
-        struct file *file = get_file_struct(fd);
-        size_written = file_write(file, buffer, size); 
-      }
-
-  lock_release(&filesys_lock);
+  check_file (buffer);
+  lock_acquire (&filesys_lock);
+  /* Tries to write to STDIN, exits. */
+  if (fd == 0)
+    {
+      lock_release (&filesys_lock);
+      exit(-1);
+    }
+  /* Writes to STDOUT. */ 
+  else if (fd == 1)
+    {
+      putbuf (buffer, size);
+      size_written = size;  //Entire buffer written to console
+    }
+  /* Writes to the file at FD. */
+  else
+    { 
+      check_fd (fd);
+      file = get_file_struct (fd);
+      size_written = file_write (file, buffer, size); 
+    }
+  lock_release (&filesys_lock);
   return size_written;
 }
 
+/* seek system call. */
 void
 seek (int fd, unsigned position) 
 {
+  struct file *file;
+
   check_fd (fd);
-  lock_acquire(&filesys_lock);
-  struct file *file = get_file_struct(fd);
+  lock_acquire (&filesys_lock);
+  /* Obtain the file structure. */
+  file = get_file_struct (fd);
   file_seek (file, position);
-  lock_release(&filesys_lock);
+  lock_release (&filesys_lock);
 }
 
+/* tell system call. */
 unsigned
 tell (int fd) 
 {
+  struct file *file;
+
   check_fd (fd);
-  struct file *file = get_file_struct(fd);
+  /* Obtain the file structure. */
+  file = get_file_struct (fd);
   return file_tell (file);
 }
 
+/* close system call. */
 void
 close (int fd)
 {
+  struct file *file;
+
   check_fd (fd);
-  lock_acquire(&filesys_lock);
-  struct file *file = get_file_struct(fd);
+  lock_acquire (&filesys_lock);
+  file = get_file_struct (fd);
   file_close (file);
   remove_file_descriptor (fd);
-  lock_release(&filesys_lock);
+  lock_release (&filesys_lock);
 }
 
-/* Checks the validity of a user address */ 
+/* Checks the validity of a user process address. */ 
 static void
 check_user_program_addresses (void *address)
 {
-  if (address == NULL || !is_user_vaddr(address) || pagedir_get_page (thread_current ()->pagedir, address) == NULL)
-          exit (-1);  
+  if (address == NULL || !is_user_vaddr (address) || pagedir_get_page (thread_current ()->pagedir, address) == NULL)
+    exit (-1);  
 }
 
 /* Given the stack pointer, check the validity of the given number of arguments (32-bit addresses) following it */
-check_stack_argument_addresses(void *start, int arg_count)
+static void
+check_stack_argument_addresses (void *start, int arg_count)
 {
   int i;
-  for(i=1; i<=arg_count; i++)
-  {
-    check_user_program_addresses(start + (i * sizeof(int)));
-  }
+  for (i = 1; i <= arg_count; i++)
+    {
+      check_user_program_addresses (start + (i * sizeof (int)));
+    }
 }
 
+/* Checks the validity of the address of a file name. */
 static void
 check_file (char *file)
 {
-  if (file == NULL || !is_user_vaddr(file) || pagedir_get_page (thread_current ()->pagedir, file) == NULL)
+  if (file == NULL || !is_user_vaddr (file) || pagedir_get_page (thread_current ()->pagedir, file) == NULL)
     exit (-1);
 }
 
+/* Checks the validity of a file descriptor. */
 static void
 check_fd (int fd)
 {
   if (fd < 0 || fd >= MAX_OPEN_FILES || get_file_struct (fd) == NULL)
     exit (-1);
+}
+
+/* Find the wait_node of a process given its pid, return NULL is not found */
+static struct wait_node *
+search_child_wait_node_list_pid (struct list *child_wait_node_list, pid_t pid)
+{
+  struct list_elem *e;
+  struct wait_node *n;
+
+  for (e = list_begin (child_wait_node_list); e != list_end (child_wait_node_list);
+       e = list_next (e))
+    {
+    n = list_entry (e, struct wait_node, elem);
+    if (n->pid == pid)
+      {
+        return n;
+      }
+    }
+
+  return NULL;
 }

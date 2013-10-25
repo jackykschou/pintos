@@ -174,6 +174,7 @@ thread_create (const char *name, int priority,
   struct switch_threads_frame *sf;
   tid_t tid;
   enum intr_level old_level;
+  struct wait_node *n;
 
   ASSERT (function != NULL);
 
@@ -186,21 +187,15 @@ thread_create (const char *name, int priority,
   init_thread (t, name, priority);
   tid = t->tid = allocate_tid ();
 
-
-  /* If the thread created is a used process, initialize the fields that a process has */
+  /*:D */
   #ifdef USERPROG
-  /* Initialize pid */
   t->pid = tid;
-  /* Initialize the process's wait_node */
-  struct wait_node *n = (struct wait_node*) malloc (sizeof (struct wait_node));
+  n = (struct wait_node *) malloc (sizeof (struct wait_node));
   t->wait_node = n;
   n->pid = t->pid;
   sema_init (&n->wait_sema, 0);
-  /* Push the wait_node into the child_wait_node_list of its parent */
   list_push_back (&thread_current ()->child_wait_node_list, &n->elem);
-  /* Assign its parent thread */
   t->parent_thread = thread_current ();
-
   #endif
 
   /* Prepare thread for first run by initializing its stack.
@@ -369,24 +364,22 @@ thread_foreach (thread_action_func *func, void *aux)
 void
 thread_set_priority (int new_priority) 
 {
-
   enum intr_level old_level = intr_disable ();
-  /* Only change the current priority if there is no priority donation occured. */
+  /* Only change the current priority if no priority donation occured. */
   if (thread_current ()->original_priority == thread_current ()->priority)
     thread_current ()->priority = new_priority;
+
   intr_set_level (old_level);
-  
   thread_current ()->original_priority = new_priority;
-  
+
   if (!list_empty (&ready_list))
     {
-      /* Yield the current running thread if the priority changed thread has a lower prioriy than any thread in the ready list. */
+      /* Yield the current running thread if the modified thread has a lower prioriy than any thread in the ready list. */
       if ((thread_get_first_list_highest_priority (&ready_list)->priority) > new_priority)
         {
           thread_yield ();
         }
-    }
-    
+    } 
 }
 
 /* Returns the current thread's priority. */
@@ -513,18 +506,18 @@ init_thread (struct thread *t, const char *name, int priority)
   t->priority = priority;
   t->magic = THREAD_MAGIC;
 
+  /*Initialization of newly added fields. */
   sema_init (&t->sleep_sema, 0);
   t->sleep_start = 0;
   t->sleep_ticks = 0;
   t->original_priority = priority;
   t->thread_waiting_for = NULL;
 
-  /* If the thread is a user process, initialized its fields */
   #ifdef USERPROG
   list_init (&t->child_wait_node_list);
   sema_init (&t->load_sema, 0);
   t->load_success = -1;
-  memset (t->file_desc, NULL, sizeof (struct file*) * MAX_OPEN_FILES); 
+  memset (t->file_desc, NULL, sizeof (struct file *) * MAX_OPEN_FILES);
   #endif
 
   list_push_back (&all_list, &t->allelem);
@@ -646,8 +639,10 @@ allocate_tid (void)
    Used by switch.S, which can't figure it out on its own. */
 uint32_t thread_stack_ofs = offsetof (struct thread, stack);
 
-/* Given a list of threads, return the thread with the highest priority, if there are more than one
-thread with the highest priority, return the one in most front of the list. */
+/* ***************Newly added functions for project 1****************************** */
+
+/* Given a list of threads, return the thread with the highest priority, if there are multiple
+threads with the highest priority, return the one in most front of the list. */
 struct thread *
 thread_get_first_list_highest_priority (struct list *l)
 {
@@ -678,3 +673,5 @@ thread_pop_list_first_highest_priority (struct list *l)
 
   return t;
 }
+
+/* ***************End of functions for project 1****************************** */

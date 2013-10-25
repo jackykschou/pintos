@@ -20,10 +20,7 @@ enum thread_status
 /* Thread identifier type.
    You can redefine this to whatever type you like. */
 typedef int tid_t;
-
-/* Process identifier type */
 typedef int pid_t;
-
 #define TID_ERROR ((tid_t) -1)          /* Error value for tid_t. */
 
 /* Thread priorities. */
@@ -31,13 +28,14 @@ typedef int pid_t;
 #define PRI_DEFAULT 31                  /* Default priority. */
 #define PRI_MAX 63                      /* Highest priority. */
 
-/* Storing information a process that is used to interact with its parent, even the process has terminated*/
+
+/* :D Newly added structure for project 2.  */
 struct wait_node
   {
-    pid_t pid;                  /* Process identifier*/
-    int exit_status;            /* Exit status of the process */
-    struct semaphore wait_sema; /* semaphore used to block the process while waiting a child */
-    struct list_elem elem;      /* list_elem to store the node in child_wait_node_list in a process */
+    pid_t pid;
+    int exit_status;
+    struct semaphore wait_sema;
+    struct list_elem elem;
   };
 
 /* A kernel thread or user process.
@@ -121,16 +119,19 @@ struct thread
 
 #ifdef USERPROG
     /* Owned by userprog/process.c. */
-    uint32_t *pagedir;                        /* Page directory. */
-    pid_t pid;                                /* pid of the process, which should be same as the tid */
-    struct list child_wait_node_list;         /* List of wait nodes of the children of this process */
-    struct semaphore load_sema;               /* Semaphore for blocking a process when creating a child that load an executable*/
-    struct thread *parent_thread;             /* Parent thread of this process */
-    struct file *file_desc[MAX_OPEN_FILES];   /* An array of files that the process can possibly have (the index of the array is file descriptor) */
-    struct wait_node *wait_node;              /* The wait node of this process that is used to give information to the parent even this process has died */
-    struct file *executable;                  /* File of the executable of the process */
-    bool load_success;                        /* Indicate whether the last loading of executable of it child is success of not */
+    uint32_t *pagedir;                  /* Page directory. */
+
+    /* :D Project2-related fields. */
+    pid_t pid;                              /* The process id of the process owning the thread */
+    struct list child_wait_node_list;       /*  */
+    struct semaphore load_sema;             /* semaphore for parents */
+    struct thread *parent_thread;           /* The parent thread */
+    struct file *file_desc[MAX_OPEN_FILES]; /* Array of file descriptor to file mappings */
+    struct wait_node *wait_node;            /*  */
+    struct file *executable;                /*  */
+    bool load_success;                      /*  */
 #endif
+
     /* Owned by thread.c. */
     unsigned magic;                     /* Detects stack overflow. */
   };
@@ -171,8 +172,9 @@ void thread_set_nice (int);
 int thread_get_recent_cpu (void);
 int thread_get_load_avg (void);
 
-/* Newly add function declaration. */
+/* :D Newly added function declarations. */
 struct thread *thread_get_first_list_highest_priority (struct list *l);
 struct thread *thread_pop_list_first_highest_priority (struct list *l);
+bool thread_check_load_success (tid_t tid);
 
 #endif /* threads/thread.h */
