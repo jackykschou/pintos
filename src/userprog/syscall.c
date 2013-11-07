@@ -16,6 +16,7 @@
 #define deref_address(ADDRESS, OFFSET, TYPE)                    \
         *(TYPE*)(((uint32_t*)ADDRESS) + OFFSET)
 
+/* Lock to ensure that only one process can use the file system at a time. */
 static struct lock filesys_lock;
 
 static void syscall_handler (struct intr_frame *);

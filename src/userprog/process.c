@@ -18,7 +18,7 @@
 #include "threads/thread.h"
 #include "threads/vaddr.h"
 
-/* :D Max number of arguments. */
+/* Max number of arguments passed in for a program. */
 #define ARG_MAX 128
 
 static thread_func start_process NO_RETURN;
@@ -87,7 +87,8 @@ start_process (void *file_name_)
   if_.cs = SEL_UCSEG;
   if_.eflags = FLAG_IF | FLAG_MBS;
   success = load (file_name, &if_.eip, &if_.esp);
-  /* :D */
+
+  /* Tells the parent whether the load is sucess and wake it up. */
   thread_current ()->parent_thread->load_success = success;
   sema_up (&(thread_current ()->parent_thread->load_sema));
 
@@ -140,7 +141,7 @@ process_exit (void)
 {
   struct thread *cur = thread_current ();
   uint32_t *pd;
-  
+
   /* Close the file loaded for the process. */
   if (cur->executable != NULL)
   {
@@ -473,12 +474,14 @@ load_segment (struct file *file, off_t ofs, uint8_t *upage,
 
       /* Get a page of memory. */
       uint8_t *kpage = palloc_get_page (PAL_USER);
+      assign_frame (thread_current (), kpage, upage);
       if (kpage == NULL)
         return false;
 
       /* Load this page. */
       if (file_read (file, kpage, page_read_bytes) != (int) page_read_bytes)
         {
+          free_frame (thread_current (), kpage);
           palloc_free_page (kpage);
           return false; 
         }
@@ -487,6 +490,7 @@ load_segment (struct file *file, off_t ofs, uint8_t *upage,
       /* Add the page to the process's address space. */
       if (!install_page (upage, kpage, writable)) 
         {
+          free_frame (thread_current (), kpage);
           palloc_free_page (kpage);
           return false; 
         }
@@ -519,6 +523,7 @@ setup_stack (void **esp, char *file_name)
   if (kpage != NULL) 
     {
       success = install_page (((uint8_t *) PHYS_BASE) - PGSIZE, kpage, true);
+      assign_frame (thread_current (), kpage, ((uint8_t *) PHYS_BASE) - PGSIZE);
       if (success)
         {
           *esp = PHYS_BASE;
@@ -565,7 +570,10 @@ setup_stack (void **esp, char *file_name)
           memcpy (*esp, NULL, 0);
         }
       else
-        palloc_free_page (kpage);
+        {
+          free_frame (thread_current (), kpage);
+          palloc_free_page (kpage);
+        }
     }
 
   return success;
