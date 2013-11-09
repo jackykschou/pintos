@@ -11,7 +11,7 @@ struct supp_page
   };
 
 void supp_page_table_init (struct hash *table);
-void supp_page_table_insert (struct hash *table, uintptr_t *upage, size_t page_read_bytes, bool writable);
+void supp_page_table_insert (struct hash *table, uintptr_t upage, size_t page_read_bytes, bool writable);
 //bool supp_page_table_inspect (struct hash *table, uintptr_t vaddr, struct intr_frame *f);
 void supp_page_table_destroy (struct hash *table);
 

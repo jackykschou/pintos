@@ -370,7 +370,6 @@ load (const char *file_name, void (**eip) (void), void **esp)
           break;
         }
     }
-
   /* Set up stack. */
   if (!setup_stack (esp, file_name))
     goto done;
@@ -393,7 +392,6 @@ load (const char *file_name, void (**eip) (void), void **esp)
       thread_current ()->executable = NULL;
       file_close (file);
     }
-
   return success;
 }
 
@@ -475,12 +473,14 @@ load_segment (struct file *file, off_t ofs, uint8_t *upage,
          We will read PAGE_READ_BYTES bytes from FILE
          and zero the final PAGE_ZERO_BYTES bytes. */
       size_t page_read_bytes = read_bytes < PGSIZE ? read_bytes : PGSIZE;
+      size_t page_zero_bytes = PGSIZE - page_read_bytes;
 
       /* Get information to the supplmental page table for lazy loading. */
       supp_page_table_insert (&thread_current ()->supp_page_table, upage, page_read_bytes, writable);
 
       /* Advance. */
       read_bytes -= page_read_bytes;
+      zero_bytes -= page_zero_bytes;
       upage += PGSIZE;
     }
 

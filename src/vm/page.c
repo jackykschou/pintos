@@ -18,7 +18,7 @@ void supp_page_table_init (struct hash *table)
 }
 
 void
-supp_page_table_insert (struct hash *table, uintptr_t *upage, size_t page_read_bytes, bool writable)
+supp_page_table_insert (struct hash *table, uintptr_t upage, size_t page_read_bytes, bool writable)
 {
 	struct supp_page *supp_page_entry = (struct supp_page*) malloc (sizeof (struct supp_page));
 
@@ -30,17 +30,14 @@ supp_page_table_insert (struct hash *table, uintptr_t *upage, size_t page_read_b
 
 	hash_insert (table, &supp_page_entry->hash_elem);
 
-	printf("lalalalalalalalalala\n");
 }
 
 bool
 supp_page_table_inspect (struct hash *table, uintptr_t vaddr, struct intr_frame *f)
 {
-
+	uintptr_t haha = pg_round_down (vaddr);
 	struct supp_page *supp_page_entry_copy = (struct supp_page*) malloc (sizeof (struct supp_page));
-printf("hahahahahahahaah\n");
 	supp_page_entry_copy->upage = pg_round_down (vaddr);
-printf("dadadadadadadadada\n");
 
 	struct hash_elem *elem =  hash_find (table, &supp_page_entry_copy->hash_elem);
 
