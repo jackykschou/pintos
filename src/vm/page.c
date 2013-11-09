@@ -10,6 +10,7 @@ static bool supp_page_table_load_page (struct hash *table, struct supp_page *ent
 static void supp_page_table_destructor (struct hash_elem *e, void *aux);
 static unsigned page_hash (const struct hash_elem *p_, void *aux UNUSED);
 static bool page_less (const struct hash_elem *a_, const struct hash_elem *b_, void *aux UNUSED);
+static bool install_page (void *upage, void *kpage, bool writable);
 
 
 void supp_page_table_init (struct hash *table)
@@ -18,7 +19,7 @@ void supp_page_table_init (struct hash *table)
 }
 
 void
-supp_page_table_insert (struct hash *table, uintptr_t upage, size_t page_read_bytes, bool writable)
+supp_page_table_insert (struct hash *table, uintptr_t upage, size_t page_read_bytes, bool writable, off_t offset)
 {
 	struct supp_page *supp_page_entry = (struct supp_page*) malloc (sizeof (struct supp_page));
 
@@ -27,6 +28,7 @@ supp_page_table_insert (struct hash *table, uintptr_t upage, size_t page_read_by
 	supp_page_entry->writable = writable;
 	supp_page_entry->is_loaded = false;
 	supp_page_entry->is_residence = false;
+	supp_page_entry->offset = offset;
 
 	hash_insert (table, &supp_page_entry->hash_elem);
 
@@ -35,8 +37,7 @@ supp_page_table_insert (struct hash *table, uintptr_t upage, size_t page_read_by
 bool
 supp_page_table_inspect (struct hash *table, uintptr_t vaddr, struct intr_frame *f)
 {
-	uintptr_t haha = pg_round_down (vaddr);
-	struct supp_page *supp_page_entry_copy = (struct supp_page*) malloc (sizeof (struct supp_page));
+	struct supp_page *supp_page_entry_copy = (struct supp_page *)malloc (sizeof (struct supp_page));
 	supp_page_entry_copy->upage = pg_round_down (vaddr);
 
 	struct hash_elem *elem =  hash_find (table, &supp_page_entry_copy->hash_elem);
@@ -81,13 +82,18 @@ supp_page_table_load_page (struct hash *table, struct supp_page *entry)
   uint8_t *upage = entry->upage;
 
   if (kpage == NULL)
+  {
+  	printf("pt1\n");
   	return false;
+  }
 
   assign_frame (thread_cur, kpage, upage);
 
+  file_seek (thread_cur->executable, entry->offset);
   /* Load the executable to the page. */
   if (file_read (thread_cur->executable, kpage, entry->page_read_bytes) != (int) entry->page_read_bytes)
     {
+    	printf("pt2: %d\n", entry->page_read_bytes);
       free_frame (thread_cur, kpage);
       palloc_free_page (kpage);
       return false; 
@@ -95,13 +101,15 @@ supp_page_table_load_page (struct hash *table, struct supp_page *entry)
 
   memset (kpage + entry->page_read_bytes, 0,  PGSIZE - entry->page_read_bytes);
 
-  if (!pagedir_get_page (thread_cur->pagedir, upage) == NULL && pagedir_set_page (thread_cur->pagedir, upage, kpage, entry->writable)) 
+  if (!install_page (entry->upage, kpage, entry->writable)) 
     {
+    	printf("pt3\n");
       free_frame (thread_cur, kpage);
       palloc_free_page (kpage);
       return false; 
     }
 
+  entry->is_loaded = true;
 	return true;
 }
 
@@ -131,3 +139,13 @@ page_less (const struct hash_elem *a_, const struct hash_elem *b_,
   return a->upage < b->upage;
 }
 
+static bool
+install_page (void *upage, void *kpage, bool writable)
+{
+  struct thread *t = thread_current ();
+
+  /* Verify that there's not already a page at that virtual
+     address, then map our page there. */
+  return (pagedir_get_page (t->pagedir, upage) == NULL
+          && pagedir_set_page (t->pagedir, upage, kpage, writable));
+}

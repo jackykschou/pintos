@@ -1,4 +1,5 @@
 #include <hash.h>
+#include "filesys/off_t.h"
 
 struct supp_page
   {
@@ -8,12 +9,13 @@ struct supp_page
     bool is_loaded;									/* Indicates if the page is loaded for the first time. */
     bool writable;									/* Indicates if the page is writable. */
     size_t page_read_bytes;					/* Number of bytes to read when the page is loaded. */
+    off_t offset;										/* Offset of the executable should be read when load. */
   };
 
-void supp_page_table_init (struct hash *table);
-void supp_page_table_insert (struct hash *table, uintptr_t upage, size_t page_read_bytes, bool writable);
+// void supp_page_table_init (struct hash *table);
+// void supp_page_table_insert (struct hash *table, uintptr_t upage, size_t page_read_bytes, bool writable);
 //bool supp_page_table_inspect (struct hash *table, uintptr_t vaddr, struct intr_frame *f);
-void supp_page_table_destroy (struct hash *table);
+// void supp_page_table_destroy (struct hash *table);
 
 
 
