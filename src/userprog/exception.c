@@ -139,6 +139,9 @@ page_fault (struct intr_frame *f)
      (#PF)". */
   asm ("movl %%cr2, %0" : "=r" (fault_addr));
 
+
+
+
   /* Turn interrupts back on (they were only off so that we could
      be assured of reading CR2 before it changed). */
   intr_enable ();
@@ -146,17 +149,23 @@ page_fault (struct intr_frame *f)
   /* Count page faults. */
   page_fault_cnt++;
 
-
-  /* Determine cause. */
-  not_present = (f->error_code & PF_P) == 0;
-  write = (f->error_code & PF_W) != 0;
-  user = (f->error_code & PF_U) != 0;
-
-  /* An attempt to acccess an unmapped user virtual address or a 
-     kernel virtual address will cause the program to exit. */
-  if (not_present || user)
+  if (supp_page_table_inspect (&thread_current ()->supp_page_table, fault_addr, f))
     {
-      exit (-1);
+      return;
+    }
+  else
+    {
+      /* Determine cause. */
+      not_present = (f->error_code & PF_P) == 0;
+      write = (f->error_code & PF_W) != 0;
+      user = (f->error_code & PF_U) != 0;
+
+      /* An attempt to acccess an unmapped user virtual address or a 
+         kernel virtual address will cause the program to exit. */
+      if (not_present || user)
+        {
+          exit (-1);
+        }
     }
 
 }
