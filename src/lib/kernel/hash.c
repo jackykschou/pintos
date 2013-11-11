@@ -375,7 +375,7 @@ rehash (struct hash *h)
   if (new_bucket_cnt == old_bucket_cnt)
     return;
 
-  /* Allocate new buckets and initialize them as empty. */
+  /* Allocate new buckets and initsialize them as empty. */
   new_buckets = malloc (sizeof *new_buckets * new_bucket_cnt);
   if (new_buckets == NULL) 
     {

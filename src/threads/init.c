@@ -40,6 +40,7 @@
 #ifdef VM
 #include "vm/frame.h"
 #include "vm/page.h"
+#include "vm/swap.h"
 #endif
 
 /* Page directory with kernel mappings only. */
@@ -115,9 +116,6 @@ main (void)
   kbd_init ();
   input_init ();
 
-  /* Initialize frame table. */
-  frame_table_init ();
-
 #ifdef USERPROG
   exception_init ();
   syscall_init ();
@@ -133,6 +131,13 @@ main (void)
   ide_init ();
   locate_block_devices ();
   filesys_init (format_filesys);
+#endif
+
+#ifdef VM
+  /* Initialize frame table. */
+  frame_table_init ();
+  /* Initialize swap table.*/
+  swap_table_init ();
 #endif
 
   printf ("Boot complete.\n");

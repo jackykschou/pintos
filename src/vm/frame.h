@@ -10,5 +10,5 @@ struct frame_table_entry
 };
 
 void frame_table_init (void);
-void assign_frame (struct thread *t, uint32_t *kpage, uint32_t *upage);
+uint8_t * assign_frame (struct thread *t, uint32_t *upage);
 void free_frame (struct thread *t, uint32_t *kpage);

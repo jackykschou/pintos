@@ -10,8 +10,6 @@ static bool supp_page_table_load_page (struct hash *table, struct supp_page *ent
 static void supp_page_table_destructor (struct hash_elem *e, void *aux);
 static unsigned page_hash (const struct hash_elem *p_, void *aux UNUSED);
 static bool page_less (const struct hash_elem *a_, const struct hash_elem *b_, void *aux UNUSED);
-static bool install_page (void *upage, void *kpage, bool writable);
-
 
 void supp_page_table_init (struct hash *table)
 {
@@ -78,36 +76,27 @@ supp_page_table_load_page (struct hash *table, struct supp_page *entry)
 	struct thread *thread_cur = thread_current ();
 
 	/* Get a page of memory. */
-  uint8_t *kpage = palloc_get_page (PAL_USER);
   uint8_t *upage = entry->upage;
+  uint8_t *kpage frame_table_assign_frame (thread_cur, entry);
 
   if (kpage == NULL)
   {
+  	//*****SWAP!!!
   	printf("pt1\n");
   	return false;
   }
 
-  assign_frame (thread_cur, kpage, upage);
-
   file_seek (thread_cur->executable, entry->offset);
+
   /* Load the executable to the page. */
   if (file_read (thread_cur->executable, kpage, entry->page_read_bytes) != (int) entry->page_read_bytes)
     {
     	printf("pt2: %d\n", entry->page_read_bytes);
-      free_frame (thread_cur, kpage);
-      palloc_free_page (kpage);
-      return false; 
+      frame_table_free_frame (thread_cur, kpage);
+      return false;
     }
 
   memset (kpage + entry->page_read_bytes, 0,  PGSIZE - entry->page_read_bytes);
-
-  if (!install_page (entry->upage, kpage, entry->writable)) 
-    {
-    	printf("pt3\n");
-      free_frame (thread_cur, kpage);
-      palloc_free_page (kpage);
-      return false; 
-    }
 
   entry->is_loaded = true;
 	return true;
@@ -137,15 +126,4 @@ page_less (const struct hash_elem *a_, const struct hash_elem *b_,
   const struct supp_page *b = hash_entry (b_, struct supp_page, hash_elem);
 
   return a->upage < b->upage;
-}
-
-static bool
-install_page (void *upage, void *kpage, bool writable)
-{
-  struct thread *t = thread_current ();
-
-  /* Verify that there's not already a page at that virtual
-     address, then map our page there. */
-  return (pagedir_get_page (t->pagedir, upage) == NULL
-          && pagedir_set_page (t->pagedir, upage, kpage, writable));
 }

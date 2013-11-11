@@ -43,6 +43,8 @@ syscall_handler (struct intr_frame *f UNUSED)
   /* Check the validity of the syscall number */
   check_user_program_addresses (f->esp);
 
+  
+  
   /* Check the validity of arguments, call the system_call. Stores return values in EAX, if any. */
 	switch (deref_address (f->esp, 0, uint32_t))
   	{

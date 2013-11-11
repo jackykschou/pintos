@@ -1,4 +1,5 @@
 #include <hash.h>
+#include "vm/swap.h"
 #include "filesys/off_t.h"
 
 struct supp_page
@@ -14,7 +15,7 @@ struct supp_page
 
 // void supp_page_table_init (struct hash *table);
 // void supp_page_table_insert (struct hash *table, uintptr_t upage, size_t page_read_bytes, bool writable);
-//bool supp_page_table_inspect (struct hash *table, uintptr_t vaddr, struct intr_frame *f);
+// sbool supp_page_table_inspect (struct hash *table, uintptr_t vaddr, struct intr_frame *f);
 // void supp_page_table_destroy (struct hash *table);
 
 
