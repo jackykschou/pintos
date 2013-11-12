@@ -21,6 +21,9 @@
 /* Max number of arguments passed in for a program. */
 #define ARG_MAX 128
 
+/* Max number of pages of a stack can have. */
+#define MAX_STACK_PAGE_SIZE 80
+
 static thread_func start_process NO_RETURN;
 static bool load (const char *cmdline, void (**eip) (void), void **esp);
 
@@ -258,7 +261,7 @@ struct Elf32_Phdr
 #define PF_W 2          /* Writable. */
 #define PF_R 4          /* Readable. */
 
-static bool setup_stack (void **esp, char *file_name);
+static void setup_stack (void **esp, char *file_name);
 static bool validate_segment (const struct Elf32_Phdr *, struct file *);
 static bool load_segment (struct file *file, off_t ofs, uint8_t *upage,
                           uint32_t read_bytes, uint32_t zero_bytes,
@@ -371,8 +374,10 @@ load (const char *file_name, void (**eip) (void), void **esp)
         }
     }
   /* Set up stack. */
-  if (!setup_stack (esp, file_name))
-    goto done;
+  setup_stack (esp, file_name);
+
+  // if (!setup_stack (esp, file_name))
+  //   goto done;
 
   /* Initial stack pointer. */
   *eip = (void (*) (void)) ehdr.e_entry;
@@ -396,8 +401,6 @@ load (const char *file_name, void (**eip) (void), void **esp)
 }
 
 /* load() helpers. */
-
-static bool install_page (void *upage, void *kpage, bool writable);
 
 /* Checks whether PHDR describes a valid, loadable segment in
    FILE and returns true if so, false otherwise. */
@@ -490,11 +493,9 @@ load_segment (struct file *file, off_t ofs, uint8_t *upage,
 
 /* Create a minimal stack by mapping a zeroed page at the top of
    user virtual memory. */
-static bool
+static void
 setup_stack (void **esp, char *file_name) 
 {
-  uint8_t *kpage;
-  bool success = false;
   /*An array of reversed argv for placement on stack*/
   char *reversed_argv[ARG_MAX];
   /*An array of argument's addresses for placement on stack*/
@@ -503,84 +504,54 @@ setup_stack (void **esp, char *file_name)
   int argc = 0;
   int i, j;
 
-  kpage = palloc_get_page (PAL_USER | PAL_ZERO);
-  if (kpage != NULL) 
+  frame_table_assign_frame (((uint8_t *) PHYS_BASE) - PGSIZE, true);
+
+  uint8_t *kpage = pagedir_get_page (thread_current ()->pagedir, ((uint8_t *) PHYS_BASE) - PGSIZE);
+  *esp = PHYS_BASE;
+  /* Tokenize arguments and put them into the reversed argv array. */
+  for (token = strtok_r (file_name, " ", &save_ptr); token != NULL;
+        token = strtok_r (NULL, " ", &save_ptr))
     {
-      success = install_page (((uint8_t *) PHYS_BASE) - PGSIZE, kpage, true);
-      assign_frame (thread_current (), kpage, ((uint8_t *) PHYS_BASE) - PGSIZE);
-      if (success)
-        {
-          *esp = PHYS_BASE;
-          /* Tokenize arguments and put them into the reversed argv array. */
-          for (token = strtok_r (file_name, " ", &save_ptr); token != NULL;
-                token = strtok_r (NULL, " ", &save_ptr))
-            {
-              reversed_argv[argc++] = token;
-            }
-
-          /* Push the reverserved argv to stack. */
-          for (j = 0, i = argc - 1; i >= 0; --i, ++j)
-            {
-              *esp -= (1 + strlen (reversed_argv[i]));
-              memcpy (*esp, reversed_argv[i], 1 + strlen(reversed_argv[i]));
-              argv_addresses[j] = (uint32_t)*esp;
-            }
-
-          /* Handle word alignment on stack */
-          *esp = ROUND_DOWN ((uint32_t) *esp, 4);
-
-          /* Push null pointer sentinel to stack */
-          *esp -= sizeof (char *);
-          memcpy (*esp, NULL, 0);
-
-          /* Push argument addresses to stack */
-          for (i = 0; i < argc; ++i)
-            {
-              *esp -= sizeof (char *);
-              memcpy (*esp, &argv_addresses[i], sizeof (char *));
-            }
-
-          /* Push argv */
-          *esp -= sizeof (char **);
-          char **argv_start_address = *esp + sizeof (char **);
-          memcpy (*esp, &argv_start_address, sizeof (char **));
-
-          /* Push argc */
-          *esp -= sizeof (int);
-          memcpy (*esp, &argc, sizeof (int));
-
-          /* Push dummy return address */
-          *esp -= sizeof (void (*) ());
-          memcpy (*esp, NULL, 0);
-        }
-      else
-        {
-          free_frame (thread_current (), kpage);
-          palloc_free_page (kpage);
-        }
+      reversed_argv[argc++] = token;
     }
 
-  return success;
-}
+  /* Push the reverserved argv to stack. */
+  for (j = 0, i = argc - 1; i >= 0; --i, ++j)
+    {
+      *esp -= (1 + strlen (reversed_argv[i]));
+      memcpy (*esp, reversed_argv[i], 1 + strlen(reversed_argv[i]));
+      argv_addresses[j] = (uint32_t)*esp;
+    }
 
-/* Adds a mapping from user virtual address UPAGE to kernel
-   virtual address KPAGE to the page table.
-   If WRITABLE is true, the user process may modify the page;
-   otherwise, it is read-only.
-   UPAGE must not already be mapped.
-   KPAGE should probably be a page obtained from the user pool
-   with palloc_get_page().
-   Returns true on success, false if UPAGE is already mapped or
-   if memory allocation fails. */
-static bool
-install_page (void *upage, void *kpage, bool writable)
-{
-  struct thread *t = thread_current ();
+  /* Handle word alignment on stack */
+  *esp = ROUND_DOWN ((uint32_t) *esp, 4);
 
-  /* Verify that there's not already a page at that virtual
-     address, then map our page there. */
-  return (pagedir_get_page (t->pagedir, upage) == NULL
-          && pagedir_set_page (t->pagedir, upage, kpage, writable));
+  /* Push null pointer sentinel to stack */
+  *esp -= sizeof (char *);
+  memcpy (*esp, NULL, 0);
+
+  /* Push argument addresses to stack */
+  for (i = 0; i < argc; ++i)
+    {
+      *esp -= sizeof (char *);
+      memcpy (*esp, &argv_addresses[i], sizeof (char *));
+    }
+
+  /* Push argv */
+  *esp -= sizeof (char **);
+  char **argv_start_address = *esp + sizeof (char **);
+  memcpy (*esp, &argv_start_address, sizeof (char **));
+
+  /* Push argc */
+  *esp -= sizeof (int);
+  memcpy (*esp, &argc, sizeof (int));
+
+  /* Push dummy return address */
+  *esp -= sizeof (void (*) ());
+  memcpy (*esp, NULL, 0);
+
+  thread_current()->stack_page_number = 1;
+
 }
 
 /* Return the file pointer at the specified index */
@@ -640,5 +611,19 @@ remove_file_descriptor (int fd)
   if (fd != 0 && fd != 1)
     {
       thread_current()->file_desc[fd] = NULL;
+    }
+}
+
+void
+stack_grow ()
+{
+  if ((thread_current ()->stack_page_number + 1) > MAX_STACK_PAGE_SIZE)
+    {
+      exit (-1);
+    }
+  else
+    {
+      ++thread_current ()->stack_page_number;
+      frame_table_assign_frame (((uint8_t *) PHYS_BASE) - (PGSIZE * thread_current ()->stack_page_number), true);
     }
 }
