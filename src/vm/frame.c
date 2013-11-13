@@ -50,6 +50,7 @@ frame_table_assign_frame (struct thread *t, uint8_t *upage, bool writable)
 		if (frame_table[i].t == NULL)
 			{
 				frame_table[i].t = t;
+				// printf("upage in frame: %p\n", upage);
 				frame_table[i].upage = upage;
 				ASSERT (install_page (t, upage, frame_table[i].kpage, writable));
 				lock_release(&frame_table_lock);
@@ -147,7 +148,7 @@ do_eviction (struct thread *t, uint8_t *new_upage, bool writable)
 
 	ASSERT (entry != NULL);
 
-	if (pagedir_is_dirty (frame_table[victim_index].t->pagedir, frame_table[victim_index].upage))
+	if (pagedir_is_dirty (frame_table[victim_index].t->pagedir, frame_table[victim_index].upage) || entry->is_stack)
 		{
 			entry->block_page_idx = swap_table_swap_out (pagedir_get_page (frame_table[victim_index].t->pagedir, frame_table[victim_index].upage));
 			entry->is_in_swap = true;
@@ -156,7 +157,7 @@ do_eviction (struct thread *t, uint8_t *new_upage, bool writable)
 	{
 		entry->is_loaded = false;
 	}
-	frame_table_free_frame (t, pagedir_get_page (frame_table[victim_index].t->pagedir, frame_table[victim_index].upage));
+	frame_table_free_frame (frame_table[victim_index].t, pagedir_get_page (frame_table[victim_index].t->pagedir, frame_table[victim_index].upage));
 	frame_table_assign_frame (thread_current (), new_upage, writable);
 
 	lock_release (&eviction_lock);

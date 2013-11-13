@@ -479,7 +479,7 @@ load_segment (struct file *file, off_t ofs, uint8_t *upage,
       size_t page_zero_bytes = PGSIZE - page_read_bytes;
 
       /* Get information to the supplmental page table for lazy loading. */
-      supp_page_table_insert (&thread_current ()->supp_page_table, upage, page_read_bytes, writable, ofs);
+      supp_page_table_insert (&thread_current ()->supp_page_table, upage, page_read_bytes, writable, ofs, false);
 
       /* Advance. */
       read_bytes -= page_read_bytes;
@@ -504,7 +504,9 @@ setup_stack (void **esp, char *file_name)
   int argc = 0;
   int i, j;
 
+  supp_page_table_insert (&thread_current ()->supp_page_table, ((uint8_t *) PHYS_BASE) - PGSIZE, NULL, true, NULL, true);
   frame_table_assign_frame (thread_current (), ((uint8_t *) PHYS_BASE) - PGSIZE, true);
+  thread_current()->stack_page_number = 1;
 
   uint8_t *kpage = pagedir_get_page (thread_current ()->pagedir, ((uint8_t *) PHYS_BASE) - PGSIZE);
   *esp = PHYS_BASE;
@@ -549,8 +551,6 @@ setup_stack (void **esp, char *file_name)
   /* Push dummy return address */
   *esp -= sizeof (void (*) ());
   memcpy (*esp, NULL, 0);
-
-  thread_current()->stack_page_number = 1;
 
 }
 
@@ -624,6 +624,7 @@ stack_grow ()
   else
     {
       ++thread_current ()->stack_page_number;
-      frame_table_assign_frame (((uint8_t *) PHYS_BASE) - (PGSIZE * thread_current ()->stack_page_number), true);
+      supp_page_table_insert (&thread_current ()->supp_page_table, ((uint8_t *) PHYS_BASE) - (PGSIZE * thread_current ()->stack_page_number), NULL, true, NULL, true);
+      frame_table_assign_frame (thread_current (), ((uint8_t *) PHYS_BASE) - (PGSIZE * thread_current ()->stack_page_number), true);
     }
 }

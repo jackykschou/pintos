@@ -23,7 +23,7 @@
    of thread.h for details. */
 #define THREAD_MAGIC 0xcd6abf4b
 
-static int next_pid = 1;
+static int next_pid = 0;
 
 /* List of processes in THREAD_READY state, that is, processes
    that are ready to run but not actually running. */
