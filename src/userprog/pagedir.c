@@ -1,8 +1,6 @@
 #include "userprog/pagedir.h"
 #include <stdbool.h>
 #include <stddef.h>
-#include <stdio.h>
-#include "threads/thread.h"
 #include <string.h>
 #include "threads/init.h"
 #include "threads/pte.h"
@@ -29,7 +27,6 @@ pagedir_create (void)
 void
 pagedir_destroy (uint32_t *pd) 
 {
-  printf("name of thread: %s\n", thread_current ()->name);
   uint32_t *pde;
 
   if (pd == NULL)

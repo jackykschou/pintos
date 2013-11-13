@@ -10,7 +10,7 @@ struct frame_table_entry
 };
 
 void frame_table_init (void);
-void frame_table_assign_frame (uint8_t *upage, bool writable);
-void frame_table_free_frame (uint32_t *kpage);
-void frame_table_free_thread_frames ();
-void frame_table_destroy ();
+void frame_table_assign_frame (struct thread *t, uint8_t *upage, bool writable);
+void frame_table_free_frame (struct thread *t, uint32_t *kpage);
+void frame_table_free_thread_frames (void);
+void frame_table_destroy (void);

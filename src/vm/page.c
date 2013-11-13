@@ -47,11 +47,12 @@ supp_page_table_inspect (struct hash *table, uintptr_t vaddr)
 	struct supp_page *entry = supp_page_table_find_entry (table, vaddr);
 	if (entry == NULL)
 		{
+			printf("ta1da1aaa112\n");
 			return false;
 		}
 	else
 		{
-			/* If the page is not loaded yet and not, load it */
+			/* If the page is not loaded yet and not swapped into the disk, load it */
 			if (!entry->is_loaded && !entry->is_in_swap)
 				{
 					return supp_page_table_load_page (table, entry);
@@ -61,6 +62,10 @@ supp_page_table_inspect (struct hash *table, uintptr_t vaddr)
 				{
 					swap_in_page_from_disk (entry);
 					return true;
+				}
+			else if (entry->is_loaded && !entry->is_in_swap)
+				{
+					exit (-1);
 				}
 
 			NOT_REACHED ();
@@ -102,7 +107,7 @@ supp_page_table_load_page (struct hash *table, struct supp_page *entry)
 
 	/* Get a page of memory. */
   uint8_t *upage = entry->upage;
-  frame_table_assign_frame (entry->upage, entry->writable);
+  frame_table_assign_frame (thread_cur, entry->upage, entry->writable);
 
 	uint8_t *kpage = pagedir_get_page (thread_cur->pagedir, entry->upage);
   file_seek (thread_cur->executable, entry->offset);
@@ -110,7 +115,7 @@ supp_page_table_load_page (struct hash *table, struct supp_page *entry)
   /* Load the executable to the page. */
   if (file_read (thread_cur->executable, kpage, entry->page_read_bytes) != (int) entry->page_read_bytes)
     {
-    	frame_table_free_frame (kpage);
+    	frame_table_free_frame (thread_cur, kpage);
     	exit (-1);
       return false;
     }
@@ -152,7 +157,8 @@ page_less (const struct hash_elem *a_, const struct hash_elem *b_,
 static void
 swap_in_page_from_disk (struct supp_page* entry)
 {
+	printf("buuuuuuuuu!!\n");
 	swap_table_swap_in (entry->block_page_idx, pagedir_get_page (thread_current()->pagedir, entry->upage));
-	frame_table_assign_frame (entry->upage, entry->writable);
+	frame_table_assign_frame (thread_current(), entry->upage, entry->writable);
 	entry->is_in_swap = false;
 }

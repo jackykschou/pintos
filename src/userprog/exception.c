@@ -157,7 +157,6 @@ page_fault (struct intr_frame *f)
     {
       stack_grow ();
     }
-    
   else if (supp_page_table_inspect (&thread_current ()->supp_page_table, fault_addr))
     {
       return;
@@ -171,7 +170,7 @@ page_fault (struct intr_frame *f)
 
       /* An attempt to acccess an unmapped user virtual address or a 
          kernel virtual address will cause the program to exit. */
-      // if (not_present || user)
+      // if (not_present || user || write)
       //   {
       //     exit (-1);
       //   }

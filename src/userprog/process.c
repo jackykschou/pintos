@@ -504,7 +504,7 @@ setup_stack (void **esp, char *file_name)
   int argc = 0;
   int i, j;
 
-  frame_table_assign_frame (((uint8_t *) PHYS_BASE) - PGSIZE, true);
+  frame_table_assign_frame (thread_current (), ((uint8_t *) PHYS_BASE) - PGSIZE, true);
 
   uint8_t *kpage = pagedir_get_page (thread_current ()->pagedir, ((uint8_t *) PHYS_BASE) - PGSIZE);
   *esp = PHYS_BASE;
