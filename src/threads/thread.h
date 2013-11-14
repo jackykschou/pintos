@@ -131,7 +131,7 @@ struct thread
     struct file *executable;                  /* File of the executable of the process */
     bool load_success;                        /* Indicate whether the last loading of executable of it child is success of not */
 
-    struct hash supp_page_table;              /* Supplmental page table for the process. */
+    struct hash supp_page_table;              /* Supplemental page table for the process. */
     size_t stack_page_number;                 /* Number of pages allocated for the stack. */
 
     /* Owned by thread.c. */
