@@ -258,6 +258,7 @@ read (int fd, void *buffer, unsigned size)
   else if (fd == 1)
     {
       lock_release (&filesys_lock);
+      printf("fail read\n");
       exit (-1);
     }
   /* Reads the file at FD. */
@@ -284,6 +285,7 @@ write (int fd, const void *buffer, unsigned size)
   if (fd == 0)
     {
       lock_release (&filesys_lock);
+      printf("fail write\n");
       exit(-1);
     }
   /* Writes to STDOUT. */ 
@@ -347,8 +349,11 @@ close (int fd)
 static void
 check_user_program_addresses (void *address)
 {
-  if (address == NULL || !is_user_vaddr (address) || pagedir_get_page (thread_current ()->pagedir, address) == NULL)
+  if (address == NULL || !is_user_vaddr (address))
+  {
+    // printf("fail check address\n");
     exit (-1);  
+  }
 }
 
 /* Given the stack pointer, check the validity of the given number of arguments (32-bit addresses) following it */
@@ -366,8 +371,11 @@ check_stack_argument_addresses (void *start, int arg_count)
 static void
 check_file (char *file)
 {
-  if (file == NULL || !is_user_vaddr (file) || pagedir_get_page (thread_current ()->pagedir, file) == NULL)
+  if (file == NULL || !is_user_vaddr (file))
+  {
+    // printf("fail check file\n");
     exit (-1);
+  }
 }
 
 /* Checks the validity of a file descriptor. */
@@ -375,7 +383,10 @@ static void
 check_fd (int fd)
 {
   if (fd < 0 || fd >= MAX_OPEN_FILES || get_file_struct (fd) == NULL)
+  {
+    // printf("fail check fd\n");
     exit (-1);
+  }
 }
 
 /* Find the wait_node of a process given its pid, return NULL is not found */

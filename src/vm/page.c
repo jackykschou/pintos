@@ -15,13 +15,11 @@ static bool page_less (const struct hash_elem *a_, const struct hash_elem *b_, v
 static void swap_in_page_from_disk (struct supp_page* entry);
 
 static struct lock supp_page_table_lock;
-static struct lock supp_page_swap_in_lock;
 
 /* Initialization of supplmental page table. */
 void supp_page_table_init (struct hash *table)
 {
 		lock_init (&supp_page_table_lock);
-		lock_init (&supp_page_swap_in_lock);
 		ASSERT (hash_init (table, page_hash, page_less, NULL) );
 }
 
@@ -62,14 +60,11 @@ supp_page_table_insert (struct hash *table, uintptr_t upage, size_t page_read_by
 bool
 supp_page_table_inspect (struct hash *table, uintptr_t vaddr)
 {
-	// printf("Inspect address: %p\n", (vaddr));
-
-	// printf("victim id: %d\n", victim_index);
-	// printf("victim table: %p\n", &(frame_table[victim_index].t->supp_page_table));
-	// printf("victim address: %p\n", frame_table[victim_index].upage);
+	// printf("Inspect address (rounded): %p\n", pg_round_down(vaddr));
 	struct supp_page *entry = supp_page_table_find_entry (table, pg_round_down (vaddr));
 	if (entry == NULL)
 		{
+			printf("failure address: %p\n", vaddr);
 			return false;
 		}
 	else
@@ -87,6 +82,7 @@ supp_page_table_inspect (struct hash *table, uintptr_t vaddr)
 				}
 			else if (entry->is_loaded && !entry->is_in_swap)
 				{
+					printf("oh no\n");
 					exit (-1);
 				}
 
@@ -105,9 +101,7 @@ supp_page_table_find_entry (struct hash *table, uintptr_t vaddr)
 	supp_page_entry_copy->upage = vaddr;
 
 	lock_acquire (&supp_page_table_lock);
-
 	struct hash_elem *elem =  hash_find (table, &supp_page_entry_copy->hash_elem);
-
 	lock_release (&supp_page_table_lock);
 
 	free (supp_page_entry_copy);
@@ -147,8 +141,8 @@ supp_page_table_load_page (struct hash *table, struct supp_page *entry)
   /* Load the executable to the page. */
   if (file_read (thread_cur->executable, kpage, entry->page_read_bytes) != (int) entry->page_read_bytes)
     {
+    	printf("fail to read exe\n");
     	frame_table_free_frame (thread_cur, kpage);
-    	lock_release (&supp_page_table_lock);
     	exit (-1);
       return false;
     }
@@ -194,9 +188,9 @@ page_less (const struct hash_elem *a_, const struct hash_elem *b_,
 static void
 swap_in_page_from_disk (struct supp_page* entry)
 {
-	lock_acquire (&supp_page_swap_in_lock);
+	// printf("swap in address: %p\n", entry->upage);
+
 	frame_table_assign_frame (thread_current(), entry->upage, entry->writable);
 	entry->is_in_swap = false;
-	swap_table_swap_in (entry->block_page_idx, pagedir_get_page (thread_current()->pagedir, entry->upage));
-	lock_release (&supp_page_swap_in_lock);
+	swap_table_swap_in (entry->block_page_idx, entry->upage);
 }

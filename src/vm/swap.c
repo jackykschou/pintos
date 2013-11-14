@@ -31,40 +31,36 @@ swap_table_init ()
 
 /* Get page from swap disk */
 void
-swap_table_swap_in (uint32_t idx, void *kpage)
+swap_table_swap_in (uint32_t idx, void *upage)
 {
-	lock_acquire (&swap_table_lock);
-
 	int i;
 	block_sector_t sector_idx = idx * SECTORS_PER_PAGE;
 	for (i = 0; i < SECTORS_PER_PAGE; ++i)
 		{
-			block_read (swap_block, sector_idx + i, kpage);
-			kpage += BLOCK_SECTOR_SIZE;
+			block_read (swap_block, sector_idx + i, upage);
+			// printf("swap in data: %0x\n", *(int*)upage);
+			upage += BLOCK_SECTOR_SIZE;
 		}
-
+	lock_acquire (&swap_table_lock);
 	bitmap_set (swap_table, idx, false);
-
 	lock_release (&swap_table_lock);
 }
 
 /* Store page in swap disk, return the page index stored in the block device. */
 uint32_t
-swap_table_swap_out (const void *kpage)
+swap_table_swap_out (const void *upage)
 {
-	lock_acquire (&swap_table_lock);
-
 	int i;
 	uint32_t block_page_idx = swap_table_get_free_page ();
 	block_sector_t sector_idx = block_page_idx * SECTORS_PER_PAGE;
 	for (i = 0; i < SECTORS_PER_PAGE; ++i)
 		{
-			block_write (swap_block, sector_idx + i, kpage);
-			kpage += BLOCK_SECTOR_SIZE;
+			// printf("swap out data: %0x\n", *(int*)upage);
+			block_write (swap_block, sector_idx + i, upage);
+			upage += BLOCK_SECTOR_SIZE;
 		}
-
+	lock_acquire (&swap_table_lock);
 	bitmap_set (swap_table, block_page_idx, true);
-
 	lock_release (&swap_table_lock);
 
 	return block_page_idx;

@@ -151,6 +151,7 @@ page_fault (struct intr_frame *f)
 
   if ((f->esp - fault_addr) >= PGSIZE)
     {
+      // printf("exit read too much \n");
       exit (-1);
     }
   if (((uint8_t *)fault_addr - (uint8_t *)(PHYS_BASE - PGSIZE * thread_current ()->stack_page_number)) <= 32)
@@ -174,7 +175,7 @@ page_fault (struct intr_frame *f)
       //   {
       //     exit (-1);
       //   }
-
+      // printf("exit from page fault\n");
       exit (-1);
     }
 

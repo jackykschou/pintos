@@ -508,7 +508,6 @@ setup_stack (void **esp, char *file_name)
   frame_table_assign_frame (thread_current (), ((uint8_t *) PHYS_BASE) - PGSIZE, true);
   thread_current()->stack_page_number = 1;
 
-  uint8_t *kpage = pagedir_get_page (thread_current ()->pagedir, ((uint8_t *) PHYS_BASE) - PGSIZE);
   *esp = PHYS_BASE;
   /* Tokenize arguments and put them into the reversed argv array. */
   for (token = strtok_r (file_name, " ", &save_ptr); token != NULL;
@@ -577,7 +576,6 @@ search_child_wait_node_list_tid (struct list *child_wait_node_list, pid_t tid)
           return n;
         }
     }
-
   return NULL;
 }
 
@@ -619,7 +617,7 @@ stack_grow ()
 {
   if ((thread_current ()->stack_page_number + 1) > MAX_STACK_PAGE_SIZE)
     {
-      exit (-1);
+      PANIC ("The stack is full!");
     }
   else
     {

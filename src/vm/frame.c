@@ -37,14 +37,10 @@ frame_table_init ()
 void
 frame_table_assign_frame (struct thread *t, uint8_t *upage, bool writable)
 {
-
-	lock_acquire (&frame_table_lock);
-
 	ASSERT (upage != NULL);
-
 	bool frame_found = false;
-
 	int i;
+	lock_acquire (&frame_table_lock);
 	for (i = 0; i < MAX_USR_FRAME_NUM; ++i)
 		{
 		if (frame_table[i].t == NULL)
@@ -57,9 +53,7 @@ frame_table_assign_frame (struct thread *t, uint8_t *upage, bool writable)
 				return;
 			}
 		}
-
 	lock_release(&frame_table_lock);
-
 	do_eviction (t, upage, writable);
 }
 
@@ -67,10 +61,9 @@ frame_table_assign_frame (struct thread *t, uint8_t *upage, bool writable)
 void
 frame_table_free_frame (struct thread *t, uint32_t *kpage)
 {
-	lock_acquire(&frame_table_lock);
-
 	bool frame_found = false;
 	int i;
+	lock_acquire(&frame_table_lock);
 	for (i = 0; i < MAX_USR_FRAME_NUM; ++i)
 		{
 		if (frame_table[i].kpage == kpage && frame_table[i].t == t)
@@ -83,10 +76,8 @@ frame_table_free_frame (struct thread *t, uint32_t *kpage)
 				break;
 			}
 		}
-
-	ASSERT (frame_found);
-
 	lock_release(&frame_table_lock);
+	ASSERT (frame_found);
 }
 
 /* Clear all the physical frames of the current thread. */
@@ -141,16 +132,14 @@ static void
 do_eviction (struct thread *t, uint8_t *new_upage, bool writable)
 {
 	lock_acquire (&eviction_lock);
-
 	int victim_index = get_victim ();
-
 	struct supp_page* entry = supp_page_table_find_entry (&(frame_table[victim_index].t->supp_page_table), frame_table[victim_index].upage);
-
 	ASSERT (entry != NULL);
-
+	// printf("swap away address: %p\n", frame_table[victim_index].upage);
 	if (pagedir_is_dirty (frame_table[victim_index].t->pagedir, frame_table[victim_index].upage) || entry->is_stack)
 		{
-			entry->block_page_idx = swap_table_swap_out (pagedir_get_page (frame_table[victim_index].t->pagedir, frame_table[victim_index].upage));
+			// printf("swap out address: %p\n", frame_table[victim_index].upage);
+			entry->block_page_idx = swap_table_swap_out (frame_table[victim_index].upage);
 			entry->is_in_swap = true;
 		}
 	else
@@ -159,7 +148,6 @@ do_eviction (struct thread *t, uint8_t *new_upage, bool writable)
 	}
 	frame_table_free_frame (frame_table[victim_index].t, pagedir_get_page (frame_table[victim_index].t->pagedir, frame_table[victim_index].upage));
 	frame_table_assign_frame (thread_current (), new_upage, writable);
-
 	lock_release (&eviction_lock);
 }
 
