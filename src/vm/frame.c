@@ -131,7 +131,7 @@ install_page (struct thread *t, void *upage, void *kpage, bool writable)
 static void
 do_eviction (struct thread *t, uint8_t *new_upage, bool writable)
 {
-	lock_acquire (&eviction_lock);
+	// lock_acquire (&eviction_lock);
 	int victim_index = get_victim ();
 	struct supp_page* entry = supp_page_table_find_entry (&(frame_table[victim_index].t->supp_page_table), frame_table[victim_index].upage);
 	ASSERT (entry != NULL);
@@ -148,7 +148,7 @@ do_eviction (struct thread *t, uint8_t *new_upage, bool writable)
 	}
 	frame_table_free_frame (frame_table[victim_index].t, pagedir_get_page (frame_table[victim_index].t->pagedir, frame_table[victim_index].upage));
 	frame_table_assign_frame (thread_current (), new_upage, writable);
-	lock_release (&eviction_lock);
+	// lock_release (&eviction_lock);
 }
 
 static int

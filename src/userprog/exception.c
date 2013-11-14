@@ -149,6 +149,8 @@ page_fault (struct intr_frame *f)
   /* Count page faults. */
   page_fault_cnt++;
 
+  printf("thread id: %d\n", thread_current ()->tid);
+
   if ((f->esp - fault_addr) >= PGSIZE)
     {
       // printf("exit read too much \n");
@@ -157,13 +159,16 @@ page_fault (struct intr_frame *f)
   if (((uint8_t *)fault_addr - (uint8_t *)(PHYS_BASE - PGSIZE * thread_current ()->stack_page_number)) <= 32)
     {
       stack_grow ();
+      printf("thread %d end page fault\n", thread_current ()->tid);
     }
   else if (supp_page_table_inspect (&thread_current ()->supp_page_table, fault_addr))
     {
+      printf("thread %d end page fault\n", thread_current ()->tid);
       return;
     }
   else
     {
+      printf("thread %d end page fault\n", thread_current ()->tid);
       /* Determine cause. */
       // not_present = (f->error_code & PF_P) == 0;
       // write = (f->error_code & PF_W) != 0;
