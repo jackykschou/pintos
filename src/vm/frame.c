@@ -4,25 +4,26 @@
 #include "swap.h"
 #include "threads/vaddr.h"
 
-#define MAX_USR_FRAME_NUM 383 /* Number of frames in pintos. */
-
-struct frame_table_entry frame_table[MAX_USR_FRAME_NUM];
-
-static struct lock frame_table_lock;
-static struct lock eviction_lock;
+#define MAX_USR_FRAME_NUM 383 /* Maximum number of frames in pintos. */
 
 static bool install_page (struct thread *t, void *upage, void *kpage, bool writable);
-static void do_eviction (struct thread *t, uint8_t *new_upage, bool writable);
+static int do_eviction (struct thread *t, uint8_t *new_upage, bool writable);
 static int get_victim ();
 
+/* The frame table, which contains 383 (number of physical/kernel pages in pintos) entries. */
+struct frame_table_entry frame_table[MAX_USR_FRAME_NUM];
+
+/* Lock for accessing the frame table. */
+static struct lock frame_table_lock;
+
+/* Index of the victim during eviction. */
 int next_victim = 0;
 
-/* Initialize the frame table  */
+/* Initialization of the frame table.  */
 void 
 frame_table_init ()
 {
 	lock_init (&frame_table_lock);
-	lock_init (&eviction_lock);
 
 	int i;
 	for (i = 0; i < MAX_USR_FRAME_NUM; ++i)
@@ -30,62 +31,53 @@ frame_table_init ()
 			frame_table[i].t = NULL;
 			frame_table[i].upage = NULL;
 			frame_table[i].kpage = palloc_get_page (PAL_USER | PAL_ZERO);
+			frame_table[i].pin = false;
 		}
 }
 
-/* Assign a physical frame to a user page, if there are no more empty frame, do eviction and replacement. */
-void
-frame_table_assign_frame (struct thread *t, uint8_t *upage, bool writable)
+/* Assigns a physical frame to a user page, if there are no more empty frame, do eviction and replacement. */
+int
+frame_table_assign_frame (struct thread *t, uint8_t *upage, bool writable, bool pin)
 {
 	ASSERT (upage != NULL);
-	bool frame_found = false;
 	int i;
+
 	lock_acquire (&frame_table_lock);
 	for (i = 0; i < MAX_USR_FRAME_NUM; ++i)
 		{
 		if (frame_table[i].t == NULL)
 			{
 				frame_table[i].t = t;
-				// printf("upage in frame: %p\n", upage);
 				frame_table[i].upage = upage;
 				ASSERT (install_page (t, upage, frame_table[i].kpage, writable));
+				frame_table[i].pin = pin;
 				lock_release(&frame_table_lock);
-				return;
+				return i;
 			}
 		}
+	/* If the program reaches here, this means the frame table is full, performs eviction. */
+	int index = do_eviction (t, upage, writable);
 	lock_release(&frame_table_lock);
-	do_eviction (t, upage, writable);
+	return index;
 }
 
-/* Clear a physical frame given a virtual address of the current thread for usage later on. */
+/* Unpins a frame in the frame table. */
 void
-frame_table_free_frame (struct thread *t, uint32_t *kpage)
+frame_table_unpin_frame (int index)
 {
-	bool frame_found = false;
-	int i;
-	lock_acquire(&frame_table_lock);
-	for (i = 0; i < MAX_USR_FRAME_NUM; ++i)
-		{
-		if (frame_table[i].kpage == kpage && frame_table[i].t == t)
-			{
-				memset (frame_table[i].kpage, 0, PGSIZE);
-				pagedir_clear_page (t->pagedir, frame_table[i].upage);
-				frame_found = true;
-				frame_table[i].t = NULL;
-				frame_table[i].upage = NULL;
-				break;
-			}
-		}
-	lock_release(&frame_table_lock);
-	ASSERT (frame_found);
+	lock_acquire (&frame_table_lock);
+	frame_table[index].pin = false;
+	lock_release (&frame_table_lock);
 }
 
-/* Clear all the physical frames of the current thread. */
+/* Clears all the physical frames of the current thread. */
 void
 frame_table_free_thread_frames ()
 {
 	struct thread *t = thread_current ();
 	int i;
+
+	lock_acquire(&frame_table_lock);
 	for (i = 0; i < MAX_USR_FRAME_NUM; ++i)
 		{
 		if (frame_table[i].t == t)
@@ -94,16 +86,19 @@ frame_table_free_thread_frames ()
 				pagedir_clear_page (t->pagedir, frame_table[i].upage);
 				frame_table[i].t = NULL;
 				frame_table[i].upage = NULL;
+				frame_table[i].pin = true;
 			}
 		}
+	lock_release (&frame_table_lock);
 }
 
 
-/* Dellocate resources the frame table. */
+/* Deallocates the resources of the frame table. */
 void
 frame_table_destroy ()
 {
 	int i;
+
 	for (i = 0; i < MAX_USR_FRAME_NUM; ++i)
 		{
 			palloc_free_page (frame_table[i].kpage);
@@ -128,41 +123,51 @@ install_page (struct thread *t, void *upage, void *kpage, bool writable)
           && pagedir_set_page (t->pagedir, upage, kpage, writable));
 }
 
-static void
+/* Performs an eviction given the NEW_UPAGE to be loaded. */
+static int
 do_eviction (struct thread *t, uint8_t *new_upage, bool writable)
 {
-	// lock_acquire (&eviction_lock);
+	/* Get the victim index. */
 	int victim_index = get_victim ();
+
+	/* Find the corresponding supplemental page table entry. */
 	struct supp_page* entry = supp_page_table_find_entry (&(frame_table[victim_index].t->supp_page_table), frame_table[victim_index].upage);
+
 	ASSERT (entry != NULL);
-	// printf("swap away address: %p\n", frame_table[victim_index].upage);
+
+	/* If the page is dirty, swap it out to the swap disk, otherwise just unload it. */
 	if (pagedir_is_dirty (frame_table[victim_index].t->pagedir, frame_table[victim_index].upage) || entry->is_stack)
 		{
-			// printf("swap out address: %p\n", frame_table[victim_index].upage);
 			entry->block_page_idx = swap_table_swap_out (frame_table[victim_index].upage);
 			entry->is_in_swap = true;
 		}
 	else
-	{
-		entry->is_loaded = false;
-	}
-	frame_table_free_frame (frame_table[victim_index].t, pagedir_get_page (frame_table[victim_index].t->pagedir, frame_table[victim_index].upage));
-	frame_table_assign_frame (thread_current (), new_upage, writable);
-	// lock_release (&eviction_lock);
+		{
+			entry->is_loaded = false;
+		}
+
+	/* Clear out the victim page and load in the new page. */
+	memset (frame_table[victim_index].kpage, 0, PGSIZE);
+	pagedir_clear_page (frame_table[victim_index].t->pagedir, frame_table[victim_index].upage);
+	frame_table[victim_index].t = t;
+	frame_table[victim_index].upage = new_upage;
+	frame_table[victim_index].pin = false;
+	ASSERT (install_page (t, new_upage, frame_table[victim_index].kpage, writable));
+
+	return victim_index;
+
 }
 
+/* Returns the index of the victim to evict from the frame table. (Clock replacement)*/
 static int
 get_victim ()
 {
-	return (next_victim++) % MAX_USR_FRAME_NUM;
-
-	// int i;
-	// for (i = 0; i < MAX_USR_FRAME_NUM; ++i)
-	// 	{
-	// 	if (!pagedir_is_dirty (frame_table[i].t->pagedir, frame_table[i].upage))
-	// 		{
-	// 			return i;
-	// 		}
-	// 	}
-	// return 0;
+	int victim = (next_victim++) % MAX_USR_FRAME_NUM;
+	/* Do not get victim that is pineed or accessed recently (set accessed bit to zero if accessed recently) */
+	while (frame_table[victim].pin == true || pagedir_is_accessed (frame_table[victim].t->pagedir, frame_table[victim].upage) )
+	{
+		pagedir_set_accessed (frame_table[victim].t->pagedir, frame_table[victim].upage, false);
+		victim = (next_victim++) % MAX_USR_FRAME_NUM;
+	}
+	return victim;
 }

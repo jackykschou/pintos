@@ -113,7 +113,7 @@ struct thread
     struct semaphore sleep_sema;         /* semaphore for getting the thread sleep instead of using busy waiting */      
     int64_t sleep_start;                 /* Time thread starts sleeping. */
     int64_t sleep_ticks;                 /* Number of ticks a thread wants to sleep for. */
-
+    
     int original_priority;                /* The priority that the thread has when there is not priority donation. */   
     struct thread *thread_waiting_for;    /* The thread that holds the lock that this thread is waiting for. */
 
@@ -135,7 +135,7 @@ struct thread
     size_t stack_page_number;                 /* Number of pages allocated for the stack. */
 
     /* Owned by thread.c. */
-    unsigned magic;                     /* Detects stack overflow. */
+    unsigned magic;                           /* Detects stack overflow. */
   };
 
 /* If false (default), use round-robin scheduler.

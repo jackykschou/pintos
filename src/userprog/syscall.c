@@ -258,7 +258,6 @@ read (int fd, void *buffer, unsigned size)
   else if (fd == 1)
     {
       lock_release (&filesys_lock);
-      printf("fail read\n");
       exit (-1);
     }
   /* Reads the file at FD. */
@@ -285,7 +284,6 @@ write (int fd, const void *buffer, unsigned size)
   if (fd == 0)
     {
       lock_release (&filesys_lock);
-      printf("fail write\n");
       exit(-1);
     }
   /* Writes to STDOUT. */ 

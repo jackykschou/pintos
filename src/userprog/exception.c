@@ -11,7 +11,6 @@
 
 /* Number of page faults processed. */
 static long long page_fault_cnt;
-
 static void kill (struct intr_frame *);
 static void page_fault (struct intr_frame *);
 
@@ -149,40 +148,27 @@ page_fault (struct intr_frame *f)
   /* Count page faults. */
   page_fault_cnt++;
 
-  printf("thread id: %d\n", thread_current ()->tid);
-
+  /* Terminate the program if it tries to access an address a page below the stack pointer. */
   if ((f->esp - fault_addr) >= PGSIZE)
     {
-      // printf("exit read too much \n");
       exit (-1);
     }
-  if (((uint8_t *)fault_addr - (uint8_t *)(PHYS_BASE - PGSIZE * thread_current ()->stack_page_number)) <= 32)
+
+  /* Check if the stack needs to grow. */
+  if (((uint8_t *) fault_addr - (uint8_t *) (PHYS_BASE - PGSIZE * thread_current ()->stack_page_number)) <= 32)
     {
       stack_grow ();
-      printf("thread %d end page fault\n", thread_current ()->tid);
     }
+
+  /* Inspect the page for possible loading. */
   else if (supp_page_table_inspect (&thread_current ()->supp_page_table, fault_addr))
     {
-      printf("thread %d end page fault\n", thread_current ()->tid);
       return;
     }
+
   else
     {
-      printf("thread %d end page fault\n", thread_current ()->tid);
-      /* Determine cause. */
-      // not_present = (f->error_code & PF_P) == 0;
-      // write = (f->error_code & PF_W) != 0;
-      // user = (f->error_code & PF_U) != 0;
-
-      /* An attempt to acccess an unmapped user virtual address or a 
-         kernel virtual address will cause the program to exit. */
-      // if (not_present || user || write)
-      //   {
-      //     exit (-1);
-      //   }
-      // printf("exit from page fault\n");
       exit (-1);
     }
-
 }
 

@@ -145,8 +145,9 @@ main (void)
   /* Run actions specified on kernel command line. */
   run_actions (argv);
 
-  // frame_table_destroy ();
-  // swap_table_destroy ();
+  /* Dellocate resources for frame and swap tables. */
+  frame_table_destroy ();
+  swap_table_destroy ();
 
   /* Finish up. */
   shutdown ();

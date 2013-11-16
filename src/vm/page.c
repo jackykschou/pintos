@@ -14,57 +14,46 @@ static unsigned page_hash (const struct hash_elem *p_, void *aux UNUSED);
 static bool page_less (const struct hash_elem *a_, const struct hash_elem *b_, void *aux UNUSED);
 static void swap_in_page_from_disk (struct supp_page* entry);
 
-static struct lock supp_page_table_lock;
 
-/* Initialization of supplmental page table. */
+/* Initialization of a supplemental page table. */
 void supp_page_table_init (struct hash *table)
 {
-		lock_init (&supp_page_table_lock);
-		ASSERT (hash_init (table, page_hash, page_less, NULL) );
+	ASSERT (hash_init (table, page_hash, page_less, NULL) );
 }
 
-/* Add a new supplmental page table entry. */
+/* Add a new supplemental page table entry. */
 void
 supp_page_table_insert (struct hash *table, uintptr_t upage, size_t page_read_bytes, bool writable, off_t offset, bool is_stack)
 {
 	ASSERT (upage % PGSIZE == 0);
-
-	// printf("Insert address: %p\n", upage);
 
 	struct supp_page *supp_page_entry = (struct supp_page*) malloc (sizeof (struct supp_page));
 
 	supp_page_entry->upage = upage;
 	supp_page_entry->page_read_bytes = page_read_bytes;
 	supp_page_entry->writable = writable;
-
 	if (is_stack)
 		supp_page_entry->is_loaded = true;
 	else
 		supp_page_entry->is_loaded = false;
-
 	supp_page_entry->is_in_swap = false;
 	supp_page_entry->is_stack = is_stack;
 	supp_page_entry->offset = offset;
-
-	lock_acquire (&supp_page_table_lock);
 	hash_insert (table, &supp_page_entry->hash_elem);
-	lock_release (&supp_page_table_lock);
-
 }
 
-/* Inspect an supplmental page table entry given a process virtual address. 
+/* Inspects supplemental page table TABLE given the virtual address VADDR. 
 		If the page in that entry is not loaded yet, load it. If the page is
 		in the swap disk, swap it back to main memory.
-		If the page is successfull loaded (from either swap disk or filesys), 
+		If the page is successfully loaded (from either swap disk or filesys), 
 		return true, else return false. */
 bool
 supp_page_table_inspect (struct hash *table, uintptr_t vaddr)
 {
-	// printf("Inspect address (rounded): %p\n", pg_round_down(vaddr));
 	struct supp_page *entry = supp_page_table_find_entry (table, pg_round_down (vaddr));
+
 	if (entry == NULL)
 		{
-			printf("failure address: %p\n", vaddr);
 			return false;
 		}
 	else
@@ -74,15 +63,18 @@ supp_page_table_inspect (struct hash *table, uintptr_t vaddr)
 				{
 					return supp_page_table_load_page (table, entry);
 				}
+
 			/* If the page is swapped out, swapped it back. */
 			else if (entry->is_loaded && entry->is_in_swap)
 				{
 					swap_in_page_from_disk (entry);
 					return true;
 				}
+
+			/* If the page is in memory and is being inspected, this means that the process tries to write to non-writeable memory,
+				terminate the process. */
 			else if (entry->is_loaded && !entry->is_in_swap)
 				{
-					printf("oh no\n");
 					exit (-1);
 				}
 
@@ -91,21 +83,17 @@ supp_page_table_inspect (struct hash *table, uintptr_t vaddr)
 		}
 }
 
-struct supp_page*
+/* Returns the supplemental page entry given the page table TABLE and the user virtual address VADDR to get. */
+struct supp_page *
 supp_page_table_find_entry (struct hash *table, uintptr_t vaddr)
 {
+	struct supp_page *supp_page_entry_copy;
+	struct hash_elem *elem;
 
-	// printf("find begin!\n");
-
-	struct supp_page *supp_page_entry_copy = (struct supp_page *)malloc (sizeof (struct supp_page));
+	supp_page_entry_copy = (struct supp_page *)malloc (sizeof (struct supp_page));
 	supp_page_entry_copy->upage = vaddr;
-
-	lock_acquire (&supp_page_table_lock);
-	struct hash_elem *elem =  hash_find (table, &supp_page_entry_copy->hash_elem);
-	lock_release (&supp_page_table_lock);
-
+	elem =  hash_find (table, &supp_page_entry_copy->hash_elem);
 	free (supp_page_entry_copy);
-	// printf("find end!\n");
 	if (elem == NULL)
 		return NULL;
 	else
@@ -118,9 +106,7 @@ void
 supp_page_table_destroy (struct hash *table) 
 {
 	frame_table_free_thread_frames ();
-	lock_acquire (&supp_page_table_lock);
   hash_destroy (table, supp_page_table_destructor);
-  lock_release (&supp_page_table_lock);
 }
 
 /* Load a page of the executable file of the process from the disk.
@@ -128,40 +114,48 @@ supp_page_table_destroy (struct hash *table)
 static bool
 supp_page_table_load_page (struct hash *table, struct supp_page *entry)
 {
+	struct thread *thread_cur;
+	uint8_t *upage;
+	uint8_t *kpage;
+	int index;
 
-	struct thread *thread_cur = thread_current ();
-
-	/* Get a page of memory. */
-  uint8_t *upage = entry->upage;
-  frame_table_assign_frame (thread_cur, entry->upage, entry->writable);
-
-	uint8_t *kpage = pagedir_get_page (thread_cur->pagedir, entry->upage);
+	thread_cur = thread_current ();
+  upage = entry->upage;
+  
+  /* Get a page of memory and pin it for loading in the executable. */
+  index = frame_table_assign_frame (thread_cur, entry->upage, entry->writable, true);
+	kpage = pagedir_get_page (thread_cur->pagedir, entry->upage);
   file_seek (thread_cur->executable, entry->offset);
 
   /* Load the executable to the page. */
   if (file_read (thread_cur->executable, kpage, entry->page_read_bytes) != (int) entry->page_read_bytes)
     {
-    	printf("fail to read exe\n");
-    	frame_table_free_frame (thread_cur, kpage);
     	exit (-1);
       return false;
     }
 
+  /* Set the remaining unload bytes of the page to 0. */
   memset (kpage + entry->page_read_bytes, 0,  PGSIZE - entry->page_read_bytes);
 
+  /* Unpin the frame after finish loading. */
+  frame_table_unpin_frame (index);
+
+  /* Set the supplmental page entry to loaded. */
   entry->is_loaded = true;
 	return true;
 
 }
 
-/* Destructor for the hash table of the supplmental page table. */
+/* Destructs the hash table of the supplemental page table. */
 static void
 supp_page_table_destructor (struct hash_elem *e, void *aux)
 {
-	struct supp_page *entry = hash_entry (e, struct supp_page, hash_elem);
+	struct supp_page *entry;
+
+	entry = hash_entry (e, struct supp_page, hash_elem);
 	if (entry->is_in_swap)
 		{
-			bitmap_set (swap_table, entry->block_page_idx, false);
+			swap_table_free (entry->block_page_idx);
 		}
 	free (entry);
 }
@@ -179,18 +173,23 @@ static bool
 page_less (const struct hash_elem *a_, const struct hash_elem *b_,
            void *aux UNUSED)
 {
-  const struct supp_page *a = hash_entry (a_, struct supp_page, hash_elem);
-  const struct supp_page *b = hash_entry (b_, struct supp_page, hash_elem);
+	const struct supp_page *a;
+  const struct supp_page *b;
 
+  a = hash_entry (a_, struct supp_page, hash_elem);
+  b = hash_entry (b_, struct supp_page, hash_elem);
   return a->upage < b->upage;
 }
 
+/* Swaps a page back from the swap disk to the main memory. */
 static void
 swap_in_page_from_disk (struct supp_page* entry)
 {
-	// printf("swap in address: %p\n", entry->upage);
-
-	frame_table_assign_frame (thread_current(), entry->upage, entry->writable);
+	int index;
+	/* Get a frame for the page in the swap disk and pin it for getting data from the swap table to the main memory. */
+	index = frame_table_assign_frame (thread_current(), entry->upage, entry->writable, true);
 	entry->is_in_swap = false;
 	swap_table_swap_in (entry->block_page_idx, entry->upage);
+	/* Unpin the page after data has transferred. */
+	frame_table_unpin_frame (index);
 }

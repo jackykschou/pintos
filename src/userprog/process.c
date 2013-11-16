@@ -146,6 +146,7 @@ void
 process_exit (void)
 {
   struct thread *cur = thread_current ();
+
   uint32_t *pd;
 
   /* Close the file loaded for the process. */
@@ -162,6 +163,7 @@ process_exit (void)
         file_close (get_file_struct (i));
     }
 
+  /* Dellocate resources for supplmental page table. */
   supp_page_table_destroy (&cur->supp_page_table);
 
   /* Destroy the current process's page directory and switch back
@@ -376,9 +378,6 @@ load (const char *file_name, void (**eip) (void), void **esp)
   /* Set up stack. */
   setup_stack (esp, file_name);
 
-  // if (!setup_stack (esp, file_name))
-  //   goto done;
-
   /* Initial stack pointer. */
   *eip = (void (*) (void)) ehdr.e_entry;
 
@@ -478,7 +477,7 @@ load_segment (struct file *file, off_t ofs, uint8_t *upage,
       size_t page_read_bytes = read_bytes < PGSIZE ? read_bytes : PGSIZE;
       size_t page_zero_bytes = PGSIZE - page_read_bytes;
 
-      /* Get information to the supplmental page table for lazy loading. */
+      /* Get information to the supplmental page table for demand paging. */
       supp_page_table_insert (&thread_current ()->supp_page_table, upage, page_read_bytes, writable, ofs, false);
 
       /* Advance. */
@@ -504,8 +503,12 @@ setup_stack (void **esp, char *file_name)
   int argc = 0;
   int i, j;
 
+
+  /* Insert the user virtual address to the supplmental page table. */
   supp_page_table_insert (&thread_current ()->supp_page_table, ((uint8_t *) PHYS_BASE) - PGSIZE, NULL, true, NULL, true);
-  frame_table_assign_frame (thread_current (), ((uint8_t *) PHYS_BASE) - PGSIZE, true);
+  /* Get a frame for the page, and pin it for setting up the stack. */
+  int index = frame_table_assign_frame (thread_current (), ((uint8_t *) PHYS_BASE) - PGSIZE, true, true);
+  
   thread_current()->stack_page_number = 1;
 
   *esp = PHYS_BASE;
@@ -551,6 +554,9 @@ setup_stack (void **esp, char *file_name)
   *esp -= sizeof (void (*) ());
   memcpy (*esp, NULL, 0);
 
+  /* Unpin the frame after finish loading the file to the frame. */
+  frame_table_unpin_frame (index);
+
 }
 
 /* Return the file pointer at the specified index */
@@ -592,9 +598,9 @@ add_file_descriptor (struct file *file)
   for (fd = 2; fd < MAX_OPEN_FILES; fd++)
     {
     /* if the current pointer is null, we can put the file ptr here */
-    if (thread_current()->file_desc[fd] == NULL)
+    if (thread_current ()->file_desc[fd] == NULL)
       {
-        thread_current()->file_desc[fd] = file;
+        thread_current ()->file_desc[fd] = file;
         return fd;
       }
     }
@@ -608,13 +614,15 @@ remove_file_descriptor (int fd)
 {
   if (fd != 0 && fd != 1)
     {
-      thread_current()->file_desc[fd] = NULL;
+      thread_current ()->file_desc[fd] = NULL;
     }
 }
 
+/* Grow the stack. */
 void
 stack_grow ()
 {
+  /* Panic if the stack growth causes number of stack page to exceed MAX_STACK_PAGE_SIZE pages. */
   if ((thread_current ()->stack_page_number + 1) > MAX_STACK_PAGE_SIZE)
     {
       PANIC ("The stack is full!");
@@ -623,6 +631,6 @@ stack_grow ()
     {
       ++thread_current ()->stack_page_number;
       supp_page_table_insert (&thread_current ()->supp_page_table, ((uint8_t *) PHYS_BASE) - (PGSIZE * thread_current ()->stack_page_number), NULL, true, NULL, true);
-      frame_table_assign_frame (thread_current (), ((uint8_t *) PHYS_BASE) - (PGSIZE * thread_current ()->stack_page_number), true);
+      frame_table_assign_frame (thread_current (), ((uint8_t *) PHYS_BASE) - (PGSIZE * thread_current ()->stack_page_number), true, false);
     }
 }
