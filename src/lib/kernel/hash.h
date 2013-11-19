@@ -46,7 +46,7 @@ typedef unsigned hash_hash_func (const struct hash_elem *e, void *aux);
 
 /* Compares the value of two hash elements A and B, given
    auxiliary data AUX.  Returns true if A is less than B, or
-s   false if A is greater than or equal to B. */
+   false if A is greater than or equal to B. */
 typedef bool hash_less_func (const struct hash_elem *a,
                              const struct hash_elem *b,
                              void *aux);

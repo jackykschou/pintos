@@ -37,11 +37,6 @@
 #include "filesys/filesys.h"
 #include "filesys/fsutil.h"
 #endif
-#ifdef VM
-#include "vm/frame.h"
-#include "vm/page.h"
-#include "vm/swap.h"
-#endif
 
 /* Page directory with kernel mappings only. */
 uint32_t *init_page_dir;
@@ -115,7 +110,6 @@ main (void)
   timer_init ();
   kbd_init ();
   input_init ();
-
 #ifdef USERPROG
   exception_init ();
   syscall_init ();
@@ -133,21 +127,10 @@ main (void)
   filesys_init (format_filesys);
 #endif
 
-#ifdef VM
-  /* Initialize frame table. */
-  frame_table_init ();
-  /* Initialize swap table.*/
-  swap_table_init ();
-#endif
-
   printf ("Boot complete.\n");
   
   /* Run actions specified on kernel command line. */
   run_actions (argv);
-
-  /* Dellocate resources for frame and swap tables. */
-  frame_table_destroy ();
-  swap_table_destroy ();
 
   /* Finish up. */
   shutdown ();

@@ -13,6 +13,4 @@ struct file *get_file_struct (int fd);
 int add_file_descriptor (struct file *file);
 void remove_file_descriptor (int fd);
 
-void stack_grow ();
-
 #endif /* userprog/process.h */

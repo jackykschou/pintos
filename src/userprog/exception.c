@@ -5,12 +5,10 @@
 #include "threads/interrupt.h"
 #include "threads/thread.h"
 #include "userprog/syscall.h"
-#include "vm/page.h"
-#include "threads/vaddr.h"
-#include "userprog/process.h"
 
 /* Number of page faults processed. */
 static long long page_fault_cnt;
+
 static void kill (struct intr_frame *);
 static void page_fault (struct intr_frame *);
 
@@ -148,27 +146,18 @@ page_fault (struct intr_frame *f)
   /* Count page faults. */
   page_fault_cnt++;
 
-  /* Terminate the program if it tries to access an address a page below the stack pointer. */
-  if ((f->esp - fault_addr) >= PGSIZE)
+
+  /* Determine cause. */
+  not_present = (f->error_code & PF_P) == 0;
+  write = (f->error_code & PF_W) != 0;
+  user = (f->error_code & PF_U) != 0;
+
+  /* An attempt to acccess an unmapped user virtual address or a 
+     kernel virtual address will cause the program to exit. */
+  if (not_present || user)
     {
       exit (-1);
     }
 
-  /* Check if the stack needs to grow. */
-  if (((uint8_t *) fault_addr - (uint8_t *) (PHYS_BASE - PGSIZE * thread_current ()->stack_page_number)) <= 32)
-    {
-      stack_grow ();
-    }
-
-  /* Inspect the page for possible loading. */
-  else if (supp_page_table_inspect (&thread_current ()->supp_page_table, fault_addr))
-    {
-      return;
-    }
-
-  else
-    {
-      exit (-1);
-    }
 }
 

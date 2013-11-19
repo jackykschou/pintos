@@ -4,7 +4,6 @@
 #include <debug.h>
 #include <list.h>
 #include <stdint.h>
-#include <hash.h>
 #include "threads/synch.h"
 
 #define MAX_OPEN_FILES 128
@@ -113,13 +112,14 @@ struct thread
     struct semaphore sleep_sema;         /* semaphore for getting the thread sleep instead of using busy waiting */      
     int64_t sleep_start;                 /* Time thread starts sleeping. */
     int64_t sleep_ticks;                 /* Number of ticks a thread wants to sleep for. */
-    
+
     int original_priority;                /* The priority that the thread has when there is not priority donation. */   
     struct thread *thread_waiting_for;    /* The thread that holds the lock that this thread is waiting for. */
 
     /* Shared between thread.c and synch.c. */
     struct list_elem elem;              /* List element. */
 
+#ifdef USERPROG
     /* Owned by userprog/process.c. */
     uint32_t *pagedir;                        /* Page directory. */
     pid_t pid;                                /* pid of the process, which should be same as the tid */
@@ -130,12 +130,9 @@ struct thread
     struct wait_node *wait_node;              /* The wait node of this process that is used to give information to the parent even this process has died */
     struct file *executable;                  /* File of the executable of the process */
     bool load_success;                        /* Indicate whether the last loading of executable of it child is success of not */
-
-    struct hash supp_page_table;              /* Supplemental page table for the process. */
-    size_t stack_page_number;                 /* Number of pages allocated for the stack. */
-
+#endif
     /* Owned by thread.c. */
-    unsigned magic;                           /* Detects stack overflow. */
+    unsigned magic;                     /* Detects stack overflow. */
   };
 
 /* If false (default), use round-robin scheduler.

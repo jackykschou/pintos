@@ -14,16 +14,13 @@
 #ifdef USERPROG
 #include "userprog/process.h"
 #endif
-#ifdef VM
-#include "vm/page.h"
-#endif
 
 /* Random value for struct thread's `magic' member.
    Used to detect stack overflow.  See the big comment at the top
    of thread.h for details. */
 #define THREAD_MAGIC 0xcd6abf4b
 
-static int next_pid = 0;
+static int next_pid = 1;
 
 /* List of processes in THREAD_READY state, that is, processes
    that are ready to run but not actually running. */
@@ -65,6 +62,7 @@ static unsigned thread_ticks;   /* # of timer ticks since last yield. */
 bool thread_mlfqs;
 
 static void kernel_thread (thread_func *, void *aux);
+
 static void idle (void *aux UNUSED);
 static struct thread *running_thread (void);
 static struct thread *next_thread_to_run (void);

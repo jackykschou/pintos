@@ -180,7 +180,7 @@ block_print_stats (void)
 
 /* Registers a new block device with the given NAME.  If
    EXTRA_INFO is non-null, it is printed as part of a user
-   message.  The block device's SIZE in sectors and pits TYPE must
+   message.  The block device's SIZE in sectors and its TYPE must
    be provided, as well as the it operation functions OPS, which
    will be passed AUX in each function call. */
 struct block *
