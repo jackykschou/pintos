@@ -439,9 +439,20 @@ inode_write_at (struct inode *inode, const void *buffer_, off_t size,
     return 0;
 
   /* Calculate the number of bytes to expand. */
+  size_t remainding_last_sector_bytes = inode->data.length % BLOCK_SECTOR_SIZE;
   size_t sectors_data_allocate_successfully = 0;
   size_t sectors_grow_successfully = 0;
-  unsigned bytes_to_allocate = (offset + size - inode.data.length);
+  
+  /* If offset is greater than the current size of the file, expands the file up
+    to offset the fill them with zerozs. */
+  size_t zero_bytes_to_allocate = 0;
+  if (offset > inode->data.length)
+    {
+      zero_bytes_to_allocate = offset - inode->data.length;
+    }
+    
+  size_t bytes_to_allocate = (offset + size - inode.data.length - remainding_last_sector_bytes);
+
   if (bytes_to_allocate > 0)
     {
       /* Number of sectors to expand. */
@@ -498,7 +509,7 @@ inode_write_at (struct inode *inode, const void *buffer_, off_t size,
           indirect_limit = (sectors < (INDIRECT_BLOCK_SECTORS - (current_num_sectors - NUM_DIRECT_BLOCKS))) ? (sectors) 
           : (INDIRECT_BLOCK_SECTORS - (current_num_sectors - NUM_DIRECT_BLOCKS));
           sectors_grow_successfully += indirect_limit;
-          assign_inode_indirect (inode, indices, indirect_limit, 0);
+          assign_inode_indirect (inode, indices, indirect_limit, current_num_sectors - NUM_DIRECT_BLOCKS);
           if (indirect_limit != sectors)
             {
               double_indirect_limit = sectors - indirect_limit;
@@ -509,7 +520,8 @@ inode_write_at (struct inode *inode, const void *buffer_, off_t size,
       else
         {
           double_indirect_limit = sectors;
-          sectors_grow_successfully += assign_inode_double_indirect (inode, indices, double_indirect_limit, 0);
+          sectors_grow_successfully += assign_inode_double_indirect (inode, indices, double_indirect_limit, 
+            current_num_sectors - NUM_DIRECT_BLOCKS - INDIRECT_BLOCK_SECTORS);
         }
 
       /* Update the length of the file. */
