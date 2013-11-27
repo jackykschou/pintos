@@ -29,6 +29,8 @@ struct indirect_block
     block_sector_t direct[INDIRECT_BLOCK_SECTORS];
   };
 
+static char zeros[BLOCK_SECTOR_SIZE];
+
 static bool init_indirect (block_sector_t *indices, int limit, block_sector_t *sector_index);
 static void init_disk_inode_direct (struct inode_disk *inode, block_sector_t *indices, int limit);
 static bool init_disk_inode_indirect (struct inode_disk *inode, block_sector_t *indices, int limit);
@@ -66,7 +68,7 @@ byte_to_sector (const struct inode *inode, off_t pos)
   ASSERT (inode != NULL);
 
   /* Check invalid */
-  if (pos > inode->data.length || pos < 0)
+  if (pos >= inode->data.length || pos < 0)
     return -1;
 
   block_sector_t sector_offset = pos / BLOCK_SECTOR_SIZE;
@@ -154,6 +156,8 @@ inode_create (block_sector_t sector, off_t length)
               alloc_success = false;
               break;
             }
+            /* Initialize the block to zeros. */
+            block_write (fs_device, sector_index, zeros);
             indices[i] = sector_index;
         }
       /* If allocation fails, deallocate all the sectors that have been allocated. */
@@ -184,20 +188,13 @@ inode_create (block_sector_t sector, off_t length)
       }
 
       success = true;
-      static char zeros[BLOCK_SECTOR_SIZE];
       /* Write the inode_disk to the disk. */
       block_write (fs_device, sector, disk_inode);
-      /* Initialize the data of the file with zeros. */
-      struct inode * inode = inode_open (sector);
-      int offset = 0;
-      for (i = 0; i < sectors; ++i, offset += BLOCK_SECTOR_SIZE)
-      {
-        inode_write_at (inode, zeros, BLOCK_SECTOR_SIZE, offset);
-      }
-      inode_close (inode);
+
       free (indices);
       free (disk_inode);
     }
+
   return success;
 }
 
@@ -362,8 +359,15 @@ inode_close (struct inode *inode)
       if (inode->removed) 
         {
           free_map_release (inode->sector, 1);
-          free_map_release (inode->data.start,
-                            bytes_to_sectors (inode->data.length)); 
+
+          int i = 0;
+          block_sector_t sector;
+          if ((sector = byte_to_sector (inode, i)) != -1)
+            {
+              i += BLOCK_SECTOR_SIZE;
+              free_map_release (sector, 1);
+            }
+
         }
 
       free (inode); 
@@ -440,7 +444,6 @@ off_t
 inode_write_at (struct inode *inode, const void *buffer_, off_t size,
                 off_t offset) 
 {
-  static char zeros[BLOCK_SECTOR_SIZE];
   const uint8_t *buffer = buffer_;
   off_t bytes_written = 0;
   uint8_t *bounce = NULL;
@@ -452,6 +455,8 @@ inode_write_at (struct inode *inode, const void *buffer_, off_t size,
   size_t remaining_last_sector_bytes = inode->data.length % BLOCK_SECTOR_SIZE;
   size_t sectors_data_allocate_successfully = 0;
   size_t sectors_grow_successfully = 0;
+  size_t zero_sectors_allocated_successfully = 0;
+  size_t sectors_allocate_successfully = 0;
   size_t data_bytes_to_allocate = 0;
   size_t zero_bytes_to_allocate = 0;
   size_t num_zero_sectors = 0;
@@ -471,39 +476,86 @@ inode_write_at (struct inode *inode, const void *buffer_, off_t size,
   int i, sector_index;
   if (zero_bytes_to_allocate > 0)
     {
-      num_zero_sectors = bytes_to_sectors (zero_bytes_to_allocate);
-      block_sector_t *zero_indices = malloc (num_zero_sectors * sizeof (block_sector_t));
+      /* Number of sectors to expand. */
+      size_t sectors = bytes_to_sectors (zero_bytes_to_allocate);
+      block_sector_t *zero_indices = malloc (sectors * sizeof (block_sector_t));
 
       ASSERT (zero_indices != NULL);
 
       /* Allocate sectors for the zero sectors. */
-      for (i = 0; i < num_zero_sectors; ++i)
+      for (i = 0; i < sectors; ++i)
         {
           if (!free_map_allocate (1, &sector_index))
             {
               break;
             }
-            ++sectors_allocate_successfully;
+            /* Initialize the block to zeros. */
+            block_write (fs_device, sector_index, zeros);
+            ++zero_sectors_allocated_successfully;
             zero_indices[i] = sector_index;
         }
 
-        if (sectors_allocate_successfully != num_zero_sectors)
-          {
-            while (i-- != 0)
+      /* Free the zero blocks allocated if any allocation fails. */
+      if (zero_sectors_allocated_successfully != sectors)
+        {
+          while (i-- != 0)
             {
-              free_map_release(indirect_indices[i], 1);
+              free_map_release(zero_indices[i], 1);
             }
-            free (zero_indices);
-            return 0;
-          }
+          free (zero_indices);
+          return 0;
+        }
 
+      /* Find the number of sectors in the file so far. */
+      off_t current_num_sectors = DIV_ROUND_UP (inode->data.length, BLOCK_SECTOR_SIZE); 
 
+      /* Find the number of blocks needed for the direct block (direct_limit), the indirect block (indirect_limit) and 
+      the double indirect block (double_indirect_limit) and their corresponding starting offset. */
+      int direct_limit = 0;
+      int indirect_limit = 0;
+      int double_indirect_limit = 0;
+      /* If the growth starts from the direct blocks. */
+      if (current_num_sectors < NUM_DIRECT_BLOCKS)
+        {
+          direct_limit = (sectors < (NUM_DIRECT_BLOCKS - current_num_sectors)) ? sectors : (NUM_DIRECT_BLOCKS - current_num_sectors);
+          sectors_grow_successfully += direct_limit;
+          assign_inode_direct (inode, zero_indices, direct_limit, current_num_sectors);
+          if (direct_limit != sectors)
+            {
+              indirect_limit = ((sectors - direct_limit) < INDIRECT_BLOCK_SECTORS) ? (sectors - direct_limit) : INDIRECT_BLOCK_SECTORS;
+              sectors_grow_successfully += indirect_limit;
+              assign_inode_indirect (inode, zero_indices + direct_limit, indirect_limit, 0);
+              if (indirect_limit != (sectors - direct_limit))
+                {
+                  double_indirect_limit = sectors - indirect_limit - direct_limit;
+                  sectors_grow_successfully += assign_inode_double_indirect (inode, zero_indices + direct_limit + indirect_limit, double_indirect_limit, 0);
+                }
+            }
+        }
+      /* If the growth starts from the indirect blocks. */
+      else if (current_num_sectors < (NUM_DIRECT_BLOCKS + INDIRECT_BLOCK_SECTORS))
+        {
+          indirect_limit = (sectors < (INDIRECT_BLOCK_SECTORS - (current_num_sectors - NUM_DIRECT_BLOCKS))) ? (sectors) 
+          : (INDIRECT_BLOCK_SECTORS - (current_num_sectors - NUM_DIRECT_BLOCKS));
+          sectors_grow_successfully += indirect_limit;
+          assign_inode_indirect (inode, zero_indices, indirect_limit, current_num_sectors - NUM_DIRECT_BLOCKS);
+          if (indirect_limit != sectors)
+            {
+              double_indirect_limit = sectors - indirect_limit;
+              sectors_grow_successfully += assign_inode_double_indirect (inode, zero_indices + indirect_limit, double_indirect_limit, 0);
+            }
+        }
+      /* If the growth starts from the second level indirect blocks. */
+      else
+        {
+          double_indirect_limit = sectors;
+          sectors_grow_successfully += assign_inode_double_indirect (inode, zero_indices, double_indirect_limit, 
+            current_num_sectors - NUM_DIRECT_BLOCKS - INDIRECT_BLOCK_SECTORS);
+        }
 
-        free (zero_indices);
+      inode->data.length += zero_bytes_to_allocate;
+      free (zero_indices);
     }
-
-
-
 
   if (data_bytes_to_allocate > 0)
     {
@@ -520,6 +572,8 @@ inode_write_at (struct inode *inode, const void *buffer_, off_t size,
             {
               break;
             }
+            /* Initialize the block to zeros. */
+            block_write (fs_device, sector_index, zeros);
             ++sectors_allocate_successfully;
             data_indices[i] = sector_index;
         }
@@ -576,7 +630,8 @@ inode_write_at (struct inode *inode, const void *buffer_, off_t size,
 
       /* Update the length of the file. */
       inode->data.length += (sectors_grow_successfully < bytes_to_sectors (data_bytes_to_allocate)) ?
-                              : size;
+                            (sectors_grow_successfully * BLOCK_SECTOR_SIZE + remaining_last_sector_bytes)
+                            : (data_bytes_to_allocate + remaining_last_sector_bytes);
       free (data_indices);
     }
 
