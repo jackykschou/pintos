@@ -340,6 +340,35 @@ close (int fd)
   lock_release (&filesys_lock);
 }
 
+ bool 
+ chdir (const char *dir)
+ {
+
+ }
+bool
+mkdir (const char *dir)
+{
+
+}
+
+bool 
+readdir (int fd, char *name)
+{
+
+}
+
+bool
+isdir (int fd)
+{
+
+}
+
+int
+inumber (int fd)
+{
+  
+}
+
 /* Checks the validity of a user process address. */ 
 static void
 check_user_program_addresses (void *address)
