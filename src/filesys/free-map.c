@@ -5,6 +5,8 @@
 #include "filesys/filesys.h"
 #include "filesys/inode.h"
 
+#include <stdio.h>
+
 static struct file *free_map_file;   /* Free map file. */
 static struct bitmap *free_map;      /* Free map, one bit per sector. */
 
@@ -37,6 +39,12 @@ free_map_allocate (size_t cnt, block_sector_t *sectorp)
     }
   if (sector != BITMAP_ERROR)
     *sectorp = sector;
+  
+  if (sector == 0)
+  {
+    printf("free_map_allocate have sector index of 0\n");
+  }
+
   return sector != BITMAP_ERROR;
 }
 
@@ -44,6 +52,11 @@ free_map_allocate (size_t cnt, block_sector_t *sectorp)
 void
 free_map_release (block_sector_t sector, size_t cnt)
 {
+  if (sector == 0)
+  {
+    printf("free_map_release have sector index of 0\n");
+  }
+  
   ASSERT (bitmap_all (free_map, sector, cnt));
   bitmap_set_multiple (free_map, sector, cnt, false);
   bitmap_write (free_map, free_map_file);
