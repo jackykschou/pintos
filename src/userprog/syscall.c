@@ -113,6 +113,33 @@ syscall_handler (struct intr_frame *f UNUSED)
   			f->eax = write (deref_address (f->esp, 1, int), 
         deref_address (f->esp, 2, void*), deref_address (f->esp, 3, unsigned));
         break;
+        
+        /* Project 4 System Calls*/
+      case SYS_CHDIR:
+        check_stack_argument_addresses (f->esp, 1);
+        f->eax = chdir (deref_address (f->esp, 1, char*));
+        break;
+
+      case SYS_MKDIR:
+        check_stack_argument_addresses (f->esp, 1);
+        f->eax = mkdir (deref_address (f->esp, 1, char*));
+        break;
+
+      case SYS_READDIR:
+        check_stack_argument_addresses (f->esp, 1);
+        f->eax = readdir (deref_address (f->esp, 1, int), deref_address (f->esp, 2, char*));
+        break;
+
+      case SYS_ISDIR:
+        check_stack_argument_addresses (f->esp, 1);
+        f->eax = isdir (deref_address (f->esp, 1, int));
+        break;
+
+      case SYS_INUMBER:
+        check_stack_argument_addresses (f->esp, 1);
+        f->eax = inumber (deref_address (f->esp, 1, int));
+        break;
+
 
       default:
       	break;
@@ -138,6 +165,7 @@ exit (int status)
 	NOT_REACHED ();
 }
 
+/* TODO - Absolute or Relative Path Name. */
 /* exec system call */
 pid_t
 exec (const char *file)
@@ -175,6 +203,7 @@ wait (pid_t pid)
   return exit_status; 
 }
 
+/* TODO - Absolute or Relative Path Name. */
 /* create system call. */
 bool
 create (const char *file, unsigned initial_size)
@@ -188,6 +217,8 @@ create (const char *file, unsigned initial_size)
   return result;
 }
 
+/* TODO - Absolute or Relative Path Name. */
+/* TODO - Delete Empty Directories as well.*/
 /* remove system call. */
 bool
 remove (const char *file)
@@ -201,6 +232,8 @@ remove (const char *file)
   return result;
 }
 
+/* TODO - Absolute or Relative Path Name. */
+/* TODO - Open directories as well */
 /* open system call. */
 int
 open (const char *file)
@@ -340,34 +373,83 @@ close (int fd)
   lock_release (&filesys_lock);
 }
 
- bool 
- chdir (const char *dir)
- {
+/* START TODO */
 
- }
-bool
-mkdir (const char *dir)
+/* System Calls for Project 4 */
+
+/* Changes current working directory. True if successful. */
+bool 
+chdir (const char *dir)
 {
+
+  //Current working directory change to dir
+  //Update thread current_dir.
+  //Relative or absolute
+
+  return false; //false for now
 
 }
 
+/* Creates directory. True if successful. */
+bool 
+mkdir (const char *dir)
+{
+  bool success = false;
+  struct dir* directory = malloc (sizeof (dir));
+  
+  block_sector_t *sector = malloc (sizeof(block_sector_t));
+  free_map_allocate(1, &sector);
+  success = dir_create(sector, 16);
+
+  //Creates directory named dir
+  //Relative or absolute
+
+  return success; //false for now
+
+}
+
+/* Reads a directory entry from a directory represented by fd.
+   If successful, stores name and returns true. */
 bool 
 readdir (int fd, char *name)
 {
+ 
+  //Reads a directory entry from fd. 
+  //fd MUST represent a directory.
+  //Store null-terminated file name in name if success.
+  //Must have room for READDIR_MAX_LEN + 1 bytes.
+  //If no entries left in directory, return false.
+  //"." and ".." should not be returned.
+
+  return false; //false for now
 
 }
 
-bool
+/* True if fd represents a directory.*/
+bool 
 isdir (int fd)
 {
 
+  //fd must represent a directory.
+  //false if ordinary file.
+
+  return false; //false for now
 }
 
-int
+/* Returns inode number of inode associated with fd. */
+int 
 inumber (int fd)
-{
-  
+{ 
+
+  //inode number of fd. 
+  //may represent an ordinary file or directory.
+  //inode number is the sector number of the inode. 
+
+  return -1; // -1 for now
+
 }
+
+/* END TODO */
 
 /* Checks the validity of a user process address. */ 
 static void
