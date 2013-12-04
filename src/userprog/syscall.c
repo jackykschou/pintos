@@ -11,6 +11,8 @@
 #include "filesys/filesys.h"
 #include "userprog/process.h"
 
+#include "filesys/inode.h"
+
  /* Dereference the pointer at ADDRESS + OFFSET. (4 byte address)
  as the type TYPE. */
 #define deref_address(ADDRESS, OFFSET, TYPE)                    \
@@ -429,17 +431,14 @@ readdir (int fd, char *name)
 bool 
 isdir (int fd)
 {
-
-  //fd must represent a directory.
-  //false if ordinary file.
-
-  return false; //false for now
+  // return ((thread_current ()->file_desc[fd])->inode->data).is_dir;
+  return false;
 }
 
 /* Returns inode number of inode associated with fd. */
 int 
 inumber (int fd)
-{ 
+{
 
   //inode number of fd. 
   //may represent an ordinary file or directory.

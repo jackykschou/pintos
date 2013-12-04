@@ -11,6 +11,7 @@
 #include "threads/switch.h"
 #include "threads/synch.h"
 #include "threads/vaddr.h"
+#include "filesys/filesys.h"
 #ifdef USERPROG
 #include "userprog/process.h"
 #endif
@@ -100,6 +101,9 @@ thread_init (void)
   init_thread (initial_thread, "main", PRI_DEFAULT);
   initial_thread->status = THREAD_RUNNING;
   initial_thread->tid = allocate_tid ();
+
+  /* Initialize the current directory of the initial thread as the root directory. */
+  initial_thread->cur_dir_sector = ROOT_DIR_SECTOR;
 }
 
 /* Starts preemptive thread scheduling by enabling interrupts.
@@ -188,7 +192,6 @@ thread_create (const char *name, int priority,
 
 
   /* If the thread created is a used process, initialize the fields that a process has */
-  #ifdef USERPROG
   /* Initialize pid */
   t->pid = tid;
   /* Initialize the process's wait_node */
@@ -201,7 +204,8 @@ thread_create (const char *name, int priority,
   /* Assign its parent thread */
   t->parent_thread = thread_current ();
 
-  #endif
+  /* Assign its current directory. (same current direct as its parent) */
+  t->cur_dir_sector = thread_current ()->cur_dir_sector;
 
   /* Prepare thread for first run by initializing its stack.
      Do this atomically so intermediate values for the 'stack' 

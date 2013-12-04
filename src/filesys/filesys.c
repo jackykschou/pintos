@@ -6,11 +6,19 @@
 #include "filesys/free-map.h"
 #include "filesys/inode.h"
 #include "filesys/directory.h"
+#include "threads/thread.h"
+#include "threads/malloc.h"
+
+#define MAX_DIR_DEPTH 10
 
 /* Partition that contains the file system. */
 struct block *fs_device;
 
+struct inode;
+struct inode_disk;
+
 static void do_format (void);
+static bool parse_path (const char *name, struct dir **dir, char *parsed_name);
 
 /* Initializes the file system module.
    If FORMAT is true, reformats the file system. */
@@ -46,12 +54,19 @@ bool
 filesys_create (const char *name, off_t initial_size) 
 {
   block_sector_t inode_sector = 0;
-  struct dir *dir = dir_open_root ();
+  struct dir *dir;
+  char parsed_name[NAME_MAX + 1];
+  bool success = parse_path (name, &dir, parsed_name);
 
-  bool success = (dir != NULL
+  if (!success)
+    {
+      return success;
+    }
+
+  success = (dir != NULL
                   && free_map_allocate (1, &inode_sector)
-                  && inode_create (inode_sector, initial_size)
-                  && dir_add (dir, name, inode_sector));
+                  && inode_create (inode_sector, initial_size, false)
+                  && dir_add (dir, parsed_name, inode_sector));
   if (!success && inode_sector != 0) 
     free_map_release (inode_sector, 1);
   dir_close (dir);
@@ -67,12 +82,17 @@ filesys_create (const char *name, off_t initial_size)
 struct file *
 filesys_open (const char *name)
 {
-  struct dir *dir = dir_open_root ();
+  struct dir *dir;
   struct inode *inode = NULL;
+  char parsed_name[NAME_MAX + 1];
+  bool success = parse_path (name, &dir, parsed_name);
 
-  if (dir != NULL)
-    dir_lookup (dir, name, &inode);
-  dir_close (dir);
+  if (success)
+  {
+    if (dir != NULL)
+      dir_lookup (dir, parsed_name, &inode);
+    dir_close (dir);
+  }
 
   return file_open (inode);
 }
@@ -84,8 +104,16 @@ filesys_open (const char *name)
 bool
 filesys_remove (const char *name) 
 {
-  struct dir *dir = dir_open_root ();
-  bool success = dir != NULL && dir_remove (dir, name);
+  struct dir *dir;
+  char parsed_name[NAME_MAX + 1];
+  bool success = parse_path (name, &dir, parsed_name);
+
+  if (!success)
+    {
+      return success;
+    }
+
+  success = dir != NULL && dir_remove (dir, parsed_name);
   dir_close (dir); 
 
   return success;
@@ -101,4 +129,91 @@ do_format (void)
     PANIC ("root directory creation failed");
   free_map_close ();
   printf ("done.\n");
+}
+
+/* Parse an absolute or relative file path and find the directory and the file name the put it to the buffers (dir and parsed_name) */
+static bool
+parse_path (const char *name, struct dir **dir, char *parsed_name)
+{
+  bool success = true;
+  struct dir *cur_dir;
+  /* If it is absolute path. */
+  if (name[0] == '/')
+    {
+      cur_dir = dir_open_root ();
+    }
+  /* If it is relative path. */
+  else
+    {
+      cur_dir = dir_open (inode_open (thread_current()->cur_dir_sector));
+    }
+
+  /* Search through the directories to get the desired directory and the name of the file. */
+  struct inode *inode = NULL;
+  char *token, *save_ptr;
+  char *name_copy = (char*) malloc (strlen (name));
+  strlcpy (name_copy, name, strlen (name));
+  if (name_copy == NULL)
+    {
+      success = false;
+      goto return_result;
+    }
+
+  /* Initialize an array to stores the different file names of the path. */
+  char **dirs = (char**)malloc (MAX_DIR_DEPTH);
+  int i;
+  for (i = 0; i < MAX_DIR_DEPTH; ++i)
+    {
+      dirs[i] = (char*) malloc (NAME_MAX + 1);
+    }
+
+  /* Read all the file names of the path. */
+  for (token = strtok_r (name_copy, "/", &save_ptr), i = 0; token != NULL; token = strtok_r (NULL, "/", &save_ptr), ++i)
+    {
+      strlcpy (dirs[i], token, strlen (token));
+    }
+
+  /* Get the last file name as the parsed name. */
+  strlcpy (parsed_name, dirs[i - 1], strlen (token));
+
+  /* Get the directory where the file (parsed name) is located. */
+  int dir_num = i - 2;
+  for (i = 0; i < dir_num; ++i)
+    {
+      success = dir_lookup (cur_dir, dirs[i], &inode);
+      if (!success)
+        {
+          goto return_result;
+        }
+      if (!(inode->data).is_dir)
+        {
+          success = false;
+          goto return_result;
+        }
+      dir_close (cur_dir);
+      cur_dir = dir_open (inode);
+      if (cur_dir == NULL)
+        {
+          success = false;
+          goto return_result;
+        }
+    }
+
+  return_result:
+
+  if (!success)
+  {
+    dir_close (cur_dir);
+  }
+
+  for (i = 0; i < MAX_DIR_DEPTH; ++i)
+    {
+      free (dirs[i]);
+    }
+  free (name_copy);
+
+  *dir = cur_dir;
+
+  return success;
+
 }

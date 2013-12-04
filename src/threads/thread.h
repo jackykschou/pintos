@@ -4,6 +4,7 @@
 #include <debug.h>
 #include <list.h>
 #include <stdint.h>
+#include "devices/block.h"
 #include "threads/synch.h"
 
 #define MAX_OPEN_FILES 128
@@ -119,7 +120,6 @@ struct thread
     /* Shared between thread.c and synch.c. */
     struct list_elem elem;              /* List element. */
 
-#ifdef USERPROG
     /* Owned by userprog/process.c. */
     uint32_t *pagedir;                        /* Page directory. */
     pid_t pid;                                /* pid of the process, which should be same as the tid */
@@ -130,7 +130,9 @@ struct thread
     struct wait_node *wait_node;              /* The wait node of this process that is used to give information to the parent even this process has died */
     struct file *executable;                  /* File of the executable of the process */
     bool load_success;                        /* Indicate whether the last loading of executable of it child is success of not */
-#endif
+
+    block_sector_t cur_dir_sector;
+
     /* Owned by thread.c. */
     unsigned magic;                     /* Detects stack overflow. */
   };
