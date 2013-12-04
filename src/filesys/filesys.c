@@ -157,6 +157,15 @@ filesys_mkdir (const char *dir)
   //   }
 
   success = dir_create(sector, 16);
+  
+  if(success)
+  {
+    struct inode* inode;
+    inode = dir_get_inode (*dir);
+
+    inode->data.is_dir = true;
+  }
+
 
   //Creates directory named dir
   //Relative or absolute
