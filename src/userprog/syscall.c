@@ -388,6 +388,11 @@ chdir (const char *dir)
   //Update thread current_dir.
   //Relative or absolute
 
+  //struct inode *inode = inode_open(sector);
+  //thread_current ()->cur_dir_sector = dir_open (inode);
+  //inode_close(inode);
+  //dir_close(thread_current ()->cur_dir_sector);
+
   return false; //false for now
 
 }
@@ -396,18 +401,7 @@ chdir (const char *dir)
 bool 
 mkdir (const char *dir)
 {
-  bool success = false;
-  struct dir* directory = malloc (sizeof (dir));
-  
-  block_sector_t *sector = malloc (sizeof(block_sector_t));
-  free_map_allocate(1, &sector);
-  success = dir_create(sector, 16);
-
-  //Creates directory named dir
-  //Relative or absolute
-
-  return success; //false for now
-
+  return filesys_mkdir(dir);
 }
 
 /* Reads a directory entry from a directory represented by fd.
@@ -431,8 +425,13 @@ readdir (int fd, char *name)
 bool 
 isdir (int fd)
 {
-  // return ((thread_current ()->file_desc[fd])->inode->data).is_dir;
-  return false;
+  check_fd (fd);
+  //fd must represent a directory.
+  //false if ordinary file.
+  struct file *file;
+  file = get_file_struct (fd);
+
+  return false; //false for now
 }
 
 /* Returns inode number of inode associated with fd. */
