@@ -118,6 +118,51 @@ filesys_remove (const char *name)
 
   return success;
 }
+
+/* UNFINISHED */
+/* Creates directory. True if successful. */
+bool 
+filesys_mkdir (const char *dir)
+{
+  bool success = false;
+
+  /*The string *dir cannot be empty.*/
+  if(*dir == NULL)
+    {
+      return success;
+    }
+
+  /*Allocate space for the directory and sector.*/
+  struct dir* directory = malloc (sizeof (dir));
+  block_sector_t *sector = malloc (sizeof(block_sector_t));
+  /*Find a free sector for the directory.*/
+  free_map_allocate(1, &sector);
+
+  // struct inode *inode = inode_open(sector);
+  // inode_close(inode);
+
+  //TODO
+  /* Fail if dir already exists or if any directory name in dir
+      besides the last doesn not already exist
+  */
+
+  // if(dir_lookup(directory, *dir,
+  //           &inode))
+  //   {
+  //    // inode_close (*sector);
+  //    // free_map_release (&sector, 1);
+  //    // free (directory); 
+  //    // free (sector); 
+  //    // return success;
+  //   }
+
+  success = dir_create(sector, 16);
+
+  //Creates directory named dir
+  //Relative or absolute
+
+  return success; 
+}
 
 /* Formats the file system. */
 static void
