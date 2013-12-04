@@ -180,6 +180,11 @@ do_format (void)
 static bool
 parse_path (const char *name, struct dir **dir, char *parsed_name)
 {
+
+  // *dir = dir_open_root ();
+  // strlcpy (parsed_name, name, strlen (name));
+  // return true;
+
   bool success = true;
   struct dir *cur_dir;
   /* If it is absolute path. */
@@ -197,30 +202,26 @@ parse_path (const char *name, struct dir **dir, char *parsed_name)
   struct inode *inode = NULL;
   char *token, *save_ptr;
   char *name_copy = (char*) malloc (strlen (name));
-  strlcpy (name_copy, name, strlen (name));
+  strlcpy (name_copy, name, strlen (name) + 1);
   if (name_copy == NULL)
     {
       success = false;
       goto return_result;
     }
-
   /* Initialize an array to stores the different file names of the path. */
-  char **dirs = (char**)malloc (MAX_DIR_DEPTH);
+  char **dirs = (char**)malloc (MAX_DIR_DEPTH * sizeof(char*));
   int i;
   for (i = 0; i < MAX_DIR_DEPTH; ++i)
     {
-      dirs[i] = (char*) malloc (NAME_MAX + 1);
+      dirs[i] = (char*) malloc ((NAME_MAX + 1) * sizeof(char*));
     }
-
   /* Read all the file names of the path. */
   for (token = strtok_r (name_copy, "/", &save_ptr), i = 0; token != NULL; token = strtok_r (NULL, "/", &save_ptr), ++i)
     {
-      strlcpy (dirs[i], token, strlen (token));
+      strlcpy (dirs[i], token, strlen (token) + 1);
     }
-
   /* Get the last file name as the parsed name. */
-  strlcpy (parsed_name, dirs[i - 1], strlen (token));
-
+  strlcpy (parsed_name, dirs[i - 1], strlen (dirs[i - 1]) + 1);
   /* Get the directory where the file (parsed name) is located. */
   int dir_num = i - 2;
   for (i = 0; i < dir_num; ++i)
@@ -243,22 +244,19 @@ parse_path (const char *name, struct dir **dir, char *parsed_name)
           goto return_result;
         }
     }
-
   return_result:
 
   if (!success)
   {
     dir_close (cur_dir);
   }
-
   for (i = 0; i < MAX_DIR_DEPTH; ++i)
     {
       free (dirs[i]);
     }
   free (name_copy);
-
+  free (dirs);
   *dir = cur_dir;
 
   return success;
-
 }
