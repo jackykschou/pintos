@@ -56,6 +56,12 @@ filesys_create (const char *name, off_t initial_size)
   block_sector_t inode_sector = 0;
   struct dir *dir;
   char parsed_name[NAME_MAX + 1];
+  
+  if (*name == NULL || (strlen (name) > NAME_MAX))
+    {
+      return false;
+    }
+  
   bool success = parse_path (name, &dir, parsed_name);
 
   if (!success)
@@ -85,6 +91,12 @@ filesys_open (const char *name)
   struct dir *dir;
   struct inode *inode = NULL;
   char parsed_name[NAME_MAX + 1];
+  
+  if (*name == NULL || (strlen (name) > NAME_MAX))
+    {
+      return NULL;
+    }
+  
   bool success = parse_path (name, &dir, parsed_name);
 
   if (success)
@@ -106,6 +118,12 @@ filesys_remove (const char *name)
 {
   struct dir *dir;
   char parsed_name[NAME_MAX + 1];
+  
+  if (*name == NULL || (strlen (name) > NAME_MAX))
+    {
+      return false;
+    }
+  
   bool success = parse_path (name, &dir, parsed_name);
 
   if (!success)
