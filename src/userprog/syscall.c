@@ -9,6 +9,7 @@
 #include "threads/synch.h"
 #include "filesys/file.h"
 #include "filesys/filesys.h"
+#include "filesys/directory.h"
 #include "userprog/process.h"
 
 #include "filesys/inode.h"
