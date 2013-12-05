@@ -88,8 +88,6 @@ inode_map_sector_index (struct inode_disk *disk_inode, size_t block_index, size_
 static size_t
 get_direct_map_index (struct inode_disk *disk_inode, size_t block_index)
 {
-  
-  // 
   return disk_inode->direct[block_index];
 }
 

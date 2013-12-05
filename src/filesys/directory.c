@@ -6,6 +6,8 @@
 #include "filesys/inode.h"
 #include "threads/malloc.h"
 
+#define READDIR_MAX_LEN 14
+
 /* Creates a directory with space for ENTRY_CNT entries in the
    given SECTOR.  Returns true if successful, false on failure. */
 bool
@@ -109,7 +111,11 @@ dir_lookup (const struct dir *dir, const char *name,
   ASSERT (dir != NULL);
   ASSERT (name != NULL);
 
-  if (lookup (dir, name, &e, NULL))
+  if (!strcmp (name, "/"))
+    {
+      *inode = inode_open (ROOT_DIR_SECTOR);
+    }
+  else if (lookup (dir, name, &e, NULL))
     *inode = inode_open (e.inode_sector);
   else
     *inode = NULL;
@@ -180,11 +186,46 @@ dir_remove (struct dir *dir, const char *name)
   /* Find directory entry. */
   if (!lookup (dir, name, &e, &ofs))
     goto done;
-
   /* Open inode. */
   inode = inode_open (e.inode_sector);
   if (inode == NULL)
     goto done;
+
+  /* If dir is a directory and if it is being opened, reject the removal. */
+  if (inode->data.is_dir && inode->open_cnt != 1)
+    {
+      goto done;
+    }
+
+  /* If dir is a directory and if it is not empty (excluding "." and ".."), reject the removal. 
+     Also remove the "." and ".." if removal is successful. */
+  if (inode->data.is_dir)
+    {
+      struct dir *dir_to_remove = dir_open (inode);
+      /* Read the "." and ".." */
+      char name_buffer[READDIR_MAX_LEN + 1];
+      /* Ignore "." and "..". */
+      dir_readdir (dir_to_remove, name_buffer);
+      if (strcmp (name_buffer, ".") && strcmp (name_buffer, ".."))
+        {
+          dir_close (dir_to_remove);
+          goto done;
+        }
+      dir_readdir (dir_to_remove, name_buffer);
+      if (strcmp (name_buffer, ".") && strcmp (name_buffer, ".."))
+        {
+          dir_close (dir_to_remove);
+          goto done;
+        }
+
+      /* If there is something more, that means the directory is not empty. */
+      if (dir_readdir (dir_to_remove, name_buffer))
+      {
+        dir_close (dir_to_remove);
+        goto done;
+      }
+      dir_close (dir_to_remove);
+    }
 
   /* Erase directory entry. */
   e.in_use = false;
@@ -193,6 +234,7 @@ dir_remove (struct dir *dir, const char *name)
 
   /* Remove inode. */
   inode_remove (inode);
+
   success = true;
 
  done:

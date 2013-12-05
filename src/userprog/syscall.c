@@ -11,8 +11,9 @@
 #include "filesys/filesys.h"
 #include "filesys/directory.h"
 #include "userprog/process.h"
-
 #include "filesys/inode.h"
+
+#define READDIR_MAX_LEN 14
 
  /* Dereference the pointer at ADDRESS + OFFSET. (4 byte address)
  as the type TYPE. */
@@ -330,7 +331,14 @@ write (int fd, const void *buffer, unsigned size)
     { 
       check_fd (fd);
       file = get_file_struct (fd);
-      size_written = file_write (file, buffer, size); 
+      if (isdir(fd))
+        {
+          size_written = -1;
+        }
+      else
+        {
+          size_written = file_write (file, buffer, size); 
+        }
     }
   lock_release (&filesys_lock);
   return size_written;
@@ -371,6 +379,7 @@ close (int fd)
   check_fd (fd);
   lock_acquire (&filesys_lock);
   file = get_file_struct (fd);
+  //here
   file_close (file);
   remove_file_descriptor (fd);
   lock_release (&filesys_lock);
@@ -389,25 +398,16 @@ chdir (const char *dir)
   result = filesys_chdir (dir);
   lock_release (&filesys_lock);
   return result;
-
-
-  //Current working directory change to dir
-  //Update thread current_dir.
-  //Relative or absolute
-
-  //struct inode *inode = inode_open(sector);
-  //thread_current ()->cur_dir_sector = dir_open (inode);
-  //inode_close(inode);
-  //dir_close(thread_current ()->cur_dir_sector);
-
-
 }
 
 /* Creates directory. True if successful. */
 bool 
 mkdir (const char *dir)
 {
-  return filesys_mkdir(dir);
+  lock_acquire (&filesys_lock);
+  bool result = filesys_mkdir(dir);
+  lock_release (&filesys_lock);
+  return result;
 }
 
 /* Reads a directory entry from a directory represented by fd.
@@ -415,16 +415,42 @@ mkdir (const char *dir)
 bool 
 readdir (int fd, char *name)
 {
- 
-  //Reads a directory entry from fd. 
-  //fd MUST represent a directory.
-  //Store null-terminated file name in name if success.
-  //Must have room for READDIR_MAX_LEN + 1 bytes.
-  //If no entries left in directory, return false.
-  //"." and ".." should not be returned.
+  lock_acquire (&filesys_lock);
+  struct file *myfile;
+  myfile = get_file_struct (fd);
+  /* If the file is not a directory, return false. */
+  if (!myfile->inode->data.is_dir)
+    {
+      lock_release (&filesys_lock);
+      return false;
+    }
+  struct dir *dir = dir_open (myfile->inode);
+  /* Fails to open directory, return false. */
+  if (dir == NULL)
+    {
+      lock_release (&filesys_lock);
+      return false;
+    }
 
-  return false; //false for now
-
+  bool still_have_thing = true;
+  bool result = false;
+  char name_buffer[READDIR_MAX_LEN + 1];
+  /* Ignore "." and "..". */
+  while (still_have_thing)
+    {
+      if (!dir_readdir (dir, name_buffer))
+        {
+          still_have_thing = false;
+        }
+      else if (strcmp (name_buffer, ".") && strcmp (name_buffer, ".."))
+        {
+          result = true;
+          strlcpy (name, name_buffer, strlen (name_buffer) + 1);
+        }
+    }
+  dir_close (dir);
+  lock_release (&filesys_lock);
+  return result;
 }
 
 /* True if fd represents a directory.*/
@@ -446,8 +472,10 @@ isdir (int fd)
 int 
 inumber (int fd)
 {
+  lock_acquire (&filesys_lock);
   struct file *myfile;
   myfile = get_file_struct (fd);
+  lock_release (&filesys_lock);
 
   return myfile->inode->sector;
 }

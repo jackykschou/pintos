@@ -91,12 +91,10 @@ filesys_open (const char *name)
   struct dir *dir;
   struct inode *inode = NULL;
   char parsed_name[NAME_MAX + 1];
-  
   if (*name == NULL || (strlen (name) > NAME_MAX))
     {
       return NULL;
     }
-  
   bool success = parse_path (name, &dir, parsed_name);
 
   if (success)
@@ -105,8 +103,8 @@ filesys_open (const char *name)
       dir_lookup (dir, parsed_name, &inode);
     dir_close (dir);
   }
-
-  return file_open (inode);
+  struct file *result = file_open (inode);
+  return result;
 }
 
 /* Deletes the file named NAME.
@@ -119,7 +117,7 @@ filesys_remove (const char *name)
   struct dir *dir;
   char parsed_name[NAME_MAX + 1];
   
-  if (*name == NULL || (strlen (name) > NAME_MAX))
+  if (*name == NULL || (strlen (name) > NAME_MAX) || !strcmp (name, "/"))
     {
       return false;
     }
@@ -239,7 +237,6 @@ do_format (void)
 static bool
 parse_path (const char *name, struct dir **dir, char *parsed_name)
 {
-
   // *dir = dir_open_root();
   // strlcpy (parsed_name, name, strlen (name) + 1);
   // return true;
@@ -267,7 +264,6 @@ parse_path (const char *name, struct dir **dir, char *parsed_name)
       success = false;
       goto return_result;
     }
-
   /* Initialize an array to stores the different file names of the path. */
   char **dirs = (char**)malloc (MAX_DIR_DEPTH * sizeof(char*));
   int i;
@@ -280,31 +276,40 @@ parse_path (const char *name, struct dir **dir, char *parsed_name)
     {
       strlcpy (dirs[i], token, strlen (token) + 1);
     }
-  /* Get the last file name as the parsed name. */
-  strlcpy (parsed_name, dirs[i - 1], strlen (dirs[i - 1]) + 1);
 
-  /* Get the directory where the file (parsed name) is located. */
-  int dir_num = i - 1;
-  for (i = 0; i < dir_num; ++i)
-    {
-      success = dir_lookup (cur_dir, dirs[i], &inode);
-      if (!success)
-        {
-          goto return_result;
-        }
-      if (!(inode->data).is_dir)
-        {
-          success = false;
-          goto return_result;
-        }
-      dir_close (cur_dir);
-      cur_dir = dir_open (inode);
-      if (cur_dir == NULL)
-        {
-          success = false;
-          goto return_result;
-        }
-    }
+  /* Special case: the root directory. */
+  if (i == 0 && !strcmp ("/", name))
+  {
+    strlcpy (parsed_name, name, strlen (name) + 1);
+  }
+  else
+  {
+    /* Get the last file name as the parsed name. */
+    strlcpy (parsed_name, dirs[i - 1], strlen (dirs[i - 1]) + 1);
+    /* Get the directory where the file (parsed name) is located. */
+    int dir_num = i - 1;
+    for (i = 0; i < dir_num; ++i)
+      {
+        success = dir_lookup (cur_dir, dirs[i], &inode);
+        if (!success)
+          {
+            goto return_result;
+          }
+        if (!(inode->data).is_dir)
+          {
+            success = false;
+            goto return_result;
+          }
+        dir_close (cur_dir);
+        cur_dir = dir_open (inode);
+        if (cur_dir == NULL)
+          {
+            success = false;
+            goto return_result;
+          }
+      }
+  }
+
   return_result:
 
   if (!success)
@@ -319,6 +324,5 @@ parse_path (const char *name, struct dir **dir, char *parsed_name)
   free (dirs);
 
   *dir = cur_dir;
-
   return success;
 }

@@ -53,7 +53,6 @@ make_tar_archive (const char *archive_name, char *files[], size_t file_cnt)
   bool success = true;
   bool write_error = false;
   size_t i;
-  
   if (!create (archive_name, 0)) 
     {
       printf ("%s: create failed\n", archive_name);
@@ -75,11 +74,9 @@ make_tar_archive (const char *archive_name, char *files[], size_t file_cnt)
                          archive_fd, &write_error))
         success = false;
     }
-
   if (!do_write (archive_fd, zeros, 512, &write_error)
       || !do_write (archive_fd, zeros, 512, &write_error)) 
     success = false;
-
   close (archive_fd);
 
   return success;
@@ -97,18 +94,21 @@ archive_file (char file_name[], size_t file_name_size,
       if (inumber (file_fd) != inumber (archive_fd)) 
         {
           if (!isdir (file_fd))
+          {
             success = archive_ordinary_file (file_name, file_fd,
                                              archive_fd, write_error);
+          }
           else
+          {
             success = archive_directory (file_name, file_name_size, file_fd,
                                          archive_fd, write_error);      
+          }
         }
       else
         {
           /* Nothing to do: don't try to archive the archive file. */
           success = true;
         }
-  
       close (file_fd);
 
       return success;
@@ -152,7 +152,6 @@ archive_ordinary_file (const char *file_name, int file_fd,
 
       file_size -= chunk_size;
     }
-
   return success;
 }
 
@@ -178,7 +177,6 @@ archive_directory (char file_name[], size_t file_name_size, int file_fd,
     if (!archive_file (file_name, file_name_size, archive_fd, write_error))
       success = false;
   file_name[dir_len] = '\0';
-
   return success;
 }
 
