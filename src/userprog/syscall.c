@@ -429,10 +429,12 @@ isdir (int fd)
   check_fd (fd);
   //fd must represent a directory.
   //false if ordinary file.
-  struct file *file;
-  file = get_file_struct (fd);
+  struct file *myfile;
+  myfile = get_file_struct (fd);
 
-  return false; //false for now
+  struct inode* myinode;
+
+  return myfile->inode->data.is_dir;
 }
 
 /* Returns inode number of inode associated with fd. */

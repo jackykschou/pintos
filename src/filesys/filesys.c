@@ -53,6 +53,7 @@ filesys_done (void)
 bool
 filesys_create (const char *name, off_t initial_size) 
 {
+
   block_sector_t inode_sector = 0;
   struct dir *dir;
   char parsed_name[NAME_MAX + 1];
@@ -61,9 +62,7 @@ filesys_create (const char *name, off_t initial_size)
     {
       return false;
     }
-  
   bool success = parse_path (name, &dir, parsed_name);
-
   if (!success)
     {
       return success;
@@ -76,6 +75,7 @@ filesys_create (const char *name, off_t initial_size)
   if (!success && inode_sector != 0) 
     free_map_release (inode_sector, 1);
   dir_close (dir);
+
 
   return success;
 }
@@ -145,48 +145,48 @@ filesys_mkdir (const char *dir)
   bool success = false;
 
   /*The string *dir cannot be empty.*/
-  if(*dir == NULL)
+  if (*dir == NULL)
     {
       return success;
     }
 
-  /*Allocate space for the directory and sector.*/
-  struct dir* directory = malloc (sizeof (dir));
-  block_sector_t *sector = malloc (sizeof(block_sector_t));
+  /* Locates the directory where the new directory should be created. */
+  struct dir *create_dir;
+  char parsed_name[NAME_MAX + 1];
+  parse_path (dir, &create_dir, parsed_name);
+
+  block_sector_t sector;
   /*Find a free sector for the directory.*/
-  free_map_allocate(1, &sector);
+  if (!free_map_allocate (1, &sector))
+    {
+      return success;
+    }
 
-  // struct inode *inode = inode_open(sector);
-  // inode_close(inode);
+  success = dir_create (sector, 16);
+  if (!success)
+    {
+      free_map_release (sector, 1);
+      return success;
+    }
 
-  //TODO
-  /* Fail if dir already exists or if any directory name in dir
-      besides the last doesn not already exist
-  */
+  success = dir_add (create_dir, parsed_name, sector);
+  if (!success)
+    {
+      free_map_release (sector, 1);
+      return success;
+    }
 
-  // if(dir_lookup(directory, *dir,
-  //           &inode))
-  //   {
-  //    // inode_close (*sector);
-  //    // free_map_release (&sector, 1);
-  //    // free (directory); 
-  //    // free (sector); 
-  //    // return success;
-  //   }
+  /* Get the dir struct of the directory that is just created and add "." and "..". */
+  struct inode *inode = inode_open (sector);
+  struct dir *new_dir = dir_open (inode);
 
-  success = dir_create(sector, 16);
-  
-  if(success)
-  {
-    struct inode* inode;
-    inode = dir_get_inode (*dir);
+  ASSERT (inode != NULL);
+  ASSERT (new_dir != NULL);
 
-    inode->data.is_dir = true;
-  }
-
-
-  //Creates directory named dir
-  //Relative or absolute
+  dir_add (new_dir, ".", sector);
+  dir_add (new_dir, "..", create_dir->inode->sector);
+  dir_close (new_dir);
+  dir_close (create_dir);
 
   return success; 
 }
@@ -200,6 +200,12 @@ do_format (void)
   if (!dir_create (ROOT_DIR_SECTOR, 16))
     PANIC ("root directory creation failed");
   free_map_close ();
+
+  struct dir *root = dir_open_root ();
+  dir_add (root, ".", ROOT_DIR_SECTOR);
+  dir_add (root, "..", ROOT_DIR_SECTOR);
+  dir_close (root);
+
   printf ("done.\n");
 }
 
@@ -208,8 +214,8 @@ static bool
 parse_path (const char *name, struct dir **dir, char *parsed_name)
 {
 
-  // *dir = dir_open_root ();
-  // strlcpy (parsed_name, name, strlen (name));
+  // *dir = dir_open_root();
+  // strlcpy (parsed_name, name, strlen (name) + 1);
   // return true;
 
   bool success = true;
@@ -235,6 +241,7 @@ parse_path (const char *name, struct dir **dir, char *parsed_name)
       success = false;
       goto return_result;
     }
+
   /* Initialize an array to stores the different file names of the path. */
   char **dirs = (char**)malloc (MAX_DIR_DEPTH * sizeof(char*));
   int i;
@@ -249,8 +256,9 @@ parse_path (const char *name, struct dir **dir, char *parsed_name)
     }
   /* Get the last file name as the parsed name. */
   strlcpy (parsed_name, dirs[i - 1], strlen (dirs[i - 1]) + 1);
+
   /* Get the directory where the file (parsed name) is located. */
-  int dir_num = i - 2;
+  int dir_num = i - 1;
   for (i = 0; i < dir_num; ++i)
     {
       success = dir_lookup (cur_dir, dirs[i], &inode);
@@ -283,6 +291,7 @@ parse_path (const char *name, struct dir **dir, char *parsed_name)
     }
   free (name_copy);
   free (dirs);
+
   *dir = cur_dir;
 
   return success;
