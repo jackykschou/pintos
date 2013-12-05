@@ -384,6 +384,12 @@ close (int fd)
 bool 
 chdir (const char *dir)
 {
+  lock_acquire (&filesys_lock);
+  bool result;
+  result = filesys_chdir (dir);
+  lock_release (&filesys_lock);
+  return result;
+
 
   //Current working directory change to dir
   //Update thread current_dir.
@@ -394,7 +400,6 @@ chdir (const char *dir)
   //inode_close(inode);
   //dir_close(thread_current ()->cur_dir_sector);
 
-  return false; //false for now
 
 }
 
@@ -441,13 +446,10 @@ isdir (int fd)
 int 
 inumber (int fd)
 {
+  struct file *myfile;
+  myfile = get_file_struct (fd);
 
-  //inode number of fd. 
-  //may represent an ordinary file or directory.
-  //inode number is the sector number of the inode. 
-
-  return -1; // -1 for now
-
+  return myfile->inode->sector;
 }
 
 /* END TODO */

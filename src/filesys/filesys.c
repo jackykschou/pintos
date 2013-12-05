@@ -190,6 +190,32 @@ filesys_mkdir (const char *dir)
 
   return success; 
 }
+
+bool 
+filesys_chdir (const char *dir)
+{
+  struct dir *target_dir;
+  struct inode *inode = NULL;
+  char parsed_name[NAME_MAX + 1];
+  if (!parse_path (dir, &target_dir, parsed_name))
+    {
+      return false;
+    }
+  if (!dir_lookup (target_dir, parsed_name, &inode))
+    {
+      dir_close (target_dir);
+      return false;
+    }
+  dir_close (target_dir);
+  if (!inode->data.is_dir)
+    {
+      return false;
+    }
+  thread_current ()->cur_dir_sector = inode->sector;
+
+  return true;
+}
+
 
 /* Formats the file system. */
 static void
