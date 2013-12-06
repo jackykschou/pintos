@@ -6,6 +6,7 @@
 #include "filesys/filesys.h"
 #include "filesys/free-map.h"
 #include "threads/malloc.h"
+#include "threads/synch.h"
 
 // static unsigned inode_grow(struct inode_disk *disk_inode, unsigned sectors_to_grow, bool must_succeed);
 // static void inode_map_sector_index(struct inode_disk *disk_inode, unsigned block_index, unsigned sector_number);
@@ -107,7 +108,7 @@ get_indirect_map_index (struct inode_disk *disk_inode, size_t block_index)
   return result;
 }
 
-static size_t 
+static int 
 get_double_indirect_map_index (struct inode_disk *disk_inode, size_t block_index)
 {
   /*Find the relative index */
@@ -187,7 +188,6 @@ inode_grow(struct inode_disk *disk_inode, size_t sectors_to_grow, bool must_succ
     {
       return 0;
     }
-
   static char zeros[BLOCK_SECTOR_SIZE];
   size_t sectors_successfully_allocated = 0;
   bool alloc_success = false;
@@ -203,9 +203,6 @@ inode_grow(struct inode_disk *disk_inode, size_t sectors_to_grow, bool must_succ
     we must calculate how many NEW index blocks are needed after we find out how many data blocks we can actually allocate*/
 
   /* Allocate the data blocks required */
-  
-  
-
   block_sector_t *allocated_sectors = malloc (sectors_to_grow * sizeof (block_sector_t));
   for (i = 0; i < sectors_to_grow; ++i)
   {
@@ -332,7 +329,6 @@ inode_grow(struct inode_disk *disk_inode, size_t sectors_to_grow, bool must_succ
   int j;
   for (i = starting_sectors, j = 0; i < actual_ending_sectors; ++i, ++j)
   {
-    
     inode_map_sector_index (disk_inode, i, allocated_sectors[j]);
   }
 
@@ -376,7 +372,6 @@ inode_grow(struct inode_disk *disk_inode, size_t sectors_to_grow, bool must_succ
 bool
 inode_create (block_sector_t sector, off_t length, bool is_dir)
 {
-
   struct inode_disk *disk_inode = NULL;
   bool success = false;
 
@@ -390,8 +385,6 @@ inode_create (block_sector_t sector, off_t length, bool is_dir)
   disk_inode = calloc (1, sizeof *disk_inode);
   if (disk_inode != NULL)
   {
-    //TODO how do we allocate the disk_inode?
-
     /* Put data in the disk inode */
     disk_inode->length = 0;
     disk_inode->is_dir = is_dir;
@@ -449,6 +442,7 @@ inode_open (block_sector_t sector)
 
   /* Initialize. */
   list_push_front (&open_inodes, &inode->elem);
+  lock_init (&inode->write_lock);
   inode->sector = sector;
   inode->open_cnt = 1;
   inode->deny_write_cnt = 0;
@@ -579,6 +573,11 @@ sectors_needed_to_grow (size_t file_len, off_t offset, off_t size)
 
   size_t allocated_sectors = file_len / BLOCK_SECTOR_SIZE + 1;
 
+  if ((file_len % BLOCK_SECTOR_SIZE) == 0)
+    {
+      --allocated_sectors;
+    }
+
   if(file_len == 0)
   {
     allocated_sectors = 0;
@@ -607,13 +606,16 @@ off_t
 inode_write_at (struct inode *inode, const void *buffer_, off_t size,
                 off_t offset) 
 {
-
+  lock_acquire (&inode->write_lock);
   const uint8_t *buffer = buffer_;
   off_t bytes_written = 0;
   uint8_t *bounce = NULL;
 
   if (inode->deny_write_cnt)
+  {
+    lock_release (&inode->write_lock);
     return 0;
+  }
 
   /* Do we need to grow the file */
   size_t sectors_to_grow = sectors_needed_to_grow (inode_length(inode), offset, size);
@@ -685,6 +687,7 @@ inode_write_at (struct inode *inode, const void *buffer_, off_t size,
     }
   free (bounce);
 
+  lock_release (&inode->write_lock);
   return bytes_written;
 }
 
