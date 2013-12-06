@@ -22,6 +22,9 @@
 
 static struct lock filesys_lock;
 
+static struct lock write_lock;
+static struct lock read_lock;
+
 static void syscall_handler (struct intr_frame *);
 
 /* Newly added function declarations. */
@@ -36,6 +39,10 @@ void
 syscall_init (void) 
 {
   lock_init (&filesys_lock);
+
+  lock_init (&write_lock);
+  lock_init (&read_lock);
+
   intr_register_int (0x30, 3, INTR_ON, syscall_handler, "syscall");
 }
 
@@ -204,6 +211,7 @@ wait (pid_t pid)
   list_remove (&child_wait_node->elem);
   exit_status = child_wait_node->exit_status;
   free (child_wait_node);
+
   return exit_status; 
 }
 
@@ -276,8 +284,8 @@ read (int fd, void *buffer, unsigned size)
   int i;
 
   check_file (buffer);
-  lock_acquire (&filesys_lock);
 
+  lock_acquire (&filesys_lock);
   /* Reads STDIN. */
   if (fd == 0)
     {
@@ -317,7 +325,7 @@ write (int fd, const void *buffer, unsigned size)
   /* Tries to write to STDIN, exits. */
   if (fd == 0)
     {
-      lock_release (&filesys_lock);
+      // lock_release (&filesys_lock);
       exit(-1);
     }
   /* Writes to STDOUT. */ 
@@ -424,7 +432,7 @@ readdir (int fd, char *name)
       lock_release (&filesys_lock);
       return false;
     }
-  struct dir *dir = dir_open (myfile->inode);
+  struct dir *dir = myfile->opened_dir;
   /* Fails to open directory, return false. */
   if (dir == NULL)
     {
@@ -445,10 +453,11 @@ readdir (int fd, char *name)
       else if (strcmp (name_buffer, ".") && strcmp (name_buffer, ".."))
         {
           result = true;
+          still_have_thing = false;
           strlcpy (name, name_buffer, strlen (name_buffer) + 1);
         }
     }
-  dir_close (dir);
+
   lock_release (&filesys_lock);
   return result;
 }

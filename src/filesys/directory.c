@@ -6,6 +6,8 @@
 #include "filesys/inode.h"
 #include "threads/malloc.h"
 
+#include "threads/thread.h"
+
 #define READDIR_MAX_LEN 14
 
 /* Creates a directory with space for ENTRY_CNT entries in the
@@ -186,16 +188,11 @@ dir_remove (struct dir *dir, const char *name)
   /* Find directory entry. */
   if (!lookup (dir, name, &e, &ofs))
     goto done;
+
   /* Open inode. */
   inode = inode_open (e.inode_sector);
   if (inode == NULL)
     goto done;
-
-  /* If dir is a directory and if it is being opened, reject the removal. */
-  if (inode->data.is_dir && inode->open_cnt != 1)
-    {
-      goto done;
-    }
 
   /* If dir is a directory and if it is not empty (excluding "." and ".."), reject the removal. 
      Also remove the "." and ".." if removal is successful. */
@@ -224,7 +221,21 @@ dir_remove (struct dir *dir, const char *name)
         dir_close (dir_to_remove);
         goto done;
       }
+
+      struct dir_entry e2;
+      off_t ofs;
+      if (lookup (dir_to_remove, ".", &e2, &ofs))
+        {
+          e2.in_use = false;
+          ASSERT (inode_write_at (dir_to_remove->inode, &e2, sizeof e2, ofs) == sizeof e2);
+        }
+      if (lookup (dir_to_remove, "..", &e2, &ofs))
+        {
+          e2.in_use = false;
+          ASSERT (inode_write_at (dir_to_remove->inode, &e2, sizeof e2, ofs) == sizeof e2);
+        }
       dir_close (dir_to_remove);
+      
     }
 
   /* Erase directory entry. */

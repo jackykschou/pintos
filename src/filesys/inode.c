@@ -395,7 +395,7 @@ inode_create (block_sector_t sector, off_t length, bool is_dir)
     /* Put data in the disk inode */
     disk_inode->length = 0;
     disk_inode->is_dir = is_dir;
-    disk_inode->magic = INODE_MAGIC;
+    // disk_inode->magic = INODE_MAGIC;
     
     /*Grow the file to the size specified - fills new sectors with zero's and maps all indicies */
     size_t result = inode_grow (disk_inode, sectors, true);
@@ -453,6 +453,7 @@ inode_open (block_sector_t sector)
   inode->open_cnt = 1;
   inode->deny_write_cnt = 0;
   inode->removed = false;
+
   block_read (fs_device, inode->sector, &inode->data);
   return inode;
 }

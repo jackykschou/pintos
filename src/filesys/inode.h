@@ -8,8 +8,7 @@
 
 /* Identifies an inode. */
 #define INODE_MAGIC 0x494e4f44
-#define NUM_DIRECT_BLOCKS 123
-#define NUM_DIRECT_BYTES (NUM_DIRECT_BLOCKS * BLOCK_SECTOR_SIZE)
+#define NUM_DIRECT_BLOCKS 124
 #define INDIRECT_BLOCK_SECTORS (BLOCK_SECTOR_SIZE / sizeof (block_sector_t))
 #define MAX_INDEX_DIRECT (NUM_DIRECT_BLOCKS)
 #define MAX_INDEX_INDIRECT (MAX_INDEX_DIRECT + INDIRECT_BLOCK_SECTORS)
@@ -26,7 +25,7 @@ struct inode_disk
     block_sector_t double_indirect;               /* Index to second-level index block */
     off_t length;                                 /* File size in bytes. */
     bool is_dir;                                  /* If the file is a directory. */
-    unsigned magic;                               /* Magic number. */
+    // unsigned magic;                               /* Magic number. */
   };
 
 struct indirect_block

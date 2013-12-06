@@ -68,10 +68,13 @@ filesys_create (const char *name, off_t initial_size)
       return success;
     }
 
+  struct inode *inode;
+
   success = (dir != NULL
                   && free_map_allocate (1, &inode_sector)
                   && inode_create (inode_sector, initial_size, false)
-                  && dir_add (dir, parsed_name, inode_sector));
+                  && dir_add (dir, parsed_name, inode_sector)
+                  && dir_lookup (dir, ".", &inode));
   if (!success && inode_sector != 0) 
     free_map_release (inode_sector, 1);
   dir_close (dir);
@@ -100,7 +103,7 @@ filesys_open (const char *name)
   if (success)
   {
     if (dir != NULL)
-      dir_lookup (dir, parsed_name, &inode);
+       dir_lookup (dir, parsed_name, &inode);
     dir_close (dir);
   }
   struct file *result = file_open (inode);
@@ -131,7 +134,6 @@ filesys_remove (const char *name)
 
   success = dir != NULL && dir_remove (dir, parsed_name);
   dir_close (dir); 
-
   return success;
 }
 
@@ -237,9 +239,6 @@ do_format (void)
 static bool
 parse_path (const char *name, struct dir **dir, char *parsed_name)
 {
-  // *dir = dir_open_root();
-  // strlcpy (parsed_name, name, strlen (name) + 1);
-  // return true;
 
   bool success = true;
   struct dir *cur_dir;
@@ -286,29 +285,29 @@ parse_path (const char *name, struct dir **dir, char *parsed_name)
   {
     /* Get the last file name as the parsed name. */
     strlcpy (parsed_name, dirs[i - 1], strlen (dirs[i - 1]) + 1);
-    /* Get the directory where the file (parsed name) is located. */
-    int dir_num = i - 1;
-    for (i = 0; i < dir_num; ++i)
-      {
-        success = dir_lookup (cur_dir, dirs[i], &inode);
-        if (!success)
-          {
-            goto return_result;
-          }
-        if (!(inode->data).is_dir)
-          {
-            success = false;
-            goto return_result;
-          }
-        dir_close (cur_dir);
-        cur_dir = dir_open (inode);
-        if (cur_dir == NULL)
-          {
-            success = false;
-            goto return_result;
-          }
-      }
   }
+    /* Get the directory where the file (parsed name) is located. */
+  int dir_num = i - 1;
+  for (i = 0; i < dir_num; ++i)
+    {
+      success = dir_lookup (cur_dir, dirs[i], &inode);
+      if (!success)
+        {
+          goto return_result;
+        }
+      if (!(inode->data).is_dir)
+        {
+          success = false;
+          goto return_result;
+        }
+      dir_close (cur_dir);
+      cur_dir = dir_open (inode);
+      if (cur_dir == NULL)
+        {
+          success = false;
+          goto return_result;
+        }
+    }
 
   return_result:
 

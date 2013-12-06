@@ -10,8 +10,21 @@ struct file *
 file_open (struct inode *inode) 
 {
   struct file *file = calloc (1, sizeof *file);
+
   if (inode != NULL && file != NULL)
     {
+      /* Open the directory if possible. */
+      if (inode->data.is_dir)
+        {
+          struct dir *opened_dir = dir_open (inode);
+          ASSERT (opened_dir != NULL);
+          file->opened_dir = opened_dir;
+        }
+      else
+        {
+          file->opened_dir = NULL;
+        }
+
       file->inode = inode;
       file->pos = 0;
       file->deny_write = false;
@@ -39,6 +52,11 @@ file_close (struct file *file)
 {
   if (file != NULL)
     {
+      /* Close the directory if possible. */
+      if (file->inode->data.is_dir)
+        {
+          dir_close (file->opened_dir);
+        }
       file_allow_write (file);
       inode_close (file->inode);
       free (file); 
