@@ -44,105 +44,105 @@ syscall_handler (struct intr_frame *f UNUSED)
   check_user_program_addresses (f->esp);
 
   /* Check the validity of arguments, call the system_call. Stores return values in EAX, if any. */
-	switch (deref_address (f->esp, 0, uint32_t))
-  	{
-  		/* No arguments */
-  		case SYS_HALT:
-  			halt ();
-        break;
+  switch (deref_address (f->esp, 0, uint32_t))
+  {
+  	  /* No arguments */
+  	  case SYS_HALT:
+  	    halt ();
+            break;
 
-  		/* One argument system calls*/
-  		case SYS_EXIT:
-        check_stack_argument_addresses (f->esp, 1);
-  			exit (deref_address (f->esp, 1, int));
-        break;
+  	  /* One argument system calls*/
+  	  case SYS_EXIT:
+            check_stack_argument_addresses (f->esp, 1);
+  	    exit (deref_address (f->esp, 1, int));
+            break;
 
-  		case SYS_EXEC:
-        check_stack_argument_addresses (f->esp, 1);
-  			f->eax = exec (deref_address (f->esp, 1, char*));
-        break;
+  	  case SYS_EXEC:
+            check_stack_argument_addresses (f->esp, 1);
+  	    f->eax = exec (deref_address (f->esp, 1, char*));
+            break;
 
-  		case SYS_WAIT:
-        check_stack_argument_addresses (f->esp, 1);
-  			f->eax = wait (deref_address (f->esp, 1, int));
-        break;
+  	  case SYS_WAIT:
+            check_stack_argument_addresses (f->esp, 1);
+  	    f->eax = wait (deref_address (f->esp, 1, int));
+            break;
 
-  		case SYS_REMOVE:
-        check_stack_argument_addresses (f->esp, 1);
-  			f->eax = remove (deref_address (f->esp, 1, char*));
-        break;
+  	  case SYS_REMOVE:
+            check_stack_argument_addresses (f->esp, 1);
+  	    f->eax = remove (deref_address (f->esp, 1, char*));
+            break;
 
-  		case SYS_OPEN:
-        check_stack_argument_addresses (f->esp, 1);
-  			f->eax = open (deref_address (f->esp, 1, char*));
-        break;
+  	  case SYS_OPEN:
+            check_stack_argument_addresses (f->esp, 1);
+  	    f->eax = open (deref_address (f->esp, 1, char*));
+            break;
 
-  		case SYS_FILESIZE:
-        check_stack_argument_addresses (f->esp, 1);
-  			f->eax = filesize (deref_address (f->esp, 1, int));
-        break;
+  	  case SYS_FILESIZE:
+            check_stack_argument_addresses (f->esp, 1);
+  	    f->eax = filesize (deref_address (f->esp, 1, int));
+            break;
 
-  		case SYS_TELL:
-        check_stack_argument_addresses (f->esp, 1);
-  			f->eax = tell (deref_address (f->esp, 1, int));
-        break;
+  	  case SYS_TELL:
+            check_stack_argument_addresses (f->esp, 1);
+  	    f->eax = tell (deref_address (f->esp, 1, int));
+            break;
 
-  		case SYS_CLOSE:
-        check_stack_argument_addresses (f->esp, 1);
-  			close (deref_address (f->esp, 1, int));
-        break;
+  	  case SYS_CLOSE:
+            check_stack_argument_addresses (f->esp, 1);
+  	    close (deref_address (f->esp, 1, int));
+            break;
 
-  	    /* Two arguments system calls*/
-  		case SYS_CREATE:
-        check_stack_argument_addresses (f->esp, 2);
-  			f->eax = create (deref_address (f->esp, 1, char*), deref_address (f->esp, 2, unsigned));
-        break;
+  	  /* Two arguments system calls*/
+  	  case SYS_CREATE:
+            check_stack_argument_addresses (f->esp, 2);
+  	    f->eax = create (deref_address (f->esp, 1, char*), deref_address (f->esp, 2, unsigned));
+            break;
 
-  		case SYS_SEEK:
-        check_stack_argument_addresses (f->esp, 2); 
-  			seek (deref_address (f->esp, 1, int), deref_address (f->esp, 2, unsigned));
-        break;
+  	  case SYS_SEEK:
+            check_stack_argument_addresses (f->esp, 2); 
+  	    seek (deref_address (f->esp, 1, int), deref_address (f->esp, 2, unsigned));
+            break;
 
-        /* Three arguments system calls*/
-  		case SYS_READ:
-        check_stack_argument_addresses (f->esp, 3);
-  			f->eax = read (deref_address (f->esp, 1, int), deref_address (f->esp, 2, void*), deref_address (f->esp, 3, unsigned));
-        break;
+          /* Three arguments system calls*/
+  	  case SYS_READ:
+            check_stack_argument_addresses (f->esp, 3);
+  	    f->eax = read (deref_address (f->esp, 1, int), deref_address (f->esp, 2, void*), deref_address (f->esp, 3, unsigned));
+            break;
 
-  		case SYS_WRITE:
-        check_stack_argument_addresses (f->esp, 3);
-  			f->eax = write (deref_address (f->esp, 1, int), 
-        deref_address (f->esp, 2, void*), deref_address (f->esp, 3, unsigned));
-        break;
+  	  case SYS_WRITE:
+            check_stack_argument_addresses (f->esp, 3);
+  	    f->eax = write (deref_address (f->esp, 1, int), 
+            deref_address (f->esp, 2, void*), deref_address (f->esp, 3, unsigned));
+            break;
         
         /* Project 4 System Calls*/
-      case SYS_CHDIR:
-        check_stack_argument_addresses (f->esp, 1);
-        f->eax = chdir (deref_address (f->esp, 1, char*));
-        break;
+      	  case SYS_CHDIR:
+            check_stack_argument_addresses (f->esp, 1);
+            f->eax = chdir (deref_address (f->esp, 1, char*));
+            break;
 
-      case SYS_MKDIR:
-        check_stack_argument_addresses (f->esp, 1);
-        f->eax = mkdir (deref_address (f->esp, 1, char*));
-        break;
+      	  case SYS_MKDIR:
+            check_stack_argument_addresses (f->esp, 1);
+            f->eax = mkdir (deref_address (f->esp, 1, char*));
+            break;
 
-      case SYS_READDIR:
-        check_stack_argument_addresses (f->esp, 1);
-        f->eax = readdir (deref_address (f->esp, 1, int), deref_address (f->esp, 2, char*));
-        break;
+	  case SYS_READDIR:
+            check_stack_argument_addresses (f->esp, 1);
+            f->eax = readdir (deref_address (f->esp, 1, int), deref_address (f->esp, 2, char*));
+            break;
 
-      case SYS_ISDIR:
-        check_stack_argument_addresses (f->esp, 1);
-        f->eax = isdir (deref_address (f->esp, 1, int));
-        break;
+	  case SYS_ISDIR:
+            check_stack_argument_addresses (f->esp, 1);
+            f->eax = isdir (deref_address (f->esp, 1, int));
+            break;
 
-      case SYS_INUMBER:
-        check_stack_argument_addresses (f->esp, 1);
-        f->eax = inumber (deref_address (f->esp, 1, int));
-        break;
+	  case SYS_INUMBER:
+            check_stack_argument_addresses (f->esp, 1);
+            f->eax = inumber (deref_address (f->esp, 1, int));
+            break;
 
-      default:
-      	break;
+	  default:
+      	    break;
   	}
 }
 
