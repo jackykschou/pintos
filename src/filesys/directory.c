@@ -226,10 +226,10 @@ dir_remove (struct dir *dir, const char *name)
 
       /* If there is something more, that means the directory is not empty. */
       if (dir_readdir (dir_to_remove, name_buffer, false))
-      {
-        dir_close (dir_to_remove);
-        goto done;
-      }
+        {
+          dir_close (dir_to_remove);
+          goto done;
+        }
 
       struct dir_entry e2;
       off_t ofs;
