@@ -44,8 +44,8 @@ syscall_handler (struct intr_frame *f UNUSED)
   check_user_program_addresses (f->esp);
 
   /* Check the validity of arguments, call the system_call. Stores return values in EAX, if any. */
-  switch (deref_address (f->esp, 0, uint32_t))
-  {
+      switch (deref_address (f->esp, 0, uint32_t))
+      {
   	  /* No arguments */
   	  case SYS_HALT:
   	    halt ();
@@ -150,8 +150,8 @@ syscall_handler (struct intr_frame *f UNUSED)
 void
 halt (void) 
 {
-	shutdown_power_off();
-	NOT_REACHED ();
+  shutdown_power_off();
+  NOT_REACHED ();
 }
 
 /* Exit system call. */
@@ -162,7 +162,7 @@ exit (int status)
   thread_current ()->wait_node->exit_status = status;
   printf ("%s: exit(%d)\n", thread_current ()->name,status);
   thread_exit ();
-	NOT_REACHED ();
+  NOT_REACHED ();
 }
 
 /* TODO - Absolute or Relative Path Name. */
@@ -431,8 +431,6 @@ isdir (int fd)
   //false if ordinary file.
   struct file *myfile;
   myfile = get_file_struct (fd);
-
-  struct inode* myinode;
 
   return myfile->inode->data.is_dir;
 }
