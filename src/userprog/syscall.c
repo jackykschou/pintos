@@ -141,7 +141,6 @@ syscall_handler (struct intr_frame *f UNUSED)
         f->eax = inumber (deref_address (f->esp, 1, int));
         break;
 
-
       default:
       	break;
   	}
