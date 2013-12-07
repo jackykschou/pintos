@@ -20,11 +20,6 @@
 #define deref_address(ADDRESS, OFFSET, TYPE)                    \
         *(TYPE*)(((uint32_t*)ADDRESS) + OFFSET)
 
-static struct lock filesys_lock;
-
-static struct lock write_lock;
-static struct lock read_lock;
-
 static void syscall_handler (struct intr_frame *);
 
 /* Newly added function declarations. */
@@ -38,11 +33,6 @@ static void check_stack_argument_addresses (void *start, int arg_count);
 void
 syscall_init (void) 
 {
-  lock_init (&filesys_lock);
-
-  lock_init (&write_lock);
-  lock_init (&read_lock);
-
   intr_register_int (0x30, 3, INTR_ON, syscall_handler, "syscall");
 }
 
@@ -183,9 +173,7 @@ exec (const char *file)
 {
   pid_t pid;
   check_file (file);
-  lock_acquire (&filesys_lock);
   pid = process_execute (file);
-  lock_release (&filesys_lock);
   /* Block the process while wait for knowing whether file is successfully loaded. */
   sema_down (&(thread_current ()->load_sema));
   if (pid == TID_ERROR || !thread_current ()->load_success)
@@ -223,9 +211,7 @@ create (const char *file, unsigned initial_size)
   bool result;
 
   check_file (file);
-  lock_acquire (&filesys_lock);
   result = filesys_create (file, initial_size);
-  lock_release (&filesys_lock);
   return result;
 }
 
@@ -238,9 +224,7 @@ remove (const char *file)
   bool result;
 
   check_file (file);
-  lock_acquire (&filesys_lock);
   result = filesys_remove (file);
-  lock_release (&filesys_lock);
   return result;
 }
 
@@ -253,10 +237,8 @@ open (const char *file)
   int result;
 
   check_file (file);
-  lock_acquire (&filesys_lock);
   /* If the file is successfully opened, assign a file descriptor to the file, otherwise return -1. */
   result = add_file_descriptor (filesys_open (file));
-  lock_release (&filesys_lock);
   return result;
 }
 
@@ -270,9 +252,7 @@ filesize (int fd)
   check_fd (fd);
   /* Obtain the file structure. */
   file = get_file_struct (fd);
-  lock_acquire (&filesys_lock);
   length = file_length (get_file_struct (fd));
-  lock_release (&filesys_lock);
   return length;
 }
 
@@ -284,7 +264,6 @@ read (int fd, void *buffer, unsigned size)
   int i;
 
   check_file (buffer);
-  lock_acquire (&filesys_lock);
 
   /* Reads STDIN. */
   if (fd == 0)
@@ -299,7 +278,6 @@ read (int fd, void *buffer, unsigned size)
   /* Tries to read STDOUT, exit. */
   else if (fd == 1)
     {
-      lock_release (&filesys_lock);
       exit (-1);
     }
   /* Reads the file at FD. */
@@ -309,7 +287,6 @@ read (int fd, void *buffer, unsigned size)
       struct file *file = get_file_struct(fd);
       size_read = file_read (get_file_struct (fd), buffer, size);
     }
-    lock_release (&filesys_lock);
   return size_read;
 }
 
@@ -321,11 +298,9 @@ write (int fd, const void *buffer, unsigned size)
   struct file *file;
 
   check_file (buffer);
-  lock_acquire (&filesys_lock);
   /* Tries to write to STDIN, exits. */
   if (fd == 0)
     {
-      lock_release (&filesys_lock);
       exit(-1);
     }
   /* Writes to STDOUT. */ 
@@ -348,7 +323,6 @@ write (int fd, const void *buffer, unsigned size)
           size_written = file_write (file, buffer, size); 
         }
     }
-    lock_release (&filesys_lock);
   return size_written;
 }
 
@@ -361,9 +335,7 @@ seek (int fd, unsigned position)
   check_fd (fd);
   /* Obtain the file structure. */
   file = get_file_struct (fd);
-  lock_acquire (&filesys_lock);
   file_seek (file, position);
-  lock_release (&filesys_lock);
 }
 
 /* tell system call. */
@@ -398,10 +370,8 @@ close (int fd)
 bool 
 chdir (const char *dir)
 {
-  lock_acquire (&filesys_lock);
   bool result;
   result = filesys_chdir (dir);
-  lock_release (&filesys_lock);
   return result;
 }
 
@@ -409,9 +379,7 @@ chdir (const char *dir)
 bool 
 mkdir (const char *dir)
 {
-  lock_acquire (&filesys_lock);
   bool result = filesys_mkdir(dir);
-  lock_release (&filesys_lock);
   return result;
 }
 
@@ -420,20 +388,17 @@ mkdir (const char *dir)
 bool 
 readdir (int fd, char *name)
 {
-  lock_acquire (&filesys_lock);
   struct file *myfile;
   myfile = get_file_struct (fd);
   /* If the file is not a directory, return false. */
   if (!myfile->inode->data.is_dir)
     {
-      lock_release (&filesys_lock);
       return false;
     }
   struct dir *dir = myfile->opened_dir;
   /* Fails to open directory, return false. */
   if (dir == NULL)
     {
-      lock_release (&filesys_lock);
       return false;
     }
 
@@ -443,7 +408,7 @@ readdir (int fd, char *name)
   /* Ignore "." and "..". */
   while (still_have_thing)
     {
-      if (!dir_readdir (dir, name_buffer))
+      if (!dir_readdir (dir, name_buffer, true))
         {
           still_have_thing = false;
         }
@@ -454,7 +419,6 @@ readdir (int fd, char *name)
           strlcpy (name, name_buffer, strlen (name_buffer) + 1);
         }
     }
-    lock_release (&filesys_lock);
 
   return result;
 }
@@ -463,7 +427,6 @@ readdir (int fd, char *name)
 bool 
 isdir (int fd)
 {
-  lock_acquire (&filesys_lock);
   check_fd (fd);
   //fd must represent a directory.
   //false if ordinary file.
@@ -471,7 +434,6 @@ isdir (int fd)
   myfile = get_file_struct (fd);
 
   struct inode* myinode;
-  lock_release (&filesys_lock);
 
   return myfile->inode->data.is_dir;
 }
@@ -480,10 +442,8 @@ isdir (int fd)
 int 
 inumber (int fd)
 {
-  lock_acquire (&filesys_lock);
   struct file *myfile;
   myfile = get_file_struct (fd);
-  lock_release (&filesys_lock);
 
   return myfile->inode->sector;
 }

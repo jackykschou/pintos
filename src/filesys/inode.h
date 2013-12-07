@@ -9,10 +9,20 @@
 
 /* Identifies an inode. */
 #define INODE_MAGIC 0x494e4f44
+
+/* Number of direct sectors in the inode.*/
 #define NUM_DIRECT_BLOCKS 124
+
+/* Number of sectors that in the first level block of the inode. */
 #define INDIRECT_BLOCK_SECTORS (BLOCK_SECTOR_SIZE / sizeof (block_sector_t))
+
+/* Number of direct sectors in the inode.*/
 #define MAX_INDEX_DIRECT (NUM_DIRECT_BLOCKS)
+
+/* Total sum of number of sectors that in the direct and the first level block of the inode. */
 #define MAX_INDEX_INDIRECT (MAX_INDEX_DIRECT + INDIRECT_BLOCK_SECTORS)
+
+/* Total sum of number of sectors that in the direct, the first level, and the second level block of the inode. */
 #define MAX_INDEX_DOUBLE_INDIRECT (MAX_INDEX_INDIRECT + INDIRECT_BLOCK_SECTORS * INDIRECT_BLOCK_SECTORS)
 
 struct bitmap;
@@ -26,15 +36,15 @@ struct inode_disk
     block_sector_t double_indirect;               /* Index to second-level index block */
     off_t length;                                 /* File size in bytes. */
     bool is_dir;                                  /* If the file is a directory. */
-    // unsigned magic;                               /* Magic number. */
   };
 
+/* Indirect block in the multi-level inode. */
 struct indirect_block
   {
-    block_sector_t direct[INDIRECT_BLOCK_SECTORS];
+    block_sector_t direct[INDIRECT_BLOCK_SECTORS];	/* Sector indeices for data of the indirect block. */
   };
 
-  /* In-memory inode. */
+/* In-memory inode. */
 struct inode 
   {
     struct list_elem elem;              /* Element in inode list. */
@@ -43,7 +53,8 @@ struct inode
     bool removed;                       /* True if deleted, false otherwise. */
     int deny_write_cnt;                 /* 0: writes ok, >0: deny writes. */
     struct inode_disk data;             /* Inode content. */
-    struct lock write_lock;             /* Lock for write operation. */
+    struct lock grow_lock;              /* Lock for file grow operation. */
+    struct lock dir_lock;               /* Lock for directory operation. */
   };
 
 void inode_init (void);

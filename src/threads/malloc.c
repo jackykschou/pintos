@@ -97,6 +97,8 @@ malloc (size_t size)
   if (size == 0)
     return NULL;
 
+  ASSERT (size >= 0);
+
   /* Find the smallest descriptor that satisfies a SIZE-byte
      request. */
   for (d = descs; d < descs + desc_cnt; d++)

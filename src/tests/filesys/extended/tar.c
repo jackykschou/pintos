@@ -68,15 +68,18 @@ make_tar_archive (const char *archive_name, char *files[], size_t file_cnt)
   for (i = 0; i < file_cnt; i++) 
     {
       char file_name[128];
-      
       strlcpy (file_name, files[i], sizeof file_name);
       if (!archive_file (file_name, sizeof file_name,
                          archive_fd, &write_error))
+      {
         success = false;
+      }
     }
   if (!do_write (archive_fd, zeros, 512, &write_error)
       || !do_write (archive_fd, zeros, 512, &write_error)) 
+  {
     success = false;
+  }
   close (archive_fd);
 
   return success;
@@ -128,12 +131,17 @@ archive_ordinary_file (const char *file_name, int file_fd,
   bool success = true;
   int file_size = filesize (file_fd);
 
+
   if (!write_header (file_name, USTAR_REGULAR, file_size,
                      archive_fd, write_error))
+  {
     return false;
+  }
+
 
   while (file_size > 0) 
     {
+
       static char buf[512];
       int chunk_size = file_size > 512 ? 512 : file_size;
       int read_retval = read (file_fd, buf, chunk_size);
@@ -145,11 +153,11 @@ archive_ordinary_file (const char *file_name, int file_fd,
           read_error = true;
           success = false;
         }
-
       memset (buf + bytes_read, 0, 512 - bytes_read);
       if (!do_write (archive_fd, buf, 512, write_error))
+      {
         success = false;
-
+      }
       file_size -= chunk_size;
     }
   return success;
@@ -198,7 +206,6 @@ do_write (int fd, const char *buffer, int size, bool *write_error)
     {
       if (!*write_error) 
         {
-          printf ("error writing archive\n");
           *write_error = true; 
         }
       return false; 

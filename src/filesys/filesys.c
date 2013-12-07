@@ -94,11 +94,17 @@ filesys_open (const char *name)
   struct dir *dir;
   struct inode *inode = NULL;
   char parsed_name[NAME_MAX + 1];
-  if (*name == NULL || (strlen (name) > NAME_MAX))
+  if (*name == NULL)
     {
       return NULL;
     }
+
   bool success = parse_path (name, &dir, parsed_name);
+  if ((strlen (parsed_name) > NAME_MAX))
+    {
+      dir_close (dir);
+      return NULL;
+    }
 
   if (success)
   {
@@ -321,7 +327,6 @@ parse_path (const char *name, struct dir **dir, char *parsed_name)
     }
   free (name_copy);
   free (dirs);
-
   *dir = cur_dir;
   return success;
 }

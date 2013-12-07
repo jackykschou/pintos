@@ -11,6 +11,7 @@
 static struct file *free_map_file;   /* Free map file. */
 static struct bitmap *free_map;      /* Free map, one bit per sector. */
 
+/* Lock for the free map. */
 static struct lock free_map_lock;
 
 /* Initializes the free map. */

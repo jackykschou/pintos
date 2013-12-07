@@ -8,12 +8,6 @@
 #include "threads/malloc.h"
 #include "threads/synch.h"
 
-// static unsigned inode_grow(struct inode_disk *disk_inode, unsigned sectors_to_grow, bool must_succeed);
-// static void inode_map_sector_index(struct inode_disk *disk_inode, unsigned block_index, unsigned sector_number);
-// static void direct_map_index(struct inode_disk *disk_inode, unsigned block_index, unsigned sector_number);
-// static void indirect_map_index(struct inode_disk *disk_inode, unsigned block_index, unsigned sector_number);
-// static void double_indirect_map_index(struct inode_disk *disk_inode, unsigned block_index, unsigned sector_number);
-
 /* Returns the number of sectors to allocate for an inode SIZE
    bytes long. */
 static inline size_t
@@ -182,12 +176,13 @@ inode_init (void)
 }
 
 static size_t
-inode_grow(struct inode_disk *disk_inode, size_t sectors_to_grow, bool must_succeed)
+inode_grow (struct inode_disk *disk_inode, size_t sectors_to_grow, bool must_succeed)
 {
   if (sectors_to_grow <= 0)
     {
       return 0;
     }
+
   static char zeros[BLOCK_SECTOR_SIZE];
   size_t sectors_successfully_allocated = 0;
   bool alloc_success = false;
@@ -196,7 +191,6 @@ inode_grow(struct inode_disk *disk_inode, size_t sectors_to_grow, bool must_succ
 
   int i;
   int sector_index;
-
   /* Check how large the inode is trying to grow */
 
   /* Allocate sectors for the file data. - we need enough for the data as well as the index blocks
@@ -442,7 +436,8 @@ inode_open (block_sector_t sector)
 
   /* Initialize. */
   list_push_front (&open_inodes, &inode->elem);
-  lock_init (&inode->write_lock);
+  lock_init (&inode->grow_lock);
+  lock_init (&inode->dir_lock);
   inode->sector = sector;
   inode->open_cnt = 1;
   inode->deny_write_cnt = 0;
@@ -570,14 +565,13 @@ inode_read_at (struct inode *inode, void *buffer_, off_t size, off_t offset)
 static size_t 
 sectors_needed_to_grow (size_t file_len, off_t offset, off_t size)
 {
-
   size_t allocated_sectors = file_len / BLOCK_SECTOR_SIZE + 1;
 
   if ((file_len % BLOCK_SECTOR_SIZE) == 0)
     {
       --allocated_sectors;
     }
-
+  
   if(file_len == 0)
   {
     allocated_sectors = 0;
@@ -606,21 +600,23 @@ off_t
 inode_write_at (struct inode *inode, const void *buffer_, off_t size,
                 off_t offset) 
 {
-  lock_acquire (&inode->write_lock);
   const uint8_t *buffer = buffer_;
   off_t bytes_written = 0;
   uint8_t *bounce = NULL;
 
   if (inode->deny_write_cnt)
   {
-    lock_release (&inode->write_lock);
     return 0;
   }
 
   /* Do we need to grow the file */
   size_t sectors_to_grow = sectors_needed_to_grow (inode_length(inode), offset, size);
 
+  lock_acquire (&inode->grow_lock);
   size_t sectors_grown = inode_grow (&inode->data, sectors_to_grow, false);
+  lock_release (&inode->grow_lock);
+
+  size_t temp_len;
 
   if (sectors_grown < sectors_to_grow)
     {
@@ -655,7 +651,6 @@ inode_write_at (struct inode *inode, const void *buffer_, off_t size,
 
       if (sector_ofs == 0 && chunk_size == BLOCK_SECTOR_SIZE)
         {
-          
           /* Write full sector directly to disk. */
           block_write (fs_device, sector_idx, buffer + bytes_written);
         }
@@ -687,7 +682,6 @@ inode_write_at (struct inode *inode, const void *buffer_, off_t size,
     }
   free (bounce);
 
-  lock_release (&inode->write_lock);
   return bytes_written;
 }
 
