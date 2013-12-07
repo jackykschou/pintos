@@ -8,6 +8,10 @@
 #include "threads/malloc.h"
 #include "threads/synch.h"
 
+/* List of open inodes, so that opening a single inode twice
+   returns the same `struct inode'. */
+static struct list open_inodes;
+
 /* Returns the number of sectors to allocate for an inode SIZE
    bytes long. */
 static inline size_t
@@ -19,7 +23,6 @@ bytes_to_sectors (off_t size)
 static void
 direct_map_index (struct inode_disk *disk_inode, size_t block_index, size_t sector_number)
 {
-  
   disk_inode->direct[block_index] = sector_number;
 }
 
@@ -28,16 +31,12 @@ indirect_map_index (struct inode_disk *disk_inode, size_t block_index, size_t se
 {
   /* Find the index if the indirect blocks direct block array */
   size_t relative_index = block_index - MAX_INDEX_DIRECT;
-
+  
   struct indirect_block* ptr = malloc (sizeof (struct indirect_block));
   block_read (fs_device, disk_inode->indirect, ptr);
-
-  
   ptr->direct[relative_index] = sector_number;
-
   block_write (fs_device, disk_inode->indirect, ptr);
   free (ptr);
-
 }
 
 static void 
@@ -94,11 +93,9 @@ get_indirect_map_index (struct inode_disk *disk_inode, size_t block_index)
 
   struct indirect_block* ptr = malloc (sizeof (struct indirect_block));
   block_read (fs_device, disk_inode->indirect, ptr);
-
   size_t result = ptr->direct[relative_index];
-
   free (ptr);
-
+  
   return result;
 }
 
@@ -161,12 +158,8 @@ byte_to_sector (const struct inode *inode, off_t pos)
 
   block_sector_t sector_offset = pos / BLOCK_SECTOR_SIZE;
   
-  return get_inode_map_sector_index(&inode->data, sector_offset);
+  return get_inode_map_sector_index (&inode->data, sector_offset);
 }
-
-/* List of open inodes, so that opening a single inode twice
-   returns the same `struct inode'. */
-static struct list open_inodes;
 
 /* Initializes the inode module. */
 void
@@ -178,6 +171,8 @@ inode_init (void)
 static size_t
 inode_grow (struct inode_disk *disk_inode, size_t sectors_to_grow, bool must_succeed)
 {
+  int i;
+  int sector_index;
   if (sectors_to_grow <= 0)
     {
       return 0;
@@ -189,11 +184,8 @@ inode_grow (struct inode_disk *disk_inode, size_t sectors_to_grow, bool must_suc
   size_t starting_sectors = bytes_to_sectors (disk_inode->length);
   size_t desired_ending_sectors = starting_sectors + sectors_to_grow; 
 
-  int i;
-  int sector_index;
-  /* Check how large the inode is trying to grow */
-
-  /* Allocate sectors for the file data. - we need enough for the data as well as the index blocks
+  /* Check how large the inode is trying to grow.
+    Allocate sectors for the file data. - we need enough for the data as well as the index blocks
     we must calculate how many NEW index blocks are needed after we find out how many data blocks we can actually allocate*/
 
   /* Allocate the data blocks required */
@@ -283,7 +275,7 @@ inode_grow (struct inode_disk *disk_inode, size_t sectors_to_grow, bool must_suc
 
     /* Initialize double indirect block */
     disk_inode->double_indirect = first_level_block_index;
-    struct indirect_block *double_indirect_first_level_ptr = malloc (sizeof(struct indirect_block));
+    struct indirect_block *double_indirect_first_level_ptr = malloc (sizeof (struct indirect_block));
     block_write (fs_device, disk_inode->double_indirect, double_indirect_first_level_ptr);
     free (double_indirect_first_level_ptr);
   }
@@ -333,22 +325,22 @@ inode_grow (struct inode_disk *disk_inode, size_t sectors_to_grow, bool must_suc
 
   /*If for any reason the allocation failed, free all allocated sectors */
   if (!alloc_success)
-  {
-    /* Free the index blocks */
-    free_map_release(indirect_block_index, 1);
-    free_map_release(first_level_block_index, 1);
-
-    for (i = 0; i < second_level_blocks_to_allocate; ++i)
     {
-      free_map_release(allocated_second_level_blocks[i], 1);
-    }
+      /* Free the index blocks */
+      free_map_release (indirect_block_index, 1);
+      free_map_release (first_level_block_index, 1);
 
+      for (i = 0; i < second_level_blocks_to_allocate; ++i)
+      {
+        free_map_release (allocated_second_level_blocks[i], 1);
+      }
+  
     /* Free the data blocks */
-    for(i = 0; i < sectors_successfully_allocated; ++i)
-    {
-      free_map_release (allocated_sectors[i], 1);
+      for(i = 0; i < sectors_successfully_allocated; ++i)
+        {
+          free_map_release (allocated_sectors[i], 1);
+        }
     }
-  }
   
   /* Always free the temporary arrays */
   free (allocated_second_level_blocks);
@@ -382,17 +374,15 @@ inode_create (block_sector_t sector, off_t length, bool is_dir)
     /* Put data in the disk inode */
     disk_inode->length = 0;
     disk_inode->is_dir = is_dir;
-    // disk_inode->magic = INODE_MAGIC;
-    
+
     /*Grow the file to the size specified - fills new sectors with zero's and maps all indicies */
     size_t result = inode_grow (disk_inode, sectors, true);
 
     /* Allocation failed - free resources*/
     if (result == -1)
-    {
-      goto return_result;
-    }    
-
+      {
+        goto return_result;
+      }    
     disk_inode->length = length;
     /* File is successfully created if we made it through */
     success = true;
@@ -404,7 +394,6 @@ inode_create (block_sector_t sector, off_t length, bool is_dir)
   return_result:
 
   free (disk_inode);
-
   return success;
 }
 
