@@ -284,14 +284,14 @@ parse_path (const char *name, struct dir **dir, char *parsed_name)
 
   /* Special case: the root directory. */
   if (i == 0 && !strcmp ("/", name))
-  {
-    strlcpy (parsed_name, name, strlen (name) + 1);
-  }
+    {
+      strlcpy (parsed_name, name, strlen (name) + 1);
+    }
   else
-  {
-    /* Get the last file name as the parsed name. */
-    strlcpy (parsed_name, dirs[i - 1], strlen (dirs[i - 1]) + 1);
-  }
+    {
+      /* Get the last file name as the parsed name. */
+      strlcpy (parsed_name, dirs[i - 1], strlen (dirs[i - 1]) + 1);
+    }
     /* Get the directory where the file (parsed name) is located. */
   int dir_num = i - 1;
   for (i = 0; i < dir_num; ++i)
