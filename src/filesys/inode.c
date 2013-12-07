@@ -608,11 +608,11 @@ inode_write_at (struct inode *inode, const void *buffer_, off_t size,
   {
     return 0;
   }
-
+  
+  lock_acquire (&inode->grow_lock);
+  
   /* Do we need to grow the file */
   size_t sectors_to_grow = sectors_needed_to_grow (inode_length(inode), offset, size);
-
-  lock_acquire (&inode->grow_lock);
   size_t sectors_grown = inode_grow (&inode->data, sectors_to_grow, false);
 
   size_t temp_len;
