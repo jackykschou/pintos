@@ -131,7 +131,7 @@ struct thread
     struct file *executable;                  /* File of the executable of the process */
     bool load_success;                        /* Indicate whether the last loading of executable of it child is success of not */
 
-    block_sector_t cur_dir_sector;
+    block_sector_t cur_dir_sector;            /* Current directory */
 
     /* Owned by thread.c. */
     unsigned magic;                     /* Detects stack overflow. */
