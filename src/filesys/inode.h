@@ -41,7 +41,7 @@ struct inode_disk
 /* Indirect block in the multi-level inode. */
 struct indirect_block
   {
-    block_sector_t direct[INDIRECT_BLOCK_SECTORS];	/* Sector indeices for data of the indirect block. */
+    block_sector_t direct[INDIRECT_BLOCK_SECTORS];	/* Sector indicies for data of the indirect block. */
   };
 
 /* In-memory inode. */
