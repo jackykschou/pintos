@@ -614,7 +614,6 @@ inode_write_at (struct inode *inode, const void *buffer_, off_t size,
 
   lock_acquire (&inode->grow_lock);
   size_t sectors_grown = inode_grow (&inode->data, sectors_to_grow, false);
-  lock_release (&inode->grow_lock);
 
   size_t temp_len;
 
@@ -629,7 +628,8 @@ inode_write_at (struct inode *inode, const void *buffer_, off_t size,
           inode->data.length = offset + size;
         }
     }
-
+    
+  lock_release (&inode->grow_lock);    
   block_write (fs_device, inode->sector, &inode->data);
 
   while (size > 0) 
